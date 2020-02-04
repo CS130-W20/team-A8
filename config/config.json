@@ -7,6 +7,17 @@
 		"db": "gamelinks", 
 		"FB_APP_SECRET": "41cd857d1acdbce7ab33fd5e7311558d",
 		"FB_APP_ID" : "181950399740252",
+		"FB_callback": "http://localhost:",
+		"igdb_key": "3b86d04ff6de0049f50a0ff162150296"
+	},
+	"testing": {
+		"config_id": "testing",
+		"port": 3000,
+		"json_indentation": 4,
+		"mongo_url": "mongodb+srv://admin:admin@gamelink-axvyy.mongodb.net/test?retryWrites=true&w=majority",
+		"db": "gamelinks", 
+		"FB_APP_SECRET": "41cd857d1acdbce7ab33fd5e7311558d",
+		"FB_APP_ID" : "181950399740252",
 		"FB_callback": "http://localhost:"
 	}
 }

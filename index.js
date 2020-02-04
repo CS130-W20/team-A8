@@ -23,8 +23,10 @@ app.use(passport.session());
 let authRouter = express.Router();
 require('./routes/passport')(passport);
 require('./routes/auth')(authRouter, passport);
+const igdbRouter = require('./routes/igdb_api');
 
 app.use('/auth', authRouter);
+app.use('/igdb', igdbRouter);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -47,7 +49,6 @@ io.on('connection', function(socket) {
    });
 });
 
-//auth
 /*
 const options = {											// Used for certificate for HTTPS
 	key: fs.readFileSync('server.key'),

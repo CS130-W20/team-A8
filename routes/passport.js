@@ -21,7 +21,6 @@ module.exports = passport => {
 		},
 		function(fbAccessToken, fbRefreshToken, profile, done) {
 			logger.info('Passport creating user')
-			console.log(profile);
 			let userInfo = {
 				firstName: profile.name.givenName,
 				lastName: profile.name.familyName,
