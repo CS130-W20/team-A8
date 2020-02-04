@@ -89,6 +89,45 @@ router.get('/cover', async (req, res) => {
 	}
 })
 
+router.get('/game', async (req,res) => {
+	const acceptedKeys = [ "age_ratings", "genres", "involved_companies", "platforms", "screenshots"];
+	let { id } = req.query;
+	url = baseUrl + 'games';
+	data = `fields age_ratings , aggregated_rating, 
+			first_release_date, platforms, genres, 
+			name, url; where id = ${id};`;
+
+	
+	try {
+		let result = await axios.get(url, {
+			headers,
+			data,
+		});
+		let promises = [];
+		for(const key in result.data[0]){
+			if (acceptedKeys.includes(key)){
+				logger.info(key)
+				for(const subId of result.data[0][key]){
+					promises.push(getGameDetail(key, subId));
+				}
+				result.data[0][key] = []
+			}
+		}
+		promises = await Promise.all(promises);
+		for(const obj of promises){
+			result.data[0][obj.key].push(obj.data);
+		}
+		logger.info('found game');
+		res.status(200).send(result.data);
+		
+	} catch (err) {
+		console.log(err);
+		logger.error('error getting game details');
+		res.status(400).send('Error');
+	}
+})
+
+
 /**
  * Helper function to get the cover URL of a given game ID
  * @param {*} id - id of the game
@@ -108,6 +147,21 @@ async function getCover(id, resolution){
 		coverUrl = result.data[0].url.replace(regex, `t_${resolution}`).substring(2);
 		logger.info(coverUrl)
 		return coverUrl
+	} catch (err) {
+		console.log(err);
+	}
+};
+
+async function getGameDetail(key, id){
+	url = baseUrl + key;
+	data = `fields *; where id = ${id};`;
+	try {
+		let result = await axios.get(url, {
+			headers,
+			data,
+		});
+		logger.info(`found ${key}`);
+		return { "key": key, "data": result.data}
 	} catch (err) {
 		console.log(err);
 	}
