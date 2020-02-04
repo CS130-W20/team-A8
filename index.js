@@ -1,14 +1,19 @@
-const express = require('express');
-const app = express();
-const http = require('http').createServer(app);
-const https = require('https');
+// Express variable
+var express = require('express');
+var app = express();
+var http = require('http').createServer(app);
+
+// Mongoose and facebook auth variables
 const path = require('path');
-const io = require('socket.io')(https);
 const mongoose = require('mongoose');
 const passport = require('passport');
 
+// Socket io
+var io = require('socket.io')(http);
+
 process.env.NODE_ENV = 'development';
 const config = require('./config/config.js');
+
 
 //mongoose connection
 mongoose.connect(global.gConfig.mongo_url, ({ dbName: global.gConfig.db }, { useNewUrlParser: true }));
@@ -41,10 +46,8 @@ app.get('/', function(req, res) {
    res.sendFile(__dirname + '/index.html');
 });
 
-io.on('connection', function(socket) {
-   socket.on('chat message', function(msg) {
-      io.emit('chat message', msg);
-   });
+app.get('/chat', function(req, res) {
+   res.sendFile(__dirname + '/chat.html');
 });
 
 //auth
@@ -61,6 +64,15 @@ https
 });
 */
 
-http.listen(3000, function(){
+// Socket io connection logic
+io.on('connection', function(socket) {
+   console.log('successfully connected to socket.io!');
+   console.log(socket.id);
+   socket.on('chat message', function(msg) {
+      io.emit('chat message', msg);
+   });
+});
+
+http.listen(3000, function() {
    console.log('listening on *:3000');
 });
