@@ -89,12 +89,17 @@ router.get('/cover', async (req, res) => {
 	}
 })
 
+/**
+ * Gets all the relevant details needed for the game page
+ * @param {string} id - the id of the game
+ */
 router.get('/game', async (req,res) => {
 	const acceptedKeys = [ "age_ratings", "genres", "involved_companies", "platforms", "screenshots"];
 	let { id } = req.query;
 	url = baseUrl + 'games';
 	data = `fields age_ratings , aggregated_rating, 
 			first_release_date, platforms, genres, 
+			rating, rating_count, total_rating, total_rating_count,
 			name, url; where id = ${id};`;
 
 	
@@ -152,6 +157,11 @@ async function getCover(id, resolution){
 	}
 };
 
+/**
+ * Returns an object containing all the fields for a specific detail about the game
+ * @param {string} key - determines what information we are trying to pull from igdb API (i.e. age_ratings, genres)
+ * @param {int} id - the id of the given key (i.e. genre id for genres key)
+ */
 async function getGameDetail(key, id){
 	url = baseUrl + key;
 	data = `fields *; where id = ${id};`;
