@@ -10,6 +10,10 @@ const passport = require('passport');
 process.env.NODE_ENV = 'development';
 const config = require('./config/config.js');
 
+// Messaging portion
+var messaging = require('./messaging/messaging');
+app.use('/chat', messaging);
+
 //mongoose connection
 mongoose.connect(global.gConfig.mongo_url, ({ dbName: global.gConfig.db }, { useNewUrlParser: true }));
 let db = mongoose.connection;
