@@ -1,19 +1,14 @@
-// Express variable
-var express = require('express');
-var app = express();
-var http = module.exports.http = require('http').createServer(app);
-
-// Mongoose and facebook auth variables
+const express = require('express');
+const app = express();
+const http = require('http').createServer(app);
+const https = require('https');
 const path = require('path');
+const io = require('socket.io')(https);
 const mongoose = require('mongoose');
 const passport = require('passport');
 
 process.env.NODE_ENV = 'development';
 const config = require('./config/config.js');
-
-// Messaging portion
-var messaging = require('./messaging/messaging');
-app.use('/chat', messaging);
 
 //mongoose connection
 mongoose.connect(global.gConfig.mongo_url, ({ dbName: global.gConfig.db }, { useNewUrlParser: true }));
@@ -61,6 +56,6 @@ https
 });
 */
 
-http.listen(3000, function() {
+http.listen(3000, function(){
    console.log('listening on *:3000');
 });
