@@ -36,7 +36,11 @@ var UserSchema = new mongoose.Schema({
 	fbAccessToken: {
 		type: String,
 		required: true,
-	},
+   },
+   socketID: {
+      type: String,
+      required: false,
+   }
 });
 
 UserSchema.statics.findOrCreate = async (userInfo, done) => {

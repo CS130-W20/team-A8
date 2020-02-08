@@ -3,18 +3,18 @@ const app = express();
 const http = require('http').createServer(app);
 const https = require('https');
 const path = require('path');
-const io = require('socket.io')(https);
+const io = require('socket.io')(http);
 const mongoose = require('mongoose');
 const passport = require('passport');
 
 process.env.NODE_ENV = 'development';
 const config = require('./config/config.js');
 
-// Messaging portion
-var messaging = require('./messaging/messaging');
-app.use('/chat', messaging);
+// For now, just require messaging to allow io
+require('./messaging/messaging')(io);
 
 //mongoose connection
+mongoose.set('useCreateIndex', true);
 mongoose.connect(global.gConfig.mongo_url, ({ dbName: global.gConfig.db }, { useNewUrlParser: true }));
 let db = mongoose.connection;
 mongoose.Promise = global.Promise;
