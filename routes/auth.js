@@ -14,7 +14,6 @@ module.exports = (router, passport) => {
 		passport.authenticate('facebook', function(err, user) {
 			if (err || !user) {
 				logger.error(err);
-				console.log(err)
 				res.status(400).send("Error Logging in");
 
 			} else {
@@ -22,7 +21,7 @@ module.exports = (router, passport) => {
 					if (err) {
 						return next(err);
 					} else {
-						res.status(200).send("Successfully logged in existing user");
+						return res.redirect('/home');
 					}
 				});
 			}
@@ -31,7 +30,6 @@ module.exports = (router, passport) => {
 
 	router.get('/deauth', async (req, res) => {
 		console.log('/deauth')
-		console.log(req.user);
 		const { _id } = req.user
 		await User.deauth(_id);
 		res.status(200).send('Successfully deauth')

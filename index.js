@@ -17,17 +17,6 @@ mongoose.Promise = global.Promise;
 db.once('open', () => { console.log('Successfully connected');});
 db.on('error', console.error.bind(console, 'conn error:'));
 
-app.use(passport.initialize());
-app.use(passport.session());
-
-let authRouter = express.Router();
-require('./routes/passport')(passport);
-require('./routes/auth')(authRouter, passport);
-const igdbRouter = require('./routes/igdb_api');
-
-app.use('/auth', authRouter);
-app.use('/igdb', igdbRouter);
-
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.json());
@@ -39,6 +28,18 @@ app.use(require('express-session')({
   saveUninitialized: true
 }));
 
+app.use(passport.initialize());
+app.use(passport.session());
+
+let authRouter = express.Router();
+require('./routes/passport')(passport);
+require('./routes/auth')(authRouter, passport);
+const igdbRouter = require('./routes/igdb_api');
+
+app.use('/auth', authRouter);
+app.use('/igdb', igdbRouter);
+
+
 app.get('/', function(req, res) {
    res.sendFile(__dirname + '/index.html');
 });
@@ -48,6 +49,11 @@ io.on('connection', function(socket) {
       io.emit('chat message', msg);
    });
 });
+
+app.get('/home', (req, res) => {
+   console.log('here1')
+   console.log(req.user);
+})
 
 /*
 const options = {											// Used for certificate for HTTPS
