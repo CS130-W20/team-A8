@@ -1,30 +1,51 @@
 const User = require('../models/User');
 
+var socketID = null;
+var this_io = null;
+
 // Socket io connection logic
-module.exports = function(io) {
-   io.on('connection', onConnect); //{
-      /*
-      socket.on('chat message', function(msg) {
-         io.emit('chat message', msg);
-         console.log('chat message triggered');
-      });
-      */
-      /*
-      socket.join('chat room', () => {
-         let rooms = Object.keys(socket.rooms);
-         console.log(rooms);
-      });
-      */
-   //});
-   // Set mongo to moongoose
-   // var user = User.findOne();
-   // console.log(user);
+function connect(io) {
+   this_io = io;
+   io.on('connection', onConnect);
 }
 
 function onConnect(socket) {
-   console.log('hello');
-   User.find(function (err, users) {
-      if (err) return console.log(err);
-      console.log(users);
+   console.log(socket.id);
+   // socketID = socket.id;
+   let han = User.findOne({'firstName': 'Han'}, 'firstName lastName socket', function(err, person) {
+      if (err) console.log(err);
+      socketID = person.socket;
+      person.save(function(err) {
+         if (err) console.log(err);
+      });
    });
+   socket.on('chat message', function(msg) {
+      this_io.to(`${socketID}`).emit('chat message', msg);
+   });
+};
+
+function updateDatabase(user) {
+   if (user) {
+      user.socket = socketID;
+      user.save(function(err) {
+         if (err) console.log(err);
+         console.log("Successfully updated");
+      });
+   }
+
+   // Also update luke and han for testing purposes
+   let han = User.findOne({'firstName' : 'Han'}, 'firstName lastName socket', function(err, person) {
+      if (err) console.log('Error finding han: %s', err);
+      person.socket = socketID;
+      person.save(function(err) {
+         if (err) console.log(err);
+         console.log("Successfully updated han");
+      });
+      console.log(person);
+   });
+};
+
+module.exports = {
+   connect,
+   updateDatabase
 };

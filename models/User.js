@@ -37,7 +37,7 @@ var UserSchema = new mongoose.Schema({
 		type: String,
 		required: true,
    },
-   socketID: {
+   socket: {
       type: String,
       required: false,
    }
