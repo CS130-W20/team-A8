@@ -12,6 +12,7 @@ function connect(io) {
 function onConnect(socket) {
    console.log(socket.id);
    // socketID = socket.id;
+   // Use mongodb id instead of first name and last name
    let han = User.findOne({'firstName': 'Han'}, 'firstName lastName socket', function(err, person) {
       if (err) console.log(err);
       socketID = person.socket;
