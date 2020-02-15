@@ -21,4 +21,8 @@ router.post('/IncOrDecLikes', async (req, res) => {
 	return err ? res.status(400).send('Failed to change likes') : res.status(200).send('Successfully changed likes');
 });
 
+router.get('/findHosts', async (req, res) => {
+	
+})
+
 module.exports = router;

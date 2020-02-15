@@ -15,6 +15,10 @@ var GameSchema = new mongoose.Schema({
 	likes: {
 		type: Number,
 		required: true,
+	},
+	hosts: {
+		type: [ String ],
+		default: [],
 	}
 });
 

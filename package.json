@@ -3,6 +3,7 @@
    "version": "0.0.1",
    "description": "United States of Gamers",
    "dependencies": {
+      "@googlemaps/google-maps-services-js": "^2.0.2",
       "apicalypse": "^0.1.6",
       "axios": "^0.19.2",
       "cloudinary": "^1.19.0",

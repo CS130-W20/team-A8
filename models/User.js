@@ -16,7 +16,7 @@ var UserSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	profileName: {
+	username: {
 		type: String,
 		required: false,
 	},
@@ -30,10 +30,18 @@ var UserSchema = new mongoose.Schema({
 		unique: true,
 		lowercase: true,
 	},
-	location: { // Not sure if should use Lat/long or addr yet.
+	profilePicture: {
 		type: String,
 	},
-	profilePicture: {
+	favorites: {
+		type: [ String ],
+		default: [],
+	},
+	hosting: {
+		type: [ String ],
+		default: [],
+	},
+	address: {
 		type: String,
 	},
 	fbAccessToken: {
@@ -68,22 +76,28 @@ UserSchema.statics.updateUser = async (updateInfo) => {
 	logger.info('updateUser');
 	let user;
 	try {
-		user = await User.findOne({ _id: updateInfo._id });
+		user = await User.findById(updateInfo._id);
+		console.log(user);
 	} catch (err) {
+		console.log(err);
 		logger.error('user update error');
-		return;
+		return err;
 	}
 	if (!user) {
 		logger.error('No user to update');
-		return;
+		return 'No user to update';
 	}
 	try {
-		await user.update(updateInfo);
+		for (let key1 of Object.keys(updateInfo)) {
+			user[key1] = updateInfo[key1];
+		}
+		await user.save();
 	} catch (err) {
+		console.log(err);
 		logger.error('failed to update user');
-		return;
+		return err;
 	}
-	return user;
+	return;
 };
 
 module.exports = User = mongoose.model('User', UserSchema);
