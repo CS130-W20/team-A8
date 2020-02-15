@@ -23,7 +23,7 @@ cloudinary.config({
  */
 router.get('/getCurrentUserInformation', async (req, res) => {
 	logger.info ('getting current users favorite games');
-	const userId = req.user ? req.user._id : '5e462d9b49581001c4591a06'; // hard coded for testing
+	const userId = req.user ? req.user._id : '5e474fc781f6514ad2d54751'; // hard coded for testing
 	let userInfo;
 	try {
 		userInfo = await User.findById(userId);
@@ -35,7 +35,7 @@ router.get('/getCurrentUserInformation', async (req, res) => {
 });
 
 /**
- * TODO: Once Google Maps API is set up, use the location of the user in order to find distance
+ * TODO: Once Google Maps API is set up, use the location of the user in order to find distance. put this in public information.
  * This will give the information of another person's profile. The next two params are query parameters
  * @param {Integer} id the id of the person we want to get info from.
  * @param {Boolean} private true if we want the user's personal information. false if we want their public information
@@ -74,7 +74,7 @@ router.get('/getProfileUserInformation', async (req, res) => {
  */
 router.post('/editUserInfo', async (req, res) => {
 	logger.info('Edit User Information');
-	const userId = req.user ? req.user._id : '5e47447c9ca2a9355632dd43'; // hard coded for testing
+	const userId = req.user ? req.user._id : '5e474fc781f6514ad2d54751'; // hard coded for testing
 	const userInfo = { _id: userId };
 	const { firstName, lastName, username, email, birthday, profilePicture, address, favorites, hosting } = req.body;
 	if (firstName) userInfo.firstName = firstName;
@@ -92,13 +92,8 @@ router.post('/editUserInfo', async (req, res) => {
 		const hostingSplit = hosting.split(',');
 		userInfo.hosting = hostingSplit;
 	}
-	try {
-		await User.updateUser(userInfo);
-		res.status(200).send('Updated user');
-	} catch (err) {
-		console.log(err);
-		res.status(400).send('Failed to Update User');
-	}
+	let err = await User.updateUser(userInfo);
+	err ? res.status(400).send('Failed to Update User') : res.status(200).send('Updated user');
 });
 
 /**

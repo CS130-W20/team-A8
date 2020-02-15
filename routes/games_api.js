@@ -21,8 +21,15 @@ router.post('/IncOrDecLikes', async (req, res) => {
 	return err ? res.status(400).send('Failed to change likes') : res.status(200).send('Successfully changed likes');
 });
 
-router.get('/findHosts', async (req, res) => {
-	
-})
+/**
+ * Gets game information.
+ * query string id for the game id.
+ */
+router.get('/getGameInfo', async (req, res) => {
+	logger.info('Finding Host');
+	const { id } = req.query;
+	const game = await Game.findOne({ id });
+	return game ? res.status(200).send(game) : res.status(400).send('Game does not exist in db');
+});
 
 module.exports = router;

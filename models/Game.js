@@ -9,7 +9,7 @@ const logger = winston.createLogger({
 
 var GameSchema = new mongoose.Schema({
 	id: {
-		type: Number,
+		type: String,
 		required: true,
 	},
 	likes: {
@@ -37,7 +37,7 @@ GameSchema.statics.IncrementLike = async (id, inc) => {
 		return 'Error finding game';
 	}
 	if (!game) {
-		const gameInfo = { id, likes: 1 };
+		const gameInfo = { id, likes: 1, hosts: [] };
 		await Game.create(gameInfo);
 		return;
 	}
