@@ -23,7 +23,7 @@ cloudinary.config({
  */
 router.get('/getCurrentUserInformation', async (req, res) => {
 	logger.info ('getting current users favorite games');
-	const userId = req.user ? req.user._id : '5e474fc781f6514ad2d54751'; // hard coded for testing
+	const userId = req.user ? req.user._id : global.gConfig.port.test_id; // hard coded for testing
 	let userInfo;
 	try {
 		userInfo = await User.findById(userId);
@@ -74,7 +74,7 @@ router.get('/getProfileUserInformation', async (req, res) => {
  */
 router.post('/editUserInfo', async (req, res) => {
 	logger.info('Edit User Information');
-	const userId = req.user ? req.user._id : '5e474fc781f6514ad2d54751'; // hard coded for testing
+	const userId = req.user ? req.user._id : global.gConfig.port.test_id; // hard coded for testing
 	const userInfo = { _id: userId };
 	const { firstName, lastName, username, email, birthday, profilePicture, address, favorites, hosting } = req.body;
 	if (firstName) userInfo.firstName = firstName;
