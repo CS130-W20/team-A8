@@ -17,13 +17,6 @@
     gud "^1.0.0"
     warning "^4.0.3"
 
-"@ant-design/dark-theme@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@ant-design/dark-theme/-/dark-theme-1.0.3.tgz#f06b4d8c62eba547a80661b68400c181c991392b"
-  integrity sha512-jd7y7GSbhta7dUsoAIqdBSAzFN6tx6mZaps2r6h+NhYoifOo7TGzagVYkjPR/27s6FK2vwzBhLBU1XPaVicfVw==
-  dependencies:
-    "@ant-design/colors" "^3.1.0"
-
 "@ant-design/icons-react@~2.0.1":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@ant-design/icons-react/-/icons-react-2.0.1.tgz#17a2513571ab317aca2927e58cea25dd31e536fb"
@@ -1787,10 +1780,10 @@ ansi-styles@^3.2.0, ansi-styles@^3.2.1:
   dependencies:
     color-convert "^1.9.0"
 
-antd@^3.26.9:
-  version "3.26.9"
-  resolved "https://registry.yarnpkg.com/antd/-/antd-3.26.9.tgz#233c9d090c44146997984966d3b3657c9426bac1"
-  integrity sha512-youf+hBJHB4nuhV7yEbm2VQSMtX9RxrNQvjlc+iIPj4FeJsuTQXIfSSAc5GhwDeVAI4+nuapCv7XLFIQ+f2ZFg==
+antd@^3.26.11:
+  version "3.26.11"
+  resolved "https://registry.yarnpkg.com/antd/-/antd-3.26.11.tgz#28d17b8c664251b879e25ad22b3102b1d04c5a10"
+  integrity sha512-LJZW/XWfv7u5L0mnctmwJEIRuT2rVi5A9SR4JE1vfMwjfJQT6n8bphcytElYXxCHr9xjQSONhuGLgeMz6AVoWQ==
   dependencies:
     "@ant-design/create-react-context" "^0.2.4"
     "@ant-design/icons" "~2.1.1"
@@ -5516,9 +5509,9 @@ is-glob@^4.0.0, is-glob@^4.0.1, is-glob@~4.0.1:
     is-extglob "^2.1.1"
 
 is-mobile@^2.1.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/is-mobile/-/is-mobile-2.2.0.tgz#72b19ab033deb0fd15a2d00a23b9b1003f8fa5d9"
-  integrity sha512-K0DmUqaZqYl6M8ej536uJYAQaBkx+qWph7xl1KRBr31UiGUT0MoFWUoqnIxzXnIeolnK8bkxtKXkZNL6HfSHhQ==
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/is-mobile/-/is-mobile-2.2.1.tgz#10f2320012c410cc285feecb13406bd586f1b2f8"
+  integrity sha512-6zELsfVFr326eq2CI53yvqq6YBanOxKBybwDT+MbMS2laBnK6Ez8m5XHSuTQQbnKRfpDzCod1CMWW5q3wZYMvA==
 
 is-number@^3.0.0:
   version "3.0.0"
