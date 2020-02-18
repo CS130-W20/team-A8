@@ -1,7 +1,7 @@
 import React from "react";
 import { Layout, Button } from "antd";
 import { BrowserRouter, withRouter } from "react-router-dom";
-import { FacebookProvider, LoginButton } from "react-facebook-login";
+import FacebookLoginButton from "./FacebookLoginButton";
 
 const { Content } = Layout;
 
@@ -9,12 +9,25 @@ const responseFacebook = (response) => {
   console.log(response);
 }
 
+function onFacebookLogin(loginStatus, resultObject){
+  // if (loginStatus === true) {
+  //   this.setState({
+  //     username: resultObject.user.name
+  //   });
+  // } else {
+  //   alert('Facebook login error');
+  // }
+}
+
 const Home = () => {
   return (
     <BrowserRouter>
       <Content style={{ padding: "0 50px", marginTop: 64 }}>
-        <div style={{ src: "#fff", padding: 24, minHeight: 380 }}/>
-
+        <div align="center">
+        <FacebookLoginButton onLogin={onFacebookLogin}>
+          <button>Facebook</button>
+        </FacebookLoginButton>
+        </div>
       </Content>
     </BrowserRouter>
   );
