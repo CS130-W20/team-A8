@@ -9,17 +9,22 @@ const logger = winston.createLogger({
 
 var GameSchema = new mongoose.Schema({
 	id: {
-		type: Number,
+		type: String,
 		required: true,
 	},
 	likes: {
 		type: Number,
 		required: true,
+	},
+	hosts: {
+		type: [ String ],
+		default: [],
 	}
 });
 
 /**
  * This is used to increment/decrement the number of likes/saves that the game has.
+ * If the game doesn't exist in the db, it adds an entry.
  * @param {Integer} id the ID of the game
  * @param {Bool} inc True to increment, False to decrement 
  */
@@ -33,7 +38,7 @@ GameSchema.statics.IncrementLike = async (id, inc) => {
 		return 'Error finding game';
 	}
 	if (!game) {
-		const gameInfo = { id, likes: 1 };
+		const gameInfo = { id, likes: 1, hosts: [] };
 		await Game.create(gameInfo);
 		return;
 	}

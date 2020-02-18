@@ -38,11 +38,13 @@ require('./routes/auth')(authRouter, passport);
 const igdbRouter = require('./routes/igdb_api');
 const profileRouter = require('./routes/profile_api');
 const gamesRouter = require('./routes/games_api');
+const mapsRouter = require('./routes/maps_api.js');
 
 app.use('/auth', authRouter);
 app.use('/igdb', igdbRouter);
 app.use('/profile', profileRouter);
 app.use('/games', gamesRouter);
+app.use('/maps', mapsRouter);
 
 app.get('/home', (req, res) => {
 	console.log('here1');

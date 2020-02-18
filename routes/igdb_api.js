@@ -1,6 +1,7 @@
 const express = require('express');
 const winston = require('winston');
 const axios = require('axios');
+const genres = require('./constants/genres');
 const router = express.Router();
 
 const logger = winston.createLogger({
@@ -15,30 +16,33 @@ const headers = { 'user-key': global.gConfig.igdb_key };
 
 /**
  * Grabs most popular games
- * @param {int} limit - limit the amount of results
+ * @param {string} limit - limit the amount of results
  */
 router.get('/popular', async (req, res) => {
 	const { limit } = req.query;
-	let url = baseUrl + 'games/';
-	let data = 'fields name, cover; sort popularity desc;'; 
-	data = limit ? `${data} limit ${limit};` : data;
+	let result = {};
 	try {
-		let result = await axios.get(url, {
-			headers,
-			data,
-		});
-		let promises = [];
-		for (let res of result.data){
-			promises.push(getCover(res.cover));
-		}
-		promises = await Promise.all(promises);
-		for (let resIndex in result.data){
-			result.data[resIndex].coverUrl = promises[resIndex];
-		}
-		logger.info('successfully got popular games');
-		res.status(200).send(result.data);
+		result = await getGames(null, limit);
+		res.status(200).send(result);
 	} catch (err) {
 		logger.error('error getting popular games');
+		res.status(400).send('Error');
+	}
+});
+
+/**
+ * Grabs most popular games by genre
+ * @param {string} genre - genre search parameter
+ * @param {string} limit - limit the amount of results
+ */
+router.get('/searchByGenre', async (req,res) => {
+	const { genre, limit } = req.query;
+	url = baseUrl + 'genres/';
+	const genreId = genres[genre.toLowerCase()];
+	try {
+		let result = await getGames(genreId, limit);
+		res.status(200).send(result);
+	} catch (err) {
 		res.status(400).send('Error');
 	}
 });
@@ -100,7 +104,7 @@ router.get('/game', async (req,res) => {
 	let data = `fields age_ratings , aggregated_rating, 
 			first_release_date, platforms, genres, 
 			rating, rating_count, total_rating, total_rating_count,
-			name, url; where id = ${id};`;
+			name, url, screenshots; where id = ${id};`;
 
 	
 	try {
@@ -132,6 +136,37 @@ router.get('/game', async (req,res) => {
 	}
 });
 
+/**
+ * Helper function to get games. By default gets most popular 10 games
+ * Otherwise can specify the number of games to return and a genre (more extendable as well)
+ * @param {string} genre - name of genre to be used to search for games
+ * @param {string} limit - number of games to be returned
+ */
+async function getGames(genre, limit) {
+	url = baseUrl + 'games/';
+	data = 'fields name, cover, total_rating, total_rating_count; sort popularity desc;' 
+	data = genre ? `${data} where genres = ${genre};` : data;
+	data = limit ? `${data} limit ${limit};` : data;
+	try {
+		let result = await axios.get(url, {
+			headers,
+			data,
+		});
+		let promises = [];
+		for (let res of result.data){
+			promises.push(getCover(res.cover));
+		}
+		promises = await Promise.all(promises);
+		for (let resIndex in result.data){
+			result.data[resIndex].coverUrl = promises[resIndex];
+		}
+		logger.info('successfully got games');
+		return result.data;
+	} catch (err) {
+		logger.error('error getting games');
+		return err;
+	}
+}
 
 /**
  * Helper function to get the cover URL of a given game ID
@@ -175,6 +210,11 @@ async function getGameDetail(key, id){
 	} catch (err) {
 		console.log(err);
 	}
+}
+
+function replaceThumbnail(url) {
+	const regex = /t_thumb/;
+	coverUrl = result.data[0].url.replace(regex, `t_720p`).substring(2);
 }
 
 module.exports = router;
