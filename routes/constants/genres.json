@@ -1,0 +1,23 @@
+{
+    "simulator": 13,
+    "tactical": 24,
+    "quiz-trivia": 26,
+    "fighting": 4,
+    "strategy": 15,
+    "adventure": 31,
+    "role-playing-rpg": 12,
+    "shooter": 5,
+    "music": 7,
+    "indie": 32,
+    "turn-based-strategy-tbs": 16,
+    "pinball": 30,
+    "puzzle": 9,
+    "real-time-strategy-rts": 11,
+    "hack-and-slash-beat-em-up": 25,
+    "visual-novel": 34,
+    "platform": 8,
+    "racing": 10,
+    "sport": 14,
+    "arcade": 33,
+    "point-and-click": 2
+}
