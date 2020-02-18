@@ -25,7 +25,7 @@ const Home = () => {
       <Content style={{ padding: "0 50px", marginTop: 64 }}>
         <div align="center">
         <FacebookLoginButton onLogin={onFacebookLogin}>
-          <button>Facebook</button>
+          <Button>Login with Facebook</Button>
         </FacebookLoginButton>
         </div>
       </Content>
