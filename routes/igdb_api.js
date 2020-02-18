@@ -144,7 +144,7 @@ router.get('/game', async (req,res) => {
  */
 async function getGames(genre, limit) {
 	url = baseUrl + 'games/';
-	data = 'fields name, cover; sort popularity desc;' 
+	data = 'fields name, cover, total_rating, total_rating_count; sort popularity desc;' 
 	data = genre ? `${data} where genres = ${genre};` : data;
 	data = limit ? `${data} limit ${limit};` : data;
 	try {
