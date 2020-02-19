@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   Menu,
   Icon,
@@ -8,7 +8,8 @@ import {
   Col,
   Typography,
   Layout,
-  Button
+  Button,
+  Carousel
 } from "antd";
 import { BrowserRouter, withRouter } from "react-router-dom";
 
@@ -53,63 +54,174 @@ const genre_filter = (
   </Menu>
 );
 
-const Games = () => {
-  return (
-    <BrowserRouter>
-      <Content style={{ padding: "0 50px", marginTop: 64 }}>
-        {/* <div style={{ src: "#000", padding: 24, minHeight: 380 }}></div> */}
-        <Row>
-          <Col span={18}>
-            <div>
-              <Text>Browse By </Text>
-              <Dropdown overlay={year_filter}>
-                <Button>
-                  year <Icon type="down" />
-                </Button>
-              </Dropdown>
-              <Dropdown overlay={rating_filter}>
-                <Button>
-                  rating
-                  <Icon type="down" />
-                </Button>
-              </Dropdown>
-              <Dropdown overlay={pop_filter}>
-                <Button>
-                  popular
-                  <Icon type="down" />
-                </Button>
-              </Dropdown>
-              <Dropdown overlay={genre_filter}>
-                <Button>
-                  genre <Icon type="down" />
-                </Button>
-              </Dropdown>
-            </div>
-          </Col>
-          <Col span={6}>
-            <Search
-              placeholder="Search"
-              enterButton="Find By Film"
-              onSearch={value => console.log(value)}
-            />
-          </Col>
-        </Row>
-        <br></br>
-        <Row>
-          <Title>Popular Games This Week</Title>
+function onChange(a, b, c) {
+  console.log(a, b, c);
+}
+
+class Games extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { apiResponse: "" }; // from games imgb api
+  }
+
+  callAPI() {
+    fetch("http://localhost:9000/") // change this link
+      .then(res => res.text())
+      .then(res => this.setState({ apiResponse: res }))
+      .catch(err => err);
+  }
+
+  componentDidMount() {
+    this.callAPI();
+  }
+
+  render() {
+    return (
+      <BrowserRouter>
+        <Content style={{ padding: "0 50px", marginTop: 64 }}>
+          {/* <div style={{ src: "#000", padding: 24, minHeight: 380 }}></div> */}
           <Row>
-            <Col span={6}>col-6</Col>
-            <Col span={6}>col-6</Col>
-            <Col span={6}>col-6</Col>
-            <Col span={6}>col-6</Col>
+            <Col span={18}>
+              <div>
+                <Text>Browse By </Text>
+                <Dropdown overlay={year_filter}>
+                  <Button>
+                    year <Icon type="down" />
+                  </Button>
+                </Dropdown>
+                <Dropdown overlay={rating_filter}>
+                  <Button>
+                    rating
+                    <Icon type="down" />
+                  </Button>
+                </Dropdown>
+                <Dropdown overlay={pop_filter}>
+                  <Button>
+                    popular
+                    <Icon type="down" />
+                  </Button>
+                </Dropdown>
+                <Dropdown overlay={genre_filter}>
+                  <Button>
+                    genre <Icon type="down" />
+                  </Button>
+                </Dropdown>
+              </div>
+            </Col>
+            <Col span={6}>
+              <Search
+                placeholder="Search"
+                enterButton="Find By Film"
+                onSearch={value => console.log(value)}
+              />
+            </Col>
           </Row>
-          {/* <Col>
+          <br></br>
+          <Row>
+            <Title>Popular Games This Week</Title>
+            {/* <Col>
           render games from imgb api db (5 columns for a total of 10 by default), returns json that we can render into components here
           </Col> */}
-        </Row>
-      </Content>
-    </BrowserRouter>
-  );
-};
+          </Row>
+          <Row>
+            <Carousel>
+              <div>
+                <h3>1</h3>
+              </div>
+              <div>
+                <h3>2</h3>
+              </div>
+              <div>
+                <h3>3</h3>
+              </div>
+              <div>
+                <h3>4</h3>
+              </div>
+            </Carousel>
+            {/* <Col span={6}>col-6</Col>
+            <Col span={6}>col-6</Col>
+            <Col span={6}>col-6</Col>
+            <Col span={6}>col-6</Col> */}
+          </Row>
+        </Content>
+      </BrowserRouter>
+    );
+  }
+}
 
-export default withRouter(Games);
+export default Games;
+
+// const Games = () => {
+//   return (
+//     <BrowserRouter>
+//       <Content style={{ padding: "0 50px", marginTop: 64 }}>
+//         {/* <div style={{ src: "#000", padding: 24, minHeight: 380 }}></div> */}
+//         <Row>
+//           <Col span={18}>
+//             <div>
+//               <Text>Browse By </Text>
+//               <Dropdown overlay={year_filter}>
+//                 <Button>
+//                   year <Icon type="down" />
+//                 </Button>
+//               </Dropdown>
+//               <Dropdown overlay={rating_filter}>
+//                 <Button>
+//                   rating
+//                   <Icon type="down" />
+//                 </Button>
+//               </Dropdown>
+//               <Dropdown overlay={pop_filter}>
+//                 <Button>
+//                   popular
+//                   <Icon type="down" />
+//                 </Button>
+//               </Dropdown>
+//               <Dropdown overlay={genre_filter}>
+//                 <Button>
+//                   genre <Icon type="down" />
+//                 </Button>
+//               </Dropdown>
+//             </div>
+//           </Col>
+//           <Col span={6}>
+//             <Search
+//               placeholder="Search"
+//               enterButton="Find By Film"
+//               onSearch={value => console.log(value)}
+//             />
+//           </Col>
+//         </Row>
+//         <br></br>
+//         <Row>
+//           <Title>Popular Games This Week</Title>
+//           {/* <Col>
+//           render games from imgb api db (5 columns for a total of 10 by default), returns json that we can render into components here
+//           </Col> */}
+//         </Row>
+//         <Row>
+//           <Carousel>
+//             <div>
+//               <h3>1</h3>
+//             </div>
+//             <div>
+//               <h3>2</h3>
+//             </div>
+//             <div>
+//               <h3>3</h3>
+//             </div>
+//             <div>
+//               <h3>4</h3>
+//             </div>
+//           </Carousel>
+//           {/* <Col span={6}>col-6</Col>
+//             <Col span={6}>col-6</Col>
+//             <Col span={6}>col-6</Col>
+//             <Col span={6}>col-6</Col> */}
+//         </Row>
+//       </Content>
+//     </BrowserRouter>
+//   );
+// };
+
+// export default withRouter(Games);
