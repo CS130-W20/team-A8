@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout, Button } from "antd";
+import { Layout, Button, Carousel } from "antd";
 import { BrowserRouter, withRouter } from "react-router-dom";
 import FacebookLoginButton from "./FacebookLoginButton";
 
