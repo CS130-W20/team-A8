@@ -10,7 +10,12 @@ const passport = require('passport');
 process.env.NODE_ENV = 'development';
 const config = require('./config/config.js');
 
+// For now, just require messaging to allow io
+var messaging = require('./messaging/messaging')
+messaging.connect(io);
+
 //mongoose connection
+// mongoose.set('useCreateIndex', true);
 mongoose.connect(global.gConfig.mongo_url, ({ dbName: global.gConfig.db }, { useNewUrlParser: true }));
 let db = mongoose.connection;
 mongoose.Promise = global.Promise;
@@ -42,12 +47,6 @@ app.use('/igdb', igdbRouter);
 app.use('/profile', profileRouter);
 app.use('/games', gamesRouter);
 app.use('/maps', mapsRouter);
-
-io.on('connection', function(socket) {
-	socket.on('chat message', function(msg) {
-		io.emit('chat message', msg);
-	});
-});
 
 app.get('/home', (req, res) => {
 	console.log('here1');
