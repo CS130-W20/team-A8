@@ -12,6 +12,7 @@ import {
   Carousel
 } from "antd";
 import { BrowserRouter, withRouter } from "react-router-dom";
+import "./Games.css";
 
 const { Content } = Layout;
 const { Search } = Input;
@@ -45,12 +46,12 @@ const pop_filter = (
 
 const genre_filter = (
   <Menu>
-    <Menu.Item>Action</Menu.Item>
-    <Menu.Item>Adventure</Menu.Item>
-    <Menu.Item>Horror</Menu.Item>
-    <Menu.Item>Racing</Menu.Item>
-    <Menu.Item>Role-Playing</Menu.Item>
-    <Menu.Item>Sports</Menu.Item>
+    <Menu.Item key="action">Action</Menu.Item>
+    <Menu.Item key="adventure">Adventure</Menu.Item>
+    <Menu.Item key="horror">Horror</Menu.Item>
+    <Menu.Item key="racing">Racing</Menu.Item>
+    <Menu.Item key="role-playing">Role-Playing</Menu.Item>
+    <Menu.Item key="sports">Sports</Menu.Item>
   </Menu>
 );
 
@@ -61,20 +62,30 @@ function onChange(a, b, c) {
 class Games extends Component {
   constructor(props) {
     super(props);
-    this.state = { apiResponse: "" }; // from games imgb api
+    this.state = { 
+      apiResponse: []}; 
+  }
+  
+  search(value) {
+    fetch(`http://localhost:9000/igdb/search?title=${value}`)
+        .then(res => res.json())
+        .then(data => this.setState({ apiResponse: data }))
+        .catch(err => console.log(`Error is: ${err}`));
   }
 
-  callAPI() {
-    fetch("http://localhost:9000/") // change this link
-      .then(res => res.text())
-      .then(res => this.setState({ apiResponse: res }))
-      .catch(err => err);
+  popular() {
+    fetch(`http://localhost:9000/igdb/popular?limit=50`)
+        .then(res => res.json())
+        .then(data => this.setState({ apiResponse: data }))
+        .catch(err => console.log(`Error is: ${err}`));
   }
 
-  componentDidMount() {
-    this.callAPI();
+  genre(value) {
+    fetch(`http://localhost:9000/igdb/searchbyGenre?genre=${value}&limit=50`)
+        .then(res => res.json())
+        .then(data => this.setState({ apiResponse: data }))
+        .catch(err => console.log(`Error is: ${err}`));
   }
-
   render() {
     return (
       <BrowserRouter>
@@ -95,12 +106,12 @@ class Games extends Component {
                     <Icon type="down" />
                   </Button>
                 </Dropdown>
-                <Dropdown overlay={pop_filter}>
-                  <Button>
+                {/* <Dropdown overlay={pop_filter}> */}
+                  <Button onClick={() => this.popular()}>
                     popular
-                    <Icon type="down" />
+                    {/* <Icon type="down" /> */}
                   </Button>
-                </Dropdown>
+                {/* </Dropdown> */}
                 <Dropdown overlay={genre_filter}>
                   <Button>
                     genre <Icon type="down" />
@@ -111,14 +122,22 @@ class Games extends Component {
             <Col span={6}>
               <Search
                 placeholder="Search"
-                enterButton="Find By Film"
-                onSearch={value => console.log(value)}
+                onSearch={value => this.search(value)}
               />
             </Col>
           </Row>
           <br></br>
           <Row>
             <Title>Popular Games This Week</Title>
+            <div>
+            {this.state.apiResponse.map(elem => {
+              return <div class="image-container">
+                <p align="center" class="name-text">{elem.name}</p>
+                <img class="elem-image" src={"http://" + elem.coverUrl}/>
+                </div>
+                
+            })}
+            </div>
             {/* <Col>
           render games from imgb api db (5 columns for a total of 10 by default), returns json that we can render into components here
           </Col> */}

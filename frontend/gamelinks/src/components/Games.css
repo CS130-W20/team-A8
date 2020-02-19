@@ -1,0 +1,17 @@
+.name-text { 
+    min-height: 50px;
+    max-width: 150px;
+    max-height: 50px;
+}
+
+.image-container {
+    max-width: 200px;
+    float: left;
+    margin-right: 25px;
+    margin-bottom: 25px;
+}
+
+.elem-image {
+    height: 200px;
+    width: 150px;
+}
