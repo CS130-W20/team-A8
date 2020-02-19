@@ -5,11 +5,11 @@ import FacebookLoginButton from "./FacebookLoginButton";
 
 const { Content } = Layout;
 
-const responseFacebook = (response) => {
+const responseFacebook = response => {
   console.log(response);
-}
+};
 
-function onFacebookLogin(loginStatus, resultObject){
+function onFacebookLogin(loginStatus, resultObject) {
   // if (loginStatus === true) {
   //   this.setState({
   //     username: resultObject.user.name
@@ -24,9 +24,9 @@ const Home = () => {
     <BrowserRouter>
       <Content style={{ padding: "0 50px", marginTop: 64 }}>
         <div align="center">
-        <FacebookLoginButton onLogin={onFacebookLogin}>
-          <Button>Login with Facebook</Button>
-        </FacebookLoginButton>
+          <FacebookLoginButton onLogin={onFacebookLogin}>
+            <Button>Login with Facebook</Button>
+          </FacebookLoginButton>
         </div>
       </Content>
     </BrowserRouter>

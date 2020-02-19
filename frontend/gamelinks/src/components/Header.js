@@ -8,10 +8,7 @@ const { Title } = Typography;
 const pmenu = (
   <Menu>
     <Menu.Item>
-      <Link to="/hosts">hosts</Link>
-    </Menu.Item>
-    <Menu.Item>
-      <Link to="/people">friends</Link>
+      <Link to="/people">hosts</Link>
     </Menu.Item>
     <Menu.Item>
       <Link to="/profile">profile</Link>
@@ -27,11 +24,11 @@ const header = () => {
     <Menu
       theme="dark"
       mode="horizontal"
-      defaultSelectedKeys={["0"]}
+      //   defaultSelectedKeys={["0"]}
       style={{ lineHeight: "64px" }}
       align="right"
     >
-      <Icon style={{ float: "left" }} type="usergroup-add" />
+      <Icon style={{ size: "large", float: "left" }} type="usergroup-add" />
       <Title style={{ float: "left", color: "white" }} level={4}>
         GAMELINKS
       </Title>

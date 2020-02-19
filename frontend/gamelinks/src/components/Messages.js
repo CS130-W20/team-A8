@@ -12,12 +12,31 @@ class Messages extends React.Component {
         <Layout style={{ minHeight: "90vh" }}>
           <Sider>
             <Avatar size={64} icon="user" />
-            <Menu mode="inline">
+            {/* <Menu mode="inline">
               <Menu.Item key="1">
                 <Link to="/profile">
                   <Icon type="cross" />
                   <span>Close Chat</span>
                 </Link>
+              </Menu.Item>
+              
+            </Menu> */}
+            <Menu theme="dark" mode="inline" defaultSelectedKeys={["4"]}>
+              <Menu.Item key="1">
+                <Icon type="export" />
+                <span className="nav-text">refer host</span>
+              </Menu.Item>
+              <Menu.Item key="2">
+                <Icon type="home" />
+                <span className="nav-text">reservations</span>
+              </Menu.Item>
+              <Menu.Item key="3">
+                <Icon type="upload" />
+                <span className="nav-text">inbox</span>
+              </Menu.Item>
+              <Menu.Item key="4">
+                <Icon type="user" />
+                <span className="nav-text">back to profile</span>
               </Menu.Item>
             </Menu>
           </Sider>
