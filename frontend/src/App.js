@@ -6,7 +6,7 @@ import Messages from './components/Messages';
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 import './App.css';
 
-class App extends React.Component {
+class App extends Component {
   state = {
     user: "null", // Add more states and change this when linked with backend.
   }
