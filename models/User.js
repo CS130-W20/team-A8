@@ -48,6 +48,14 @@ var UserSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	latitude: {
+		type: Number,
+		required: false,
+	},
+	longitude: {
+		type: Number,
+		required: false,
+	}
 });
 
 UserSchema.statics.findOrCreate = async (userInfo, done) => {
