@@ -3,14 +3,12 @@
    "version": "0.0.1",
    "description": "United States of Gamers",
    "dependencies": {
-<<<<<<< HEAD
       "@googlemaps/google-maps-services-js": "^2.0.2",
-=======
       "antd": "^3.26.9",
->>>>>>> 595737d0529f1a8cf0baed3e23aa5439c7171817
       "apicalypse": "^0.1.6",
       "axios": "^0.19.2",
       "cloudinary": "^1.19.0",
+      "cors": "^2.8.5",
       "express": "^4.17.1",
       "express-session": "^1.17.0",
       "fs": "0.0.1-security",

@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const winston = require('winston');
+const map = require('../helpers/map');
+const maps_api_key = require('../config/maps_api_key').api_key;
 
 const logger = winston.createLogger({
 	transports: [
@@ -51,7 +53,15 @@ var UserSchema = new mongoose.Schema({
    socket: {
       type: String,
       required: false,
-   }
+   },
+	latitude: {
+		type: Number,
+		required: false,
+	},
+	longitude: {
+		type: Number,
+		required: false,
+	}
 });
 
 UserSchema.statics.findOrCreate = async (userInfo, done) => {
@@ -94,6 +104,13 @@ UserSchema.statics.updateUser = async (updateInfo) => {
 	try {
 		for (let key1 of Object.keys(updateInfo)) {
 			user[key1] = updateInfo[key1];
+
+			// Update geocoordinates too if the address is updated
+			if (key1 == 'address') {
+				const { lat, long } = map.addressToGeocoordinates(updateInfo[key1], maps_api_key);
+				user['latitude'] = lat;
+				user['longitude'] = long;
+			}
 		}
 		await user.save();
 	} catch (err) {

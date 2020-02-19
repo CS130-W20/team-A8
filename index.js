@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const https = require('https');
+const cors = require('cors');
 const io = require('socket.io')(https);
 const mongoose = require('mongoose');
 const passport = require('passport');
@@ -21,6 +22,7 @@ mongoose.Promise = global.Promise;
 db.once('open', () => { console.log('Successfully connected');});
 db.on('error', console.error.bind(console, 'conn error:'));
 app.set('view engine', 'ejs');
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(require('express-session')({
@@ -48,9 +50,9 @@ app.use('/maps', mapsRouter);
 
 app.get('/home', (req, res) => {
 	console.log('here1');
-   console.log(req.user);
+    console.log(req.user);
 });
 
-http.listen(3000, function(){
+http.listen(9000, function(){
 	console.log('listening on *:3000');
 });
