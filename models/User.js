@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const winston = require('winston');
 const map = require('../helpers/map');
-const maps_api_key = require('../config/maps_api_key').api_key;
+const maps_api_key = require('../config/config.json').development.api_key;
 
 const logger = winston.createLogger({
 	transports: [
