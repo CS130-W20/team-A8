@@ -8,7 +8,11 @@
 		"FB_APP_SECRET": "41cd857d1acdbce7ab33fd5e7311558d",
 		"FB_APP_ID" : "181950399740252",
 		"FB_callback": "http://localhost:",
-		"igdb_key": "3b86d04ff6de0049f50a0ff162150296"
+		"igdb_key": "3b86d04ff6de0049f50a0ff162150296",
+		"CLOUDINARY_KEY": "974473475599991",
+		"CLOUDINARY_SECRET": "Hc5CisGM8NPX0aXBfxJOnbGtloI",
+		"CLOUDINARY_NAME": "doth6ny3e",
+		"test_id": "5e47447c9ca2a9355632dd43"
 	},
 	"testing": {
 		"config_id": "testing",

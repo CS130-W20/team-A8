@@ -1,26 +1,35 @@
-// Express variable
-var express = require('express');
-var app = express();
-var http = module.exports.http = require('http').createServer(app);
-
-// Mongoose and facebook auth variables
-const path = require('path');
+const express = require('express');
+const app = express();
+const http = require('http').createServer(app);
+const https = require('https');
+const cors = require('cors');
+const io = require('socket.io')(https);
 const mongoose = require('mongoose');
 const passport = require('passport');
 
 process.env.NODE_ENV = 'development';
 const config = require('./config/config.js');
 
-// Messaging portion
-var messaging = require('./messaging/messaging');
-app.use('/chat', messaging);
+// For now, just require messaging to allow io
+var messaging = require('./messaging/messaging')
+messaging.connect(io);
 
 //mongoose connection
+// mongoose.set('useCreateIndex', true);
 mongoose.connect(global.gConfig.mongo_url, ({ dbName: global.gConfig.db }, { useNewUrlParser: true }));
 let db = mongoose.connection;
 mongoose.Promise = global.Promise;
 db.once('open', () => { console.log('Successfully connected');});
 db.on('error', console.error.bind(console, 'conn error:'));
+app.set('view engine', 'ejs');
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(require('express-session')({
+	secret: 'keyboard cat',
+	resave: true,
+	saveUninitialized: true
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -29,38 +38,21 @@ let authRouter = express.Router();
 require('./routes/passport')(passport);
 require('./routes/auth')(authRouter, passport);
 const igdbRouter = require('./routes/igdb_api');
+const profileRouter = require('./routes/profile_api');
+const gamesRouter = require('./routes/games_api');
+const mapsRouter = require('./routes/maps_api.js');
 
 app.use('/auth', authRouter);
 app.use('/igdb', igdbRouter);
+app.use('/profile', profileRouter);
+app.use('/games', gamesRouter);
+app.use('/maps', mapsRouter);
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(require('express-session')({
-  secret: 'keyboard cat',
-  resave: true,
-  saveUninitialized: true
-}));
-
-app.get('/', function(req, res) {
-   res.sendFile(__dirname + '/index.html');
+app.get('/home', (req, res) => {
+	console.log('here1');
+    console.log(req.user);
 });
 
-/*
-const options = {											// Used for certificate for HTTPS
-	key: fs.readFileSync('server.key'),
-	cert: fs.readFileSync('server.crt')
-};
-
-https
-	.createServer(app)
-	.listen(global.gConfig.port, function() {
-		console.log(`listening on port ${global.gConfig.port}`);
-});
-*/
-
-http.listen(3000, function() {
-   console.log('listening on *:3000');
+http.listen(9000, function(){
+	console.log('listening on *:3000');
 });
