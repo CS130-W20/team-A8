@@ -12,7 +12,7 @@ class Header extends React.Component {
         selected: 'people',
     }
 
-    handleClick = event => {
+    handleClick = async event => {
         console.log('clicked ', event);
         this.setState({
             selected: event.key,
