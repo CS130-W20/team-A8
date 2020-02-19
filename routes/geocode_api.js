@@ -1,9 +1,7 @@
 const express = require('express');
 const winston = require('winston');
-const MapsClient = require("@googlemaps/google-maps-services-js").Client;
 const User = require('../models/User');
 const router = express.Router();
-const map = new MapsClient({});
 
 const logger = winston.createLogger({
 	transports: [
@@ -12,5 +10,12 @@ const logger = winston.createLogger({
 });
 
 
+router.get('/geocode', async(req,res) => {
+
+    const geocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json?';
+    let { address } = req.query;
+    address = address.replace(/ +/g, "+");
+    console.log(address)
+});
 
 module.exports = router;
