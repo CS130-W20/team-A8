@@ -20,9 +20,10 @@ function onConnect(socket) {
          if (err) console.log(err);
       });
    });
-   socket.on('chat message', function(msg) {
-      this_io.to(`${socketID}`).emit('chat message', msg);
-   });
+   // socket.on('chat message', function(msg) {
+   //    this_io.to(`${socketID}`).emit('chat message', msg);
+   // });
+   socket.on('private message', privateMessage(usr, msg));
 };
 
 function updateDatabase(user) {
@@ -45,6 +46,11 @@ function updateDatabase(user) {
       console.log(person);
    });
 };
+
+function privateMessage(usr, msg) {
+   console.log(msg + "to" + usr);
+   this_io.to(usr).emit('private message', msg);
+}
 
 module.exports = {
    connect,
