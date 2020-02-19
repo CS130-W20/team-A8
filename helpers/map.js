@@ -1,8 +1,5 @@
-const express = require('express');
-const winston = require('winston');
 const axios = require('axios');
-const User = require('../models/User');
-const router = express.Router();
+const winston = require('winston');
 
 const logger = winston.createLogger({
 	transports: [
@@ -10,11 +7,8 @@ const logger = winston.createLogger({
 	]
 });
 
-
-router.get('/geocode', async(req, res) => {
-
+async function addressToGeocoordinates(address, api_key) {
     let geocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json?';
-    let { address, api_key } = req.query;
     address = address.replace(/ +/g, "+");
     geocodeUrl += `address=${address}&key=${api_key}`;
     try {
@@ -22,18 +16,16 @@ router.get('/geocode', async(req, res) => {
         logger.info("successfully received geocoordinates");
         let geocoordinates = result.data.results[0].geometry.location
         console.log(geocoordinates);
-        res.status(200).send(geocoordinates);
+        return geocoordinates
         
 	} catch (err) {
 		console.log(err);
 		logger.error('Error getting geocoordinates');
-		res.status(400).send('Error');
+		return err
 	} 
-});
+}
 
-router.get('/distance', async(req, res) => {
-    let {lat1, lon1, lat2, lon2} = req.query;
-    console.log(maps_api_key)
+function distanceBtwnGeocoords(lat1, lon1, lat2, lon2) {
     try {
         if ((lat1 == lat2) && (lon1 == lon2)) {
             res.status(200).send(0);
@@ -55,7 +47,6 @@ router.get('/distance', async(req, res) => {
     } catch (err){
         console.log(err)
     }
+}
 
-});
-
-module.exports = router;
+module.exports = { addressToGeocoordinates, distanceBtwnGeocoords }
