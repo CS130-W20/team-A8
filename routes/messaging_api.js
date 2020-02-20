@@ -1,4 +1,13 @@
-const User = require('../models/User');
+const express = require('express');
+const Game = require('../models/User');
+const router = express.Router();
+const winston = require('winston');
+
+const logger = winston.createLogger({
+	transports: [
+		new winston.transports.Console()
+	]
+});
 
 var socketID = null;
 var this_io = null;
@@ -7,6 +16,7 @@ var this_io = null;
 function connect(io) {
    this_io = io;
    io.on('connection', onConnect);
+   return "Successfully connected to SocketIO";
 }
 
 function onConnect(socket) {
@@ -52,7 +62,16 @@ function privateMessage(usr, msg) {
    this_io.to(usr).emit('private message', msg);
 }
 
-module.exports = {
-   connect,
-   updateDatabase
-};
+/**
+ * Connects user to socketio to allow them to communicate with other people
+ */
+router.get('/connectSocketIO', async (req, res) => {
+   let io = req.app.get('io');
+   try {
+      result = await connect(io);
+      res.status(200).send(result);
+   } catch (err) {
+      logger.error('Error connecting to socketio');
+      res.status(400).send('Error');
+   }
+});
