@@ -38,11 +38,11 @@ router.get('/getCurrentUserInformation', async (req, res) => {
  * TODO: Once Google Maps API is set up, use the location of the user in order to find distance. put this in public information.
  * This will give the information of another person's profile. The next two params are query parameters
  * @param {Integer} id the id of the person we want to get info from.
- * @param {Boolean} private true if we want the user's personal information. false if we want their public information
+ * @param {Boolean} priv true if we want the user's personal information. false if we want their public information
  */
 router.get('/getProfileUserInformation', async (req, res) => {
 	logger.info('getting profile users information');
-	const { id, private } = req.query;
+	const { id, priv } = req.query;
 	let user;
 	try {
 		user = await User.findById(id);
@@ -59,7 +59,7 @@ router.get('/getProfileUserInformation', async (req, res) => {
 		hosting: user.hosting,
 		profilePicture: user.profilePicture,
 	};
-	if (private == 'false') {
+	if (priv == 'false') {
 		userInfo.firstName = user.firstName;
 		userInfo.lastName = user.lastName;
 		userInfo.address = user.address;
