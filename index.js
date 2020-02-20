@@ -42,7 +42,7 @@ require('./routes/auth')(authRouter, passport);
 const igdbRouter = require('./routes/igdb_api');
 const profileRouter = require('./routes/profile_api');
 const gamesRouter = require('./routes/games_api');
-const messagingRouter = require('.routes/messaging_api.js');
+const messagingRouter = require('./routes/messaging_api.js');
 
 app.use('/auth', authRouter);
 app.use('/igdb', igdbRouter);
