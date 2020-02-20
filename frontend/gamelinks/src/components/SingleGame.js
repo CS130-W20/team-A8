@@ -8,6 +8,7 @@ import {
   Button,
   Row,
   Col,
+  Link,
   Typography
 } from "antd";
 import { BrowserRouter, withRouter } from "react-router-dom";
@@ -23,7 +24,7 @@ search(value) {
       .catch(err => console.log(`Error is: ${err}`));
   }
 
-class Game extends Component {
+class SingleGame extends Component {
   render() {
     return (
       <BrowserRouter>
@@ -41,8 +42,8 @@ class Game extends Component {
                   style={{ width: 300 }}
                 >
                   <Link>My Hosts</Link>
-                  <Link>More Hosts</Link>
-                  {/* link to people page  */}
+                  <Link>More Hosts</Link> */}
+                  {/* link to people page 
                 </Card>
               </Col>
               <Col span={8}>
@@ -80,4 +81,4 @@ class Game extends Component {
   }
 }
 
-export default Game;
+export default SingleGame;

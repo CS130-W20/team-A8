@@ -6,7 +6,7 @@ import Home from "./components/Home";
 import Messages from "./components/Messages";
 import Profile from "./components/Profile";
 import Games from "./components/Games";
-import Game from "./components/SingleGame";
+import SingleGame from "./components/SingleGame";
 
 class App extends Component {
   state = {
@@ -21,7 +21,7 @@ class App extends Component {
             <Route exact path="/" component={withRouter(Home)} />
             <Route exact path="/messages" component={withRouter(Messages)} />
             <Route exact path="/games" component={Games} />
-            <Route exact path="/SingleGame/" component={Game} />
+            <Route exact path="/SingleGame/" component={SingleGame} />
           </Switch>
         </div>
       </BrowserRouter>
