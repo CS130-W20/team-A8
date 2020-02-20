@@ -16,6 +16,13 @@ const { Content } = Layout;
 const { Search } = Input;
 const { Title, Text } = Typography;
 
+search(value) {
+    fetch(`http://localhost:9000/igdb/game?id=${value}`)
+      .then(res => res.json())
+      .then(data => this.setState({ apiResponse: data }))
+      .catch(err => console.log(`Error is: ${err}`));
+  }
+
 class Game extends Component {
   render() {
     return (
@@ -24,7 +31,7 @@ class Game extends Component {
           <div>
             <Row>
               <Col span={8} alignContent="center">
-                render game picture cover
+              {this.state.apiResponse.data[coverUrl]}
                 <br />
                 <Rate character={<Icon type="heart" />} count={1} />
                 <Rate allowHalf disabled defaultValue={4.5} />
