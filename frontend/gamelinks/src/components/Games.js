@@ -62,29 +62,30 @@ function onChange(a, b, c) {
 class Games extends Component {
   constructor(props) {
     super(props);
-    this.state = { 
-      apiResponse: []}; 
+    this.state = {
+      apiResponse: []
+    };
   }
-  
+
   search(value) {
     fetch(`http://localhost:9000/igdb/search?title=${value}`)
-        .then(res => res.json())
-        .then(data => this.setState({ apiResponse: data }))
-        .catch(err => console.log(`Error is: ${err}`));
+      .then(res => res.json())
+      .then(data => this.setState({ apiResponse: data }))
+      .catch(err => console.log(`Error is: ${err}`));
   }
 
   popular() {
     fetch(`http://localhost:9000/igdb/popular?limit=50`)
-        .then(res => res.json())
-        .then(data => this.setState({ apiResponse: data }))
-        .catch(err => console.log(`Error is: ${err}`));
+      .then(res => res.json())
+      .then(data => this.setState({ apiResponse: data }))
+      .catch(err => console.log(`Error is: ${err}`));
   }
 
   genre(value) {
     fetch(`http://localhost:9000/igdb/searchbyGenre?genre=${value}&limit=50`)
-        .then(res => res.json())
-        .then(data => this.setState({ apiResponse: data }))
-        .catch(err => console.log(`Error is: ${err}`));
+      .then(res => res.json())
+      .then(data => this.setState({ apiResponse: data }))
+      .catch(err => console.log(`Error is: ${err}`));
   }
   render() {
     return (
@@ -107,10 +108,10 @@ class Games extends Component {
                   </Button>
                 </Dropdown>
                 {/* <Dropdown overlay={pop_filter}> */}
-                  <Button onClick={() => this.popular()}>
-                    popular
-                    {/* <Icon type="down" /> */}
-                  </Button>
+                <Button onClick={() => this.popular()}>
+                  popular
+                  {/* <Icon type="down" /> */}
+                </Button>
                 {/* </Dropdown> */}
                 <Dropdown overlay={genre_filter}>
                   <Button>
@@ -130,13 +131,16 @@ class Games extends Component {
           <Row>
             <Title>Popular Games This Week</Title>
             <div>
-            {this.state.apiResponse.map(elem => {
-              return <div class="image-container">
-                <p align="center" class="name-text">{elem.name}</p>
-                <img class="elem-image" src={"http://" + elem.coverUrl}/>
-                </div>
-                
-            })}
+              {this.state.apiResponse.map(elem => {
+                return (
+                  <div class="image-container">
+                    <p align="center" class="name-text">
+                      {elem.name}
+                    </p>
+                    <img class="elem-image" src={"http://" + elem.coverUrl} />
+                  </div>
+                );
+              })}
             </div>
             {/* <Col>
           render games from imgb api db (5 columns for a total of 10 by default), returns json that we can render into components here
@@ -169,78 +173,3 @@ class Games extends Component {
 }
 
 export default Games;
-
-// const Games = () => {
-//   return (
-//     <BrowserRouter>
-//       <Content style={{ padding: "0 50px", marginTop: 64 }}>
-//         {/* <div style={{ src: "#000", padding: 24, minHeight: 380 }}></div> */}
-//         <Row>
-//           <Col span={18}>
-//             <div>
-//               <Text>Browse By </Text>
-//               <Dropdown overlay={year_filter}>
-//                 <Button>
-//                   year <Icon type="down" />
-//                 </Button>
-//               </Dropdown>
-//               <Dropdown overlay={rating_filter}>
-//                 <Button>
-//                   rating
-//                   <Icon type="down" />
-//                 </Button>
-//               </Dropdown>
-//               <Dropdown overlay={pop_filter}>
-//                 <Button>
-//                   popular
-//                   <Icon type="down" />
-//                 </Button>
-//               </Dropdown>
-//               <Dropdown overlay={genre_filter}>
-//                 <Button>
-//                   genre <Icon type="down" />
-//                 </Button>
-//               </Dropdown>
-//             </div>
-//           </Col>
-//           <Col span={6}>
-//             <Search
-//               placeholder="Search"
-//               enterButton="Find By Film"
-//               onSearch={value => console.log(value)}
-//             />
-//           </Col>
-//         </Row>
-//         <br></br>
-//         <Row>
-//           <Title>Popular Games This Week</Title>
-//           {/* <Col>
-//           render games from imgb api db (5 columns for a total of 10 by default), returns json that we can render into components here
-//           </Col> */}
-//         </Row>
-//         <Row>
-//           <Carousel>
-//             <div>
-//               <h3>1</h3>
-//             </div>
-//             <div>
-//               <h3>2</h3>
-//             </div>
-//             <div>
-//               <h3>3</h3>
-//             </div>
-//             <div>
-//               <h3>4</h3>
-//             </div>
-//           </Carousel>
-//           {/* <Col span={6}>col-6</Col>
-//             <Col span={6}>col-6</Col>
-//             <Col span={6}>col-6</Col>
-//             <Col span={6}>col-6</Col> */}
-//         </Row>
-//       </Content>
-//     </BrowserRouter>
-//   );
-// };
-
-// export default withRouter(Games);
