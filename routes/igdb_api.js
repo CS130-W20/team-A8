@@ -150,8 +150,8 @@ router.get('/game', async (req,res) => {
  */
 async function getGames(genre, limit) {
 	url = baseUrl + 'games/';
-	data = 'fields name, cover, total_rating, total_rating_count; sort popularity desc;' 
-	data = genre ? `${data} where genres = ${genre};` : data;
+	data = 'fields name, cover, total_rating, total_rating_count, genres; sort popularity desc;' 
+	data = genre ? `${data} where genres = ${genre};` : `${data} where genres != 13;`;
 	data = limit ? `${data} limit ${limit};` : data;
 	try {
 		let result = await axios.get(url, {

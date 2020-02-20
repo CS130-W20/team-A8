@@ -17,12 +17,10 @@ const { Content } = Layout;
 const { Search } = Input;
 const { Title, Text } = Typography;
 
-// export default class Game extends Component {
+export default class Game extends Component {
+  // componentDidMount() {
+  //   console.log(this.carousel);
+  // }
 
-//     componentDidMount() {
-//         console.log(this.carousel);
-//     }
-
-//     render() {
-//     }
-// }
+  render() {}
+}
