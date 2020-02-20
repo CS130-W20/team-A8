@@ -71,4 +71,4 @@ class Messages extends React.Component {
   }
 }
 
-export default withRouter(Messages);
+export default Messages;
