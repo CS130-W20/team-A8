@@ -90,7 +90,7 @@ router.get('/search', async (req, res) => {
 router.get('/cover', async (req, res) => {
 	let { id, resolution } = req.query;
 	try {
-		let coverUrl = await igdb_helpers.getCover(id, resolution);
+		let coverUrl = await igdb_helpers.coverCover(id, resolution);
 		res.status(200).send(coverUrl);
 	} catch (err) {
 		console.log(err.data);
@@ -141,5 +141,9 @@ router.get('/game', async (req,res) => {
 		res.status(400).send('Error');
 	}
 });
+
+
+
+
 
 module.exports = router;

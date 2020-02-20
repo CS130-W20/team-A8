@@ -1,7 +1,15 @@
-.name-text { 
+.name-text-box { 
+    background: #6f95db;
+    color: white;
+    text-align: center;
     min-height: 50px;
     max-width: 150px;
     max-height: 50px;
+}
+
+.name-text {
+    left: 50%;
+    top: 50%;
 }
 
 .image-container {
@@ -15,3 +23,18 @@
     height: 200px;
     width: 150px;
 }
+
+.ant-carousel {
+    background: #364d79;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.ant-carousel .slick-slide {
+    overflow: hidden;
+  }
+  
+.ant-carousel .slick-slide h3 {
+    color: #fff;
+}
+  
