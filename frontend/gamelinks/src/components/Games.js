@@ -11,7 +11,8 @@ import {
   Button,
   Carousel
 } from "antd";
-import { Link, BrowserRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
+import SingleGame from "./SingleGame";
 import "./Games.css";
 
 const { SubMenu } = Menu;
@@ -19,12 +20,13 @@ const { Content } = Layout;
 const { Search } = Input;
 const { Title, Text } = Typography;
 
-class Games extends Component {
+class Games extends React.Component {
   constructor(props) {
     super(props);
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
     this.carousel = React.createRef();
+    this.limit = "50";
     this.state = {
       apiResponse: [],
       title: ""
@@ -97,7 +99,7 @@ class Games extends Component {
 
   popular() {
     this.state.title = `Most Popular`;
-    fetch(`http://localhost:9000/igdb/popular?limit=50`)
+    fetch(`http://localhost:9000/igdb/popular?limit=${this.limit}`)
       .then(res => res.json())
       .then(data => this.setState({ apiResponse: data }))
       .catch(err => console.log(`Error is: ${err}`));
@@ -105,7 +107,9 @@ class Games extends Component {
 
   genre(value) {
     this.state.title = `Genre: "${value}"`;
-    fetch(`http://localhost:9000/igdb/searchbyGenre?genre=${value}&limit=50`)
+    fetch(
+      `http://localhost:9000/igdb/searchbyGenre?genre=${value}&limit=${this.limit}`
+    )
       .then(res => res.json())
       .then(data => this.setState({ apiResponse: data }))
       .catch(err => console.log(`Error is: ${err}`));
@@ -124,10 +128,10 @@ class Games extends Component {
       slidesToScroll: 6
     };
     return (
-      <BrowserRouter>
+      <div>
         <br></br>
         <Row>
-          <Col span={18}>
+          <Col span={5}>
             <div>
               <Text>Browse By </Text>
               <Button onClick={() => this.popular()}>popular</Button>
@@ -138,10 +142,14 @@ class Games extends Component {
               </Dropdown>
             </div>
           </Col>
+          <Col span={3}>
+            <Input placeholder="Limit (Default 50)" disabled="true" />
+          </Col>
+          <Col span={1} />
           <Col span={6}>
             <Search
               placeholder="Search by Name"
-              onSearch={value => this.search(value)}
+              value={value => this.search(value)}
             />
           </Col>
         </Row>
@@ -169,7 +177,7 @@ class Games extends Component {
           </Carousel>
           <Icon type="right-circle" onClick={this.next} />
         </div>
-      </BrowserRouter>
+      </div>
     );
   }
 }

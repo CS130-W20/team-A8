@@ -1,6 +1,6 @@
 const axios = require('axios');
 const winston = require('winston');
-
+const api_key = require('../config/config.json').development.api_key;
 const logger = winston.createLogger({
 	transports: [
 		new winston.transports.Console()
@@ -12,13 +12,16 @@ const logger = winston.createLogger({
  * @param {string} address - user's address
  * @returns {object} - latitude and longitude
  */
-async function addressToGeocoordinates(address, api_key) {
+async function addressToGeocoordinates(address) {
     let geocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json?';
     address = address.replace(/ +/g, "+");
     geocodeUrl += `address=${address}&key=${api_key}`;
     try {
         let result = await axios.get(geocodeUrl);
-        logger.info("successfully received geocoordinates");
+        logger.info("successfully received result");
+        if (result.data.results.length==0) {
+            return 'No results for address';
+        }
         let geocoordinates = result.data.results[0].geometry.location
         console.log(geocoordinates);
         return geocoordinates
@@ -41,7 +44,7 @@ async function addressToGeocoordinates(address, api_key) {
 function distanceBtwnGeocoords(lat1, lon1, lat2, lon2) {
     try {
         if ((lat1 == lat2) && (lon1 == lon2)) {
-            res.status(200).send(0);
+            return 0
         }
         else {
             var radlat1 = Math.PI * lat1/180;
@@ -55,10 +58,11 @@ function distanceBtwnGeocoords(lat1, lon1, lat2, lon2) {
             dist = Math.acos(dist);
             dist = dist * 180/Math.PI;
             dist = dist * 60 * 1.1515;
-            res.status(200).send({dist});
+            return dist
         }
     } catch (err){
         console.log(err)
+        return err
     }
 }
 

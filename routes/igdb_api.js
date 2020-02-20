@@ -3,6 +3,7 @@ const winston = require('winston');
 const axios = require('axios');
 const genres = require('./constants/genres');
 const router = express.Router();
+const igdb_helpers = require('./helpers/igdb_helper');
 
 const logger = winston.createLogger({
 	transports: [
@@ -17,13 +18,13 @@ const headers = { 'user-key': global.gConfig.igdb_key };
 /**
  * Grabs most popular games
  * @param {string} limit - limit the amount of results
- * @returns {[object]} - List of JSON objects representing popular games
+ * @returns {Array.<Object>} - List of JSON objects representing popular games
  */
 router.get('/popular', async (req, res) => {
 	const { limit } = req.query;
 	let result = {};
 	try {
-		result = await getGames(null, limit);
+		result = await igdb_helpers.getGames(null, limit);
 		res.status(200).send(result);
 	} catch (err) {
 		logger.error('error getting popular games');
@@ -35,14 +36,14 @@ router.get('/popular', async (req, res) => {
  * Grabs most popular games by genre
  * @param {string} genre - genre search parameter
  * @param {string} limit - limit the amount of results
- * @returns {[object]} - List of JSON objects representing popular games in genre
+ * @returns {Array.<Object>} - List of JSON objects representing popular games in genre
  */
 router.get('/searchByGenre', async (req,res) => {
 	const { genre, limit } = req.query;
 	url = baseUrl + 'genres/';
 	const genreId = genres[genre.toLowerCase()];
 	try {
-		let result = await getGames(genreId, limit);
+		let result = await igdb_helpers.getGames(genreId, limit);
 		res.status(200).send(result);
 	} catch (err) {
 		res.status(400).send('Error');
@@ -52,7 +53,7 @@ router.get('/searchByGenre', async (req,res) => {
 /**
  * Searches for a games. Returns name and cover picture 
  * @param {string} title - title to search for
- * @returns {[object]} - List of relevant games based on search parameter
+ * @returns {Array.<Object>} - List of relevant games based on search parameter
  */
 router.get('/search', async (req, res) => {
 	const { title } = req.query;
@@ -65,7 +66,7 @@ router.get('/search', async (req, res) => {
 		});
 		let promises = [];
 		for (let res of result.data){
-			promises.push(getCover(res.cover));
+			promises.push(igdb_helpers.getCover(res.cover));
 		}
 		promises = await Promise.all(promises);
 		for (let resIndex in result.data){
@@ -89,7 +90,7 @@ router.get('/search', async (req, res) => {
 router.get('/cover', async (req, res) => {
 	let { id, resolution } = req.query;
 	try {
-		let coverUrl = await coverCover(id, resolution);
+		let coverUrl = await igdb_helpers.coverCover(id, resolution);
 		res.status(200).send(coverUrl);
 	} catch (err) {
 		console.log(err.data);
@@ -122,7 +123,7 @@ router.get('/game', async (req,res) => {
 			if (acceptedKeys.includes(key)){
 				logger.info(key);
 				for(const subId of result.data[0][key]){
-					promises.push(getGameDetail(key, subId));
+					promises.push(igdb_helpers.getGameDetail(key, subId));
 				}
 				result.data[0][key] = [];
 			}
@@ -140,114 +141,5 @@ router.get('/game', async (req,res) => {
 		res.status(400).send('Error');
 	}
 });
-
-/**
- * Helper function to get games. By default gets most popular 10 games
- * Otherwise can specify the number of games to return and a genre (more extendable as well)
- * @param {string} genre - name of genre to be used to search for games
- * @param {string} limit - number of games to be returned
- * @returns {[object]} - List of game objects 
- */
-async function getGames(genre, limit) {
-	url = baseUrl + 'games/';
-	data = 'fields name, cover, total_rating, total_rating_count, genres; sort popularity desc;' 
-	data = genre ? `${data} where genres = ${genre};` : `${data} where genres != 13;`;
-	data = limit ? `${data} limit ${limit};` : data;
-	try {
-		let result = await axios.get(url, {
-			headers,
-			data,
-		});
-		let promises = [];
-		for (let res of result.data){
-			promises.push(getCover(res.cover));
-		}
-		promises = await Promise.all(promises);
-		for (let resIndex in result.data){
-			result.data[resIndex].coverUrl = promises[resIndex];
-		}
-		logger.info('successfully got games');
-		return result.data;
-	} catch (err) {
-		logger.error('error getting games');
-		return err;
-	}
-}
-
-/**
- * Helper function to get the cover URL of a given game ID
- * @param {*} id - id of the game cover
- * @param {*} resolution  - resolution of the picture. Options: 720p, 1080p.
- * @returns {string} - URL for cover image
- */
-async function getCover(id, resolution){
-	resolution = resolution || '720p';
-	let url = baseUrl + 'covers';
-	let data = `fields url; where id = ${id};`;
-	try {
-		let result = await axios.get(url, {
-			headers,
-			data,
-		});
-		logger.info('found cover');
-		const regex = /t_thumb/;
-		coverUrl = result.data[0].url.replace(regex, `t_${resolution}`).substring(2);
-		logger.info(coverUrl);
-		return coverUrl;
-	} catch (err) {
-		console.log(err);
-	}
-}
-
-/**
- * Another helper function to get the cover URL of a given game ID
- * @param {*} id - id of the game
- * @param {*} resolution  - resolution of the picture. Options: 720p, 1080p.
- * @returns {string} - URL for cover image
- */
-async function coverCover(id, resolution){
-	resolution = resolution || '720p';
-	let url = baseUrl + 'covers';
-	let data = `fields url; where game = ${id};`;
-	try {
-		let result = await axios.get(url, {
-			headers,
-			data,
-		});
-		logger.info('found cover');
-		const regex = /t_thumb/;
-		coverUrl = result.data[0].url.replace(regex, `t_${resolution}`).substring(2);
-		logger.info(coverUrl);
-		return coverUrl;
-	} catch (err) {
-		console.log(err);
-	}
-}
-
-/**
- * Returns an object containing all the fields for a specific detail about the game
- * @param {string} key - determines what information we are trying to pull from igdb API (i.e. age_ratings, genres)
- * @param {int} id - the id of the given key (i.e. genre id for genres key)
- * @returns {object} - Game details
- */
-async function getGameDetail(key, id){
-	let url = baseUrl + key;
-	let data = `fields *; where id = ${id};`;
-	try {
-		let result = await axios.get(url, {
-			headers,
-			data,
-		});
-		logger.info(`found ${key}`);
-		return { 'key': key, 'data': result.data};
-	} catch (err) {
-		console.log(err);
-	}
-}
-
-function replaceThumbnail(url) {
-	const regex = /t_thumb/;
-	coverUrl = result.data[0].url.replace(regex, `t_720p`).substring(2);
-}
 
 module.exports = router;
