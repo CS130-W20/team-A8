@@ -17,7 +17,7 @@ const headers = { 'user-key': global.gConfig.igdb_key };
 /**
  * Grabs most popular games
  * @param {string} limit - limit the amount of results
- * @returns {Array.<Object>} - List of JSON objects representing popular games
+ * @returns {[object]} - List of JSON objects representing popular games
  */
 router.get('/popular', async (req, res) => {
 	const { limit } = req.query;
@@ -35,7 +35,7 @@ router.get('/popular', async (req, res) => {
  * Grabs most popular games by genre
  * @param {string} genre - genre search parameter
  * @param {string} limit - limit the amount of results
- * @returns {Array.<Object>} - List of JSON objects representing popular games in genre
+ * @returns {[object]} - List of JSON objects representing popular games in genre
  */
 router.get('/searchByGenre', async (req,res) => {
 	const { genre, limit } = req.query;
@@ -52,7 +52,7 @@ router.get('/searchByGenre', async (req,res) => {
 /**
  * Searches for a games. Returns name and cover picture 
  * @param {string} title - title to search for
- * @returns {Array.<Object>} - List of relevant games based on search parameter
+ * @returns {[object]} - List of relevant games based on search parameter
  */
 router.get('/search', async (req, res) => {
 	const { title } = req.query;
@@ -146,14 +146,13 @@ router.get('/game', async (req,res) => {
  * Otherwise can specify the number of games to return and a genre (more extendable as well)
  * @param {string} genre - name of genre to be used to search for games
  * @param {string} limit - number of games to be returned
- * @returns {Array.<Object>} - List of game objects 
+ * @returns {[object]} - List of game objects 
  */
 async function getGames(genre, limit) {
 	url = baseUrl + 'games/';
-	data = 'fields name, cover, total_rating, total_rating_count, genres; sort popularity desc; where themes != (42);' 
-	data = genre ? `${data} where genres = ${genre};` : data;
+	data = 'fields name, cover, total_rating, total_rating_count, genres; sort popularity desc;' 
+	data = genre ? `${data} where genres = ${genre};` : `${data} where genres != 13;`;
 	data = limit ? `${data} limit ${limit};` : data;
-
 	try {
 		let result = await axios.get(url, {
 			headers,
@@ -177,14 +176,14 @@ async function getGames(genre, limit) {
 
 /**
  * Helper function to get the cover URL of a given game ID
- * @param {string} id - id of the game
- * @param {string} resolution  - resolution of the picture. Options: 720p, 1080p.
+ * @param {*} id - id of the game
+ * @param {*} resolution  - resolution of the picture. Options: 720p, 1080p.
  * @returns {string} - URL for cover image
  */
 async function getCover(id, resolution){
 	resolution = resolution || '720p';
 	let url = baseUrl + 'covers';
-	let data = `fields url; where id = ${id};`;
+	let data = `fields url; where game = ${id};`;
 	try {
 		let result = await axios.get(url, {
 			headers,
