@@ -89,7 +89,7 @@ router.get('/search', async (req, res) => {
 router.get('/cover', async (req, res) => {
 	let { id, resolution } = req.query;
 	try {
-		let coverUrl = await getCover(id, resolution);
+		let coverUrl = await coverCover(id, resolution);
 		res.status(200).send(coverUrl);
 	} catch (err) {
 		console.log(err.data);
@@ -176,11 +176,36 @@ async function getGames(genre, limit) {
 
 /**
  * Helper function to get the cover URL of a given game ID
- * @param {*} id - id of the game
+ * @param {*} id - id of the game cover
  * @param {*} resolution  - resolution of the picture. Options: 720p, 1080p.
  * @returns {string} - URL for cover image
  */
 async function getCover(id, resolution){
+	resolution = resolution || '720p';
+	let url = baseUrl + 'covers';
+	let data = `fields url; where id = ${id};`;
+	try {
+		let result = await axios.get(url, {
+			headers,
+			data,
+		});
+		logger.info('found cover');
+		const regex = /t_thumb/;
+		coverUrl = result.data[0].url.replace(regex, `t_${resolution}`).substring(2);
+		logger.info(coverUrl);
+		return coverUrl;
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+/**
+ * Another helper function to get the cover URL of a given game ID
+ * @param {*} id - id of the game
+ * @param {*} resolution  - resolution of the picture. Options: 720p, 1080p.
+ * @returns {string} - URL for cover image
+ */
+async function coverCover(id, resolution){
 	resolution = resolution || '720p';
 	let url = baseUrl + 'covers';
 	let data = `fields url; where game = ${id};`;
