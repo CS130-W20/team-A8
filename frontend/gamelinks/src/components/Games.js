@@ -157,7 +157,7 @@ class Games extends Component {
             {this.state.apiResponse.map(elem => {
               return (
                 <div class="image-container">
-                  <Link to={`/single-game/${elem.id}`}>
+                  <Link to={`/single-game/?id=${elem.id}`}>
                     <img class="elem-image" src={"http://" + elem.coverUrl} />
                   </Link>
                   <div class="name-text-box">

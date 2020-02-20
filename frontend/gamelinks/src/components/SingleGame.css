@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 125px;
+}
+
+.small-container {
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: row;
+}
