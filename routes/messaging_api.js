@@ -75,3 +75,12 @@ router.get('/connectSocketIO', async (req, res) => {
       res.status(400).send('Error');
    }
 });
+
+/**
+ * Send private message to person you clicked on
+ */
+// router.get('/privateMessage', async (req, res) => {
+//    let partner_id = req.
+// });
+
+module.exports = router;
