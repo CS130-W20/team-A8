@@ -21,7 +21,7 @@ class App extends Component {
             <Route exact path="/" component={withRouter(Home)} />
             <Route exact path="/messages" component={withRouter(Messages)} />
             <Route exact path="/games" component={Games} />
-            <Route path="/SingleGame" component={SingleGame} />
+            <Route path="/single-game" component={SingleGame} />
           </Switch>
         </div>
       </BrowserRouter>
