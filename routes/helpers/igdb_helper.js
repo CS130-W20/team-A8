@@ -21,7 +21,7 @@ const headers = { 'user-key': igdb_key };
 async function getGames(genre, limit) {
 	url = baseUrl + 'games/';
 	data = 'fields name, cover, total_rating, total_rating_count, genres; sort popularity desc; where themes != (42);' 
-	data = genre ? `${data} where genres = ${genre};` : data;
+	data = genre ? `${data} where themes != (42) & genres = ${genre};` : data;
 	data = limit ? `${data} limit ${limit};` : data;
 
 	try {
