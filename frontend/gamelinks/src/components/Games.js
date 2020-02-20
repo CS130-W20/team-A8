@@ -96,6 +96,11 @@ class Games extends Component {
             <Col span={18}>
               <div>
                 <Text>Browse By </Text>
+                {/* <Dropdown overlay={pop_filter}> */}
+                <Button onClick={() => this.popular()}>
+                  popular
+                  {/* <Icon type="down" /> */}
+                </Button>
                 <Dropdown overlay={year_filter}>
                   <Button>
                     year <Icon type="down" />
@@ -107,11 +112,6 @@ class Games extends Component {
                     <Icon type="down" />
                   </Button>
                 </Dropdown>
-                {/* <Dropdown overlay={pop_filter}> */}
-                <Button onClick={() => this.popular()}>
-                  popular
-                  {/* <Icon type="down" /> */}
-                </Button>
                 {/* </Dropdown> */}
                 <Dropdown overlay={genre_filter}>
                   <Button>

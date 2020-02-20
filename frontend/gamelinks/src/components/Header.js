@@ -1,5 +1,5 @@
 import React from "react";
-import { Menu, Input, Typography, Icon, Dropdown } from "antd";
+import { Avatar, Menu, Input, Typography, Icon, Dropdown } from "antd";
 import { Link } from "react-router-dom";
 
 const { Search } = Input;
