@@ -17,6 +17,7 @@ const headers = { 'user-key': global.gConfig.igdb_key };
 /**
  * Grabs most popular games
  * @param {string} limit - limit the amount of results
+ * @returns {[object]} - List of JSON objects representing popular games
  */
 router.get('/popular', async (req, res) => {
 	const { limit } = req.query;
@@ -26,7 +27,7 @@ router.get('/popular', async (req, res) => {
 		res.status(200).send(result);
 	} catch (err) {
 		logger.error('error getting popular games');
-		res.status(400).send('Error');
+		res.status(400).send(err);
 	}
 });
 
@@ -34,6 +35,7 @@ router.get('/popular', async (req, res) => {
  * Grabs most popular games by genre
  * @param {string} genre - genre search parameter
  * @param {string} limit - limit the amount of results
+ * @returns {[object]} - List of JSON objects representing popular games in genre
  */
 router.get('/searchByGenre', async (req,res) => {
 	const { genre, limit } = req.query;
@@ -50,6 +52,7 @@ router.get('/searchByGenre', async (req,res) => {
 /**
  * Searches for a games. Returns name and cover picture 
  * @param {string} title - title to search for
+ * @returns {[object]} - List of relevant games based on search parameter
  */
 router.get('/search', async (req, res) => {
 	const { title } = req.query;
@@ -81,6 +84,7 @@ router.get('/search', async (req, res) => {
  * Finds the cover picture for a game. Returns a URL to the image
  * @param {string} resolution - the resolution of the picture. Options: 720p, 1080p. Defaults to 720p. lmk if you need more resolutions.
  * @param {string} id - the id of the game
+ * @returns {string} - URL for the cover image of the relevant game
  */
 router.get('/cover', async (req, res) => {
 	let { id, resolution } = req.query;
@@ -96,6 +100,7 @@ router.get('/cover', async (req, res) => {
 /**
  * Gets all the relevant details needed for the game page
  * @param {string} id - the id of the game
+ * @returns {object} - Game details
  */
 router.get('/game', async (req,res) => {
 	const acceptedKeys = [ 'age_ratings', 'genres', 'involved_companies', 'platforms', 'screenshots'];
@@ -127,7 +132,7 @@ router.get('/game', async (req,res) => {
 			result.data[0][obj.key].push(obj.data);
 		}
 		logger.info('found game');
-		res.status(200).send(result.data);
+		res.status(200).send(result.data[0]);
 		
 	} catch (err) {
 		console.log(err);
@@ -141,6 +146,7 @@ router.get('/game', async (req,res) => {
  * Otherwise can specify the number of games to return and a genre (more extendable as well)
  * @param {string} genre - name of genre to be used to search for games
  * @param {string} limit - number of games to be returned
+ * @returns {[object]} - List of game objects 
  */
 async function getGames(genre, limit) {
 	url = baseUrl + 'games/';
@@ -172,6 +178,7 @@ async function getGames(genre, limit) {
  * Helper function to get the cover URL of a given game ID
  * @param {*} id - id of the game
  * @param {*} resolution  - resolution of the picture. Options: 720p, 1080p.
+ * @returns {string} - URL for cover image
  */
 async function getCover(id, resolution){
 	resolution = resolution || '720p';
@@ -196,6 +203,7 @@ async function getCover(id, resolution){
  * Returns an object containing all the fields for a specific detail about the game
  * @param {string} key - determines what information we are trying to pull from igdb API (i.e. age_ratings, genres)
  * @param {int} id - the id of the given key (i.e. genre id for genres key)
+ * @returns {object} - Game details
  */
 async function getGameDetail(key, id){
 	let url = baseUrl + key;

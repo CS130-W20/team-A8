@@ -7,6 +7,11 @@ const logger = winston.createLogger({
 	]
 });
 
+/**
+ * Converts an address to its corresponding geocoordinates using google maps API
+ * @param {*} address - user's address
+ * @returns {object} - latitude and longitude
+ */
 async function addressToGeocoordinates(address, api_key) {
     let geocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json?';
     address = address.replace(/ +/g, "+");
@@ -25,6 +30,14 @@ async function addressToGeocoordinates(address, api_key) {
 	} 
 }
 
+/**
+ * Computes distance(miles) between two geocoordinates of user1 and user2
+ * @param {*} lat1 latitude of user1
+ * @param {*} lon1 longitude of user1
+ * @param {*} lat2 latitude of user2
+ * @param {*} lon2 longitude of user2
+ * @returns {string} distance in miles
+ */
 function distanceBtwnGeocoords(lat1, lon1, lat2, lon2) {
     try {
         if ((lat1 == lat2) && (lon1 == lon2)) {
