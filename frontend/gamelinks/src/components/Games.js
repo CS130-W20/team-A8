@@ -11,63 +11,70 @@ import {
   Button,
   Carousel
 } from "antd";
-import { BrowserRouter, withRouter } from "react-router-dom";
+import { Link, BrowserRouter } from "react-router-dom";
 import "./Games.css";
 
+const { SubMenu } = Menu;
 const { Content } = Layout;
 const { Search } = Input;
 const { Title, Text } = Typography;
-// implement filter categories later but rn they are dummies :)
-const year_filter = (
-  <Menu>
-    <Menu.Item>All</Menu.Item>
-    <Menu.Item>2020s</Menu.Item>
-    <Menu.Item>2010s</Menu.Item>
-    <Menu.Item>2000s</Menu.Item>
-  </Menu>
-);
-
-const rating_filter = (
-  <Menu>
-    <Menu.Item>Highest First</Menu.Item>
-    <Menu.Item>Lowest First</Menu.Item>
-    <Menu.Item>Top 100s</Menu.Item>
-  </Menu>
-);
-
-const pop_filter = (
-  <Menu>
-    <Menu.Item>All Time</Menu.Item>
-    <Menu.Item>This Year</Menu.Item>
-    <Menu.Item>This Month</Menu.Item>
-    <Menu.Item>This Week</Menu.Item>
-  </Menu>
-);
-
-const genre_filter = (
-  <Menu>
-    <Menu.Item key="action">Action</Menu.Item>
-    <Menu.Item key="adventure">Adventure</Menu.Item>
-    <Menu.Item key="horror">Horror</Menu.Item>
-    <Menu.Item key="racing">Racing</Menu.Item>
-    <Menu.Item key="role-playing">Role-Playing</Menu.Item>
-    <Menu.Item key="sports">Sports</Menu.Item>
-  </Menu>
-);
-
-function onChange(a, b, c) {
-  console.log(a, b, c);
-}
 
 class Games extends Component {
   constructor(props) {
     super(props);
+    this.next = this.next.bind(this);
+    this.previous = this.previous.bind(this);
+    this.carousel = React.createRef();
     this.state = {
-      apiResponse: []
+      apiResponse: [],
+      title: ""
     };
   }
+  next() {
+    this.carousel.next();
+  }
+  previous() {
+    this.carousel.prev();
+  }
+
+  genre_filter = (
+    <Menu>
+      <SubMenu title="A-I">
+        <Menu.Item onClick={() => this.genre(`adventure`)}>Adventure</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`arcade`)}>Arcade</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`fighting`)}>Fighting</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`hack-and-slash-beat-em-up`)}>Hack-and-Slash / Beat-Em-Up</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`indie`)}>Indie</Menu.Item>
+      </SubMenu>
+      <SubMenu title="M-P">
+        <Menu.Item onClick={() => this.genre(`music`)}>Music</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`pinball`)}>Pinball</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`platform`)}>Platform</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`point-and-click`)}>Point-and-Click</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`puzzle`)}>Puzzle</Menu.Item>
+      </SubMenu>
+      <SubMenu title="Q-R">
+        <Menu.Item onClick={() => this.genre(`quiz-trivia`)}>Quiz / Trivia</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`racing`)}>Racing</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`real-time-strategy-rts`)}>RTS</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`role-playing-rpg`)}>RPG</Menu.Item>
+      </SubMenu>
+      <SubMenu title="S">
+        <Menu.Item onClick={() => this.genre(`shooter`)}>Shooter</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`simulator`)}>Simulator</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`sport`)}>Sport</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`strategy`)}>Strategy</Menu.Item>
+      </SubMenu>
+      <SubMenu title="T-V">
+        <Menu.Item onClick={() => this.genre(`tactical`)}>Tactical</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`turn-based-strategy-tbs`)}>Turn-Based</Menu.Item>
+        <Menu.Item onClick={() => this.genre(`visual-novel`)}>Visual-Novel</Menu.Item>
+      </SubMenu>
+    </Menu>
+  );
 
   search(value) {
+    this.state.title = `Search for: "${value}"`
     fetch(`http://localhost:9000/igdb/search?title=${value}`)
       .then(res => res.json())
       .then(data => this.setState({ apiResponse: data }))
@@ -75,6 +82,7 @@ class Games extends Component {
   }
 
   popular() {
+    this.state.title = `Most Popular`
     fetch(`http://localhost:9000/igdb/popular?limit=50`)
       .then(res => res.json())
       .then(data => this.setState({ apiResponse: data }))
@@ -82,38 +90,36 @@ class Games extends Component {
   }
 
   genre(value) {
+    this.state.title = `Genre: "${value}"`
     fetch(`http://localhost:9000/igdb/searchbyGenre?genre=${value}&limit=50`)
       .then(res => res.json())
       .then(data => this.setState({ apiResponse: data }))
       .catch(err => console.log(`Error is: ${err}`));
   }
+
+  componentDidMount(){
+    this.popular();
+  }
+
   render() {
+    const props = {
+      dots: true,
+      infinite: true,
+      speed: 500,
+      slidesToShow: 6,
+      slidesToScroll: 6
+    };
     return (
       <BrowserRouter>
-        <Content style={{ padding: "0 50px", marginTop: 64 }}>
-          {/* <div style={{ src: "#000", padding: 24, minHeight: 380 }}></div> */}
+        <br></br>
           <Row>
-            <Col span={18}>
+            <Col span={5}>
               <div>
                 <Text>Browse By </Text>
-                {/* <Dropdown overlay={pop_filter}> */}
                 <Button onClick={() => this.popular()}>
                   popular
-                  {/* <Icon type="down" /> */}
                 </Button>
-                <Dropdown overlay={year_filter}>
-                  <Button>
-                    year <Icon type="down" />
-                  </Button>
-                </Dropdown>
-                <Dropdown overlay={rating_filter}>
-                  <Button>
-                    rating
-                    <Icon type="down" />
-                  </Button>
-                </Dropdown>
-                {/* </Dropdown> */}
-                <Dropdown overlay={genre_filter}>
+                <Dropdown overlay={this.genre_filter}>
                   <Button>
                     genre <Icon type="down" />
                   </Button>
@@ -122,51 +128,35 @@ class Games extends Component {
             </Col>
             <Col span={6}>
               <Search
-                placeholder="Search"
+                placeholder="Search by Name"
                 onSearch={value => this.search(value)}
               />
             </Col>
           </Row>
           <br></br>
-          <Row>
-            <Title>Popular Games This Week</Title>
-            <div>
+          <Title>{this.state.title}</Title>
+          <div>
+          <Icon type="left-circle" onClick={this.previous} />
+          <Carousel class="carousel" ref={node => (this.carousel = node)} {...props}>
+
               {this.state.apiResponse.map(elem => {
                 return (
                   <div class="image-container">
-                    <p align="center" class="name-text">
-                      {elem.name}
-                    </p>
-                    <img class="elem-image" src={"http://" + elem.coverUrl} />
+                    <Link to={`/SingleGame/${elem.id}`}>
+                      <img class="elem-image" src={"http://" + elem.coverUrl} />
+                    </Link>
+                    <div class="name-text-box">
+                      <p class="name-text">
+                       {elem.name}
+                      </p>
+                    </div>
                   </div>
                 );
               })}
-            </div>
-            {/* <Col>
-          render games from imgb api db (5 columns for a total of 10 by default), returns json that we can render into components here
-          </Col> */}
-          </Row>
-          <Row>
-            <Carousel>
-              <div>
-                <h3>1</h3>
-              </div>
-              <div>
-                <h3>2</h3>
-              </div>
-              <div>
-                <h3>3</h3>
-              </div>
-              <div>
-                <h3>4</h3>
-              </div>
-            </Carousel>
-            {/* <Col span={6}>col-6</Col>
-            <Col span={6}>col-6</Col>
-            <Col span={6}>col-6</Col>
-            <Col span={6}>col-6</Col> */}
-          </Row>
-        </Content>
+              
+          </Carousel>
+          <Icon type="right-circle" onClick={this.next} />
+          </div>
       </BrowserRouter>
     );
   }
