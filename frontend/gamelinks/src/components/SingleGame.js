@@ -8,23 +8,38 @@ import {
   Button,
   Row,
   Col,
-  Link,
-  Typography
+  Typography,
+  Layout,
+  Input
 } from "antd";
-import { BrowserRouter, withRouter } from "react-router-dom";
+import { BrowserRouter, Link } from "react-router-dom";
 
 const { Content } = Layout;
 const { Search } = Input;
 const { Title, Text } = Typography;
 
-search(value) {
-    fetch(`http://localhost:9000/igdb/game?id=${value}`)
+
+
+class SingleGame extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      apiResponse: {}
+    };
+  }
+
+  getGame() {
+    fetch(`http://localhost:9000/igdb/game?id=11195`)
       .then(res => res.json())
       .then(data => this.setState({ apiResponse: data }))
       .catch(err => console.log(`Error is: ${err}`));
   }
 
-class SingleGame extends Component {
+  componentDidMount(){
+    this.getGame();
+    console.log(this.state.apiResponse);
+  }
+
   render() {
     return (
       <BrowserRouter>
@@ -32,7 +47,11 @@ class SingleGame extends Component {
           <div>
             <Row>
               <Col span={8} alignContent="center">
-              {this.state.apiResponse.data[coverUrl]}
+                 {/* LOOK HERE FOR THE JSON USAGE!!! */}
+                 {/* LOOK HERE FOR THE JSON USAGE!!! */}
+                 {/* LOOK HERE FOR THE JSON USAGE!!! */}
+              {this.state.apiResponse.name}
+              {this.state.apiResponse.rating}
                 <br />
                 <Rate character={<Icon type="heart" />} count={1} />
                 <Rate allowHalf disabled defaultValue={4.5} />
@@ -42,8 +61,8 @@ class SingleGame extends Component {
                   style={{ width: 300 }}
                 >
                   <Link>My Hosts</Link>
-                  <Link>More Hosts</Link> */}
-                  {/* link to people page 
+                  <Link>More Hosts</Link>
+                  {/* link to people page  */}
                 </Card>
               </Col>
               <Col span={8}>
