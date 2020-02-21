@@ -18,8 +18,9 @@ class App extends Component {
           <Header user={this.state.user} />
           <Switch>
             <Route exact path="/" component={withRouter(Home)} />
-            <Route exact path="/messages" component={withRouter(Messages)} />
-            <Route exact path="/games" component={Games} />
+            <Route path="/messages" component={withRouter(Messages)} />
+            <Route path='/profile' component={ Profile } />
+            <Route path="/games" component={Games} />
           </Switch>
         </div>
       </BrowserRouter>
