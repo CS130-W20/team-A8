@@ -1,3 +1,10 @@
+const winston = require('winston');
+
+const logger = winston.createLogger({
+	transports: [
+		new winston.transports.Console()
+	]
+});
 
 var socketID = null;
 var this_io = null;
@@ -6,16 +13,23 @@ var this_socket = null;
 /**
  * Connects when user accesses inbox
  * @param {<Object>} io - io object is the overarching object used for socketio
+ * @return {string} - returns successful or unsuccessful connection
  */
-function connect(io) {
+async function connect(io) {
    this_io = io;
-   io.on('connection', onConnect);
-   return "Successfully connected to SocketIO";
+   try {
+      await io.on('connection', onConnect);
+      return "Successfully connected to SocketIO";
+   } catch (err) {
+      logger.error('Error connecting');
+      return err;
+   }
 }
 
 /**
  * This function just deals with the main connection
  * @param {<Object>} socket - socket object used to communicate with others
+ * @returns {void} - does not return anything
  */
 function onConnect(socket) {
    this_socket = socket;
@@ -24,7 +38,8 @@ function onConnect(socket) {
 
 /**
  * Updates the user's database with their new socket id
- * @param {Integer} user - holdes the user's socket id
+ * @param {integer} user - holdes the user's socket id
+ * @return {integer} - returns the user back to the caller
  */
 function updateUserSocket(user) {
    if (user) {
@@ -34,12 +49,14 @@ function updateUserSocket(user) {
          console.log("Successfully updated");
       });
    }
+   return user;
 };
 
 /**
  * Private message event sends msg to new user
  * @param {Integer} usr - holds the user's socket id
  * @param {String} msg - holds the message the user typed and received
+ * @returns {void} - does not return anything
  */
 function privateMessage(usr, msg) {
    console.log(msg + "to" + usr);

@@ -12,6 +12,8 @@ const logger = winston.createLogger({
 
 /**
  * Connects user to socketio to allow them to communicate with other people
+ * @param {<Object>} io - the io object from index.js needed to connect
+ * @returns {string} - result of the connection 
  */
 router.get('/connectSocketIO', async (req, res) => {
    let io = req.app.get('io');
