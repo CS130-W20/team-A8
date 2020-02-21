@@ -9,7 +9,8 @@ import {
   Typography,
   Layout,
   Button,
-  Carousel
+  Carousel,
+  Avatar
 } from "antd";
 import { Link } from "react-router-dom";
 import "./Games.css";
@@ -148,7 +149,7 @@ class Games extends React.Component {
           <Col span={6}>
             <Search
               placeholder="Search by Name"
-              value={value => this.search(value)}
+              onSearch={value => this.search(value)}
             />
           </Col>
         </Row>
@@ -172,11 +173,8 @@ class Games extends React.Component {
             );
           })}
         </Carousel>
-        <div class="container">
-          <Icon type="left-circle" onClick={this.previous} />
-          <Icon type="right-circle" onClick={this.next} />
-          <Link> See More Games </Link>
-        </div>
+          <Avatar className="arrow-left" size="large" icon="left-circle" onClick={this.previous} /> 
+          <Avatar className="arrow-right" size="large" icon="right-circle" onClick={this.next} />
         {/* <div></div> */}
       </div>
     );

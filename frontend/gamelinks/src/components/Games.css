@@ -1,5 +1,5 @@
 .container {
-  display: flex;
+  
   /* justify-content: center; */
 }
 
@@ -47,4 +47,12 @@
 
 .ant-carousel .slick-slide h3 {
   color: #fff;
+}
+
+.arrow-left {
+  float:left;
+}
+
+.arrow-right {
+  float:right;
 }
