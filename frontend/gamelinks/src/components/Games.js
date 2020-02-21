@@ -12,7 +12,6 @@ import {
   Carousel
 } from "antd";
 import { Link } from "react-router-dom";
-import SingleGame from "./SingleGame";
 import "./Games.css";
 
 const { SubMenu } = Menu;
@@ -124,14 +123,14 @@ class Games extends React.Component {
       dots: true,
       infinite: true,
       speed: 500,
-      slidesToShow: 6,
+      slidesToShow: 4,
       slidesToScroll: 6
     };
     return (
       <div>
         <br></br>
         <Row>
-          <Col span={5}>
+          <Col span={18}>
             <div>
               <Text>Browse By </Text>
               <Button onClick={() => this.popular()}>popular</Button>
@@ -142,10 +141,10 @@ class Games extends React.Component {
               </Dropdown>
             </div>
           </Col>
-          <Col span={3}>
+          {/* <Col span={3}>
             <Input placeholder="Limit (Default 50)" disabled="true" />
-          </Col>
-          <Col span={1} />
+          </Col> */}
+          {/* <Col span={1} /> */}
           <Col span={6}>
             <Search
               placeholder="Search by Name"
@@ -155,28 +154,30 @@ class Games extends React.Component {
         </Row>
         <br></br>
         <Title>{this.state.title}</Title>
-        <div>
-          <Icon type="left-circle" onClick={this.previous} />
-          <Carousel
-            class="carousel"
-            ref={node => (this.carousel = node)}
-            {...props}
-          >
-            {this.state.apiResponse.map(elem => {
-              return (
-                <div class="image-container">
-                  <Link to={`/singlegame/?id=${elem.id}`}>
-                    <img class="elem-image" src={"http://" + elem.coverUrl} />
-                  </Link>
-                  <div class="name-text-box">
-                    <p class="name-text">{elem.name}</p>
-                  </div>
+        <Carousel
+          class="carousel"
+          ref={node => (this.carousel = node)}
+          {...props}
+        >
+          {this.state.apiResponse.map(elem => {
+            return (
+              <div class="image-container">
+                <Link to={`/singlegame/?id=${elem.id}`}>
+                  <img class="elem-image" src={"http://" + elem.coverUrl} />
+                </Link>
+                <div class="name-text-box">
+                  <p class="name-text">{elem.name}</p>
                 </div>
-              );
-            })}
-          </Carousel>
+              </div>
+            );
+          })}
+        </Carousel>
+        <div class="container">
+          <Icon type="left-circle" onClick={this.previous} />
           <Icon type="right-circle" onClick={this.next} />
+          <Link> See More Games </Link>
         </div>
+        {/* <div></div> */}
       </div>
     );
   }

@@ -14,6 +14,8 @@ import {
   Input
 } from "antd";
 import { BrowserRouter, Link } from "react-router-dom";
+import FacebookLoginButton from "./FacebookLoginButton";
+
 import "./SingleGame.css";
 
 const { Content } = Layout;
@@ -32,6 +34,16 @@ class SingleGame extends React.Component {
       apiPlatforms: {},
       coverUrl: ""
     };
+  }
+
+  onFacebookLogin(loginStatus, resultObject) {
+    // if (loginStatus === true) {
+    //   this.setState({
+    //     username: resultObject.user.name
+    //   });
+    // } else {
+    //   alert("Facebook login error");
+    // }
   }
 
   getGame() {
@@ -140,7 +152,9 @@ class SingleGame extends React.Component {
             <Col span={8}>
               <div class="container">
                 {/* if user is not logged in, show this button and link to the facebook*/}
-                <Button>sign in to log, rate, or review</Button>
+                <FacebookLoginButton onLogin={this.onFacebookLogin}>
+                  <Button>sign in to log, rate, or review</Button>
+                </FacebookLoginButton>
                 <br />
                 <Button>share</Button>
                 <br />
