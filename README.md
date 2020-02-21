@@ -30,6 +30,7 @@ test: Testing
 
 ## Installation/Run instructions
 In the main directory, run `npm install express` and then run `node index.js` to start the backend at localhost:9000.
+
 In the frontend/gamelinks directory, run `npm install` and then run `npm start` to start the frontend at localhost:3000.
 
 ## Relevant Links 
