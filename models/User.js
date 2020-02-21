@@ -49,11 +49,14 @@ var UserSchema = new mongoose.Schema({
 	fbAccessToken: {
 		type: String,
 		required: true,
-   },
-   socket: {
-      type: String,
-      required: false,
-   },
+	},
+	socket: {
+		type: String,
+		required: false,
+	},
+	bio: {
+		type: String,
+	},
 	latitude: {
 		type: Number,
 		required: false,

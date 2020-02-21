@@ -21,7 +21,8 @@ module.exports = (router, passport) => {
 					if (err) {
 						return next(err);
 					} else {
-						return res.redirect('/home');
+						console.log('here');
+						return res.redirect(global.gConfig.FB_callback + global.gConfig.front_port);
 					}
 				});
 			}

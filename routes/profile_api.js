@@ -58,6 +58,8 @@ router.get('/getProfileUserInformation', async (req, res) => {
 		favorites: user.favorites,
 		hosting: user.hosting,
 		profilePicture: user.profilePicture,
+		bio: user.bio,
+		city: user.city,
 	};
 	if (private == 'false') {
 		userInfo.firstName = user.firstName;
@@ -74,9 +76,9 @@ router.get('/getProfileUserInformation', async (req, res) => {
  */
 router.post('/editUserInfo', async (req, res) => {
 	logger.info('Edit User Information');
-	const userId = req.user ? req.user._id : global.gConfig.port.test_id; // hard coded for testing
+	const userId = req.user ? req.user._id : '5e4dda4dff01201577298b58'; // hard coded for testing
 	const userInfo = { _id: userId };
-	const { firstName, lastName, username, email, birthday, profilePicture, address, favorites, hosting } = req.body;
+	const { firstName, lastName, username, email, birthday, profilePicture, address, favorites, hosting, bio, socket } = req.body;
 	if (firstName) userInfo.firstName = firstName;
 	if (lastName) userInfo.lastName = lastName;
 	if (username) userInfo.username = username;
@@ -84,6 +86,8 @@ router.post('/editUserInfo', async (req, res) => {
 	if (birthday) userInfo.birthday = birthday;
 	if (profilePicture) userInfo.profilePicture = profilePicture;
 	if (address) userInfo.address = address;
+	if (bio) userInfo.bio = bio;
+	if (socket) userInfo.socket = socket;
 	if (favorites) {
 		const favoritesSplit = favorites.split(',');
 		userInfo.favorites = favoritesSplit;
@@ -105,7 +109,7 @@ router.post('/editProfilePicture', upload.single('profile'), async (req, res) =>
 	const { file } = req;
 	const cloudRes = await cloudinary.uploader.upload(file);
 	const { url } = cloudRes;
-	const userId = req.user ? req.user._id : '5e47447c9ca2a9355632dd43'; // hard coded for testing
+	const userId = req.user ? req.user._id : '5e4dda4dff01201577298b58'; // hard coded for testing
 	const userInfo = { _id: userId, profilePicture: url };
 	try {
 		await User.updateUser(userInfo);
