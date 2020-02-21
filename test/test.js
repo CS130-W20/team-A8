@@ -3,20 +3,20 @@ const mapFunctions = require('../helpers/map');
 const igdbFunctions = require('../routes/helpers/igdb_helper');
 
 describe('Map Functions', function() {
-    /*
+    
   describe('#addressToGeocoordinates()', function() {
     // A string explanation of what we're testing
     it('should return an object with a latitude and longitude specified', async function(){
       // Our actual test
-        let geocoordinates = await mapFunction.addressToGeocoordinates('532 midvale ave, los angeles, ca');
+        let geocoordinates = await mapFunctions.addressToGeocoordinates('532 midvale ave, los angeles, ca');
         let keys = Object.keys(geocoordinates);
         assert.equal(keys.length, 2);
     });
     it('should return an object with no key values if given an invalid address', async function (){
-        let result = await mapFunction.addressToGeocoordinates('!');
+        let result = await mapFunctions.addressToGeocoordinates('!');
         assert.equal(result, 'No results for address');
     });
-  });*/
+  });
 
   describe('#distanceBtwnGeocoords()', function() {
       it('should return a distance if the points are not equal', function (){

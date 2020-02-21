@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  margin-top: 125px;
+  margin-top: 25px;
 }
 
 .small-container {
@@ -10,3 +10,4 @@
   justify-content: space-evenly;
   flex-direction: row;
 }
+
