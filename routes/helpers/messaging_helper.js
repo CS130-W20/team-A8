@@ -74,9 +74,25 @@ function updateUserSocket(user) {
  * @param {String} msg - holds the message the user typed and received
  * @returns {void} - does not return anything
  */
-function privateMessage(usr, msg) {
-   console.log(msg + "to" + usr);
-   this_io.to(usr).emit('private message', msg);
+async function privateMessage(usr, msg) {
+   // Update chat partners
+   let user;
+   try {
+      user = await User.findById(userId);
+   } catch (err) {
+      logger.error(err);
+   }
+   if (!user) {
+      logger.error('error findind user');
+   }
+   const userInfo = {
+      _id: userId,
+      chatPartners: usr,
+   };
+   User.updateUser(userInfo);
+
+   // console.log(msg + "to" + usr);
+   // this_io.to(usr).emit('private message', msg);
 }
 
 module.export = {connect, onConnect, updateUserSocket, privateMessage};
