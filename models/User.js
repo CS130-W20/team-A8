@@ -70,6 +70,10 @@ var UserSchema = new mongoose.Schema({
 		type: Number,
 		required: false,
    },
+   chatPartners: {
+      type: [String],
+      required: false,
+   },
    userStats: {
       type: UserStatSchema,
       required: false,

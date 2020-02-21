@@ -1,3 +1,4 @@
+const User = require('../../models/User');
 const winston = require('winston');
 
 const logger = winston.createLogger({
@@ -9,14 +10,16 @@ const logger = winston.createLogger({
 var socketID = null;
 var this_io = null;
 var this_socket = null;
+let userId;
 
 /**
  * Connects when user accesses inbox
  * @param {<Object>} io - io object is the overarching object used for socketio
  * @return {string} - returns successful or unsuccessful connection
  */
-async function connect(io) {
+async function connect(io, id) {
    this_io = io;
+   userId = id;
    try {
       await io.on('connection', onConnect);
       return "Successfully connected to SocketIO";
@@ -31,8 +34,21 @@ async function connect(io) {
  * @param {<Object>} socket - socket object used to communicate with others
  * @returns {void} - does not return anything
  */
-function onConnect(socket) {
-   this_socket = socket;
+async function onConnect(socket) {
+   let user;
+   try {
+      user = await User.findById(userId);
+   } catch (err) {
+      logger.error(err);
+   }
+   if (!user) {
+      logger.error('Error finding user');
+   }
+   const userInfo = {
+      _id: userId,
+      socket: socket.id
+   };
+   User.updateUser(userInfo);
    // socket.on('send message', privateMessage(usr, msg));
 };
 
