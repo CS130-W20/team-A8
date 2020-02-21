@@ -70,7 +70,10 @@ var UserSchema = new mongoose.Schema({
 		type: Number,
 		required: false,
    },
-   
+   userStats: {
+      type: UserStatSchema,
+      required: false,
+   }
 });
 
 UserSchema.statics.findOrCreate = async (userInfo, done) => {
