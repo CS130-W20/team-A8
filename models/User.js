@@ -9,6 +9,14 @@ const logger = winston.createLogger({
 	]
 });
 
+var UserStatSchema = new mongoose.Schema({
+   favoriteGames: {
+      type: [String],
+      required: false,
+   },
+   timePlayed: Map
+});
+
 var UserSchema = new mongoose.Schema({
 	firstName: {
 		type: String,
@@ -61,7 +69,8 @@ var UserSchema = new mongoose.Schema({
 	longitude: {
 		type: Number,
 		required: false,
-	}
+   },
+   
 });
 
 UserSchema.statics.findOrCreate = async (userInfo, done) => {

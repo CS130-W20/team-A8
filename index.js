@@ -9,15 +9,10 @@ const passport = require('passport');
 process.env.NODE_ENV = 'development';
 const config = require('./config/config.js');
 
-// For now, just require messaging to allow io
-// var messaging = require('./messaging/messaging')
-// messaging.connect(io);
-
 // Set messaging
 app.set('io', io);
 
 //mongoose connection
-// mongoose.set('useCreateIndex', true);
 mongoose.connect(global.gConfig.mongo_url, ({ dbName: global.gConfig.db }, { useNewUrlParser: true }));
 let db = mongoose.connection;
 mongoose.Promise = global.Promise;

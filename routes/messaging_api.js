@@ -11,6 +11,7 @@ const logger = winston.createLogger({
 
 var socketID = null;
 var this_io = null;
+var this_socket = null;
 
 // Socket io connection logic
 function connect(io) {
@@ -20,20 +21,8 @@ function connect(io) {
 }
 
 function onConnect(socket) {
-   console.log(socket.id);
-   // socketID = socket.id;
-   // Use mongodb id instead of first name and last name
-   let han = User.findOne({'firstName': 'Han'}, 'firstName lastName socket', function(err, person) {
-      if (err) console.log(err);
-      socketID = person.socket;
-      person.save(function(err) {
-         if (err) console.log(err);
-      });
-   });
-   // socket.on('chat message', function(msg) {
-   //    this_io.to(`${socketID}`).emit('chat message', msg);
-   // });
-   socket.on('private message', privateMessage(usr, msg));
+   this_socket = socket;
+   // socket.on('private message', privateMessage(usr, msg));
 };
 
 function updateDatabase(user) {
@@ -44,17 +33,6 @@ function updateDatabase(user) {
          console.log("Successfully updated");
       });
    }
-
-   // Also update luke and han for testing purposes
-   let han = User.findOne({'firstName' : 'Han'}, 'firstName lastName socket', function(err, person) {
-      if (err) console.log('Error finding han: %s', err);
-      person.socket = socketID;
-      person.save(function(err) {
-         if (err) console.log(err);
-         console.log("Successfully updated han");
-      });
-      console.log(person);
-   });
 };
 
 function privateMessage(usr, msg) {
@@ -79,8 +57,12 @@ router.get('/connectSocketIO', async (req, res) => {
 /**
  * Send private message to person you clicked on
  */
+// Need to work on this once backend developed
 // router.get('/privateMessage', async (req, res) => {
-//    let partner_id = req.
+//    let partner_id = req.socketID;
+//    this_socket.on('private message', function(msg) {
+//       this_io.to(partner_id).emit('private message', msg);
+//    });
 // });
 
 module.exports = router;
