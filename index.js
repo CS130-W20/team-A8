@@ -1,21 +1,18 @@
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
-const https = require('https');
 const cors = require('cors');
-const io = require('socket.io')(https);
+const io = require('socket.io')(http);
 const mongoose = require('mongoose');
 const passport = require('passport');
 
 process.env.NODE_ENV = 'development';
 const config = require('./config/config.js');
 
-// For now, just require messaging to allow io
-var messaging = require('./messaging/messaging')
-messaging.connect(io);
+// Set messaging
+app.set('io', io);
 
 //mongoose connection
-// mongoose.set('useCreateIndex', true);
 mongoose.connect(global.gConfig.mongo_url, ({ dbName: global.gConfig.db }, { useNewUrlParser: true }));
 let db = mongoose.connection;
 mongoose.Promise = global.Promise;
@@ -40,11 +37,13 @@ require('./routes/auth')(authRouter, passport);
 const igdbRouter = require('./routes/igdb_api');
 const profileRouter = require('./routes/profile_api');
 const gamesRouter = require('./routes/games_api');
+const messagingRouter = require('./routes/messaging_api');
 
 app.use('/auth', authRouter);
 app.use('/igdb', igdbRouter);
 app.use('/profile', profileRouter);
 app.use('/games', gamesRouter);
+app.use('/messaging', messagingRouter);
 
 app.get('/home', (req, res) => {
 	console.log('here1');

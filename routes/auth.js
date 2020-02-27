@@ -21,8 +21,12 @@ module.exports = (router, passport) => {
 					if (err) {
 						return next(err);
 					} else {
-						console.log('here');
-						return res.redirect(global.gConfig.FB_callback + global.gConfig.front_port);
+						console.log('logged in');
+
+						res.set('Access-Control-Allow-Origin', `${global.gConfig.FB_callback}${global.gConfig.front_port}`)
+						res.set('Access-Control-Allow-Methods', 'GET, OPTIONS')
+						res.set('Access-Control-Allow-Headers', 'Content-Type')
+						res.status(200).send(user);
 					}
 				});
 			}

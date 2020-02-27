@@ -20,8 +20,14 @@
     border-radius: 75px;
     background-size: cover;
     background-repeat: no-repeat;
-    top: 25px;
+    top: 10px;
     left: 50px;
+}
+
+#change_profile_pic {
+    position: absolute;
+    bottom: 0;
+    left: 55px;
 }
 
 #name_and_loc {
@@ -46,7 +52,6 @@
 
 #hosting {
     height: 700px;
-    background-color: plum;
     width: calc(100% - 400px);
     margin-left: 30px;
 }
@@ -72,5 +77,36 @@
 .games_list {
     width: 100%;
     height: 300px;
-    background-color: yellowgreen;
+    text-align: center;
+}
+
+.games_list_carousel {
+    width: 80%;
+    left: 10%;
+    height: 250px;
+}
+
+.games_list_children {
+    position: absolute;
+    left: 6%;
+    width: 80%;
+}
+
+.card {
+    height: 260px;
+    width: 40px;
+}
+
+.card img {
+    height: 200px;
+    width: 200px;
+}
+
+.name-text-box {
+    position: absolute;
+    width: 200px;
+}
+
+.name-text {
+    color: white;
 }

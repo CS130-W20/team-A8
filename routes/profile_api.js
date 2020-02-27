@@ -22,7 +22,9 @@ cloudinary.config({
  * Retrieves all information about the logged in user.
  */
 router.get('/getCurrentUserInformation', async (req, res) => {
-	logger.info ('getting current users favorite games');
+	logger.info ('getting current users');
+	console.log(req.user)
+	console.log(req.session)
 	const userId = req.user ? req.user._id : global.gConfig.port.test_id; // hard coded for testing
 	let userInfo;
 	try {
@@ -31,6 +33,7 @@ router.get('/getCurrentUserInformation', async (req, res) => {
 		logger.error('got an error finding user');
 		res.status(400).send(err);
 	}
+	console.log(userInfo);
 	res.status(200).send(userInfo);
 });
 
@@ -38,11 +41,11 @@ router.get('/getCurrentUserInformation', async (req, res) => {
  * TODO: Once Google Maps API is set up, use the location of the user in order to find distance. put this in public information.
  * This will give the information of another person's profile. The next two params are query parameters
  * @param {Integer} id the id of the person we want to get info from.
- * @param {Boolean} private true if we want the user's personal information. false if we want their public information
+ * @param {Boolean} priv true if we want the user's personal information. false if we want their public information
  */
 router.get('/getProfileUserInformation', async (req, res) => {
 	logger.info('getting profile users information');
-	const { id, private } = req.query;
+	const { id, priv } = req.query;
 	let user;
 	try {
 		user = await User.findById(id);
@@ -53,6 +56,7 @@ router.get('/getProfileUserInformation', async (req, res) => {
 	if (!user) {
 		return res.status(400).send('Could not find user');
 	}
+	console.log(user);
 	const userInfo = {
 		username: user.username,
 		favorites: user.favorites,
@@ -61,7 +65,7 @@ router.get('/getProfileUserInformation', async (req, res) => {
 		bio: user.bio,
 		city: user.city,
 	};
-	if (private == 'false') {
+	if (priv == 'false') {
 		userInfo.firstName = user.firstName;
 		userInfo.lastName = user.lastName;
 		userInfo.address = user.address;
@@ -78,6 +82,7 @@ router.post('/editUserInfo', async (req, res) => {
 	logger.info('Edit User Information');
 	const userId = req.user ? req.user._id : '5e4dda4dff01201577298b58'; // hard coded for testing
 	const userInfo = { _id: userId };
+	console.log(req.body);
 	const { firstName, lastName, username, email, birthday, profilePicture, address, favorites, hosting, bio, socket } = req.body;
 	if (firstName) userInfo.firstName = firstName;
 	if (lastName) userInfo.lastName = lastName;
@@ -88,14 +93,8 @@ router.post('/editUserInfo', async (req, res) => {
 	if (address) userInfo.address = address;
 	if (bio) userInfo.bio = bio;
 	if (socket) userInfo.socket = socket;
-	if (favorites) {
-		const favoritesSplit = favorites.split(',');
-		userInfo.favorites = favoritesSplit;
-	}
-	if (hosting) {
-		const hostingSplit = hosting.split(',');
-		userInfo.hosting = hostingSplit;
-	}
+	if (favorites) userInfo.favorites = favorites;
+	if (hosting) userInfo.hosting = hosting;
 	let err = await User.updateUser(userInfo);
 	err ? res.status(400).send('Failed to Update User') : res.status(200).send('Updated user');
 });
