@@ -1,7 +1,9 @@
 const express = require('express');
 const Game = require('../models/User');
+const User = require('../models/User');
 const router = express.Router();
 const winston = require('winston');
+const messaging_helper = require('./helpers/messaging_helper');
 
 const logger = winston.createLogger({
 	transports: [
@@ -9,44 +11,35 @@ const logger = winston.createLogger({
 	]
 });
 
-var socketID = null;
-var this_io = null;
-var this_socket = null;
-
-// Socket io connection logic
-function connect(io) {
-   this_io = io;
-   io.on('connection', onConnect);
-   return "Successfully connected to SocketIO";
-}
-
-function onConnect(socket) {
-   this_socket = socket;
-   // socket.on('private message', privateMessage(usr, msg));
-};
-
-function updateDatabase(user) {
-   if (user) {
-      user.socket = socketID;
-      user.save(function(err) {
-         if (err) console.log(err);
-         console.log("Successfully updated");
-      });
+router.get('/inbox', async (req, res) => {
+   logger.info('getting list of chat partners');
+   const userId = req.user ? req.user._id : global.gConfig.port.test_id;
+   let user;
+   try {
+      user = await User.findById(userId);
+   } catch (err) {
+      logger.error('got an error finding user');
+      res.status(400).sendDate(err);
    }
-};
-
-function privateMessage(usr, msg) {
-   console.log(msg + "to" + usr);
-   this_io.to(usr).emit('private message', msg);
-}
+   if (!user) {
+      return res.status(400).send('Could not find user');
+   }
+   const userInfo = {
+      chatPartners: user.chatPartners,
+   };
+   res.status(200).send(userInfo);
+});
 
 /**
  * Connects user to socketio to allow them to communicate with other people
+ * @param {<Object>} io - the io object from index.js needed to connect
+ * @returns {string} - result of the connection 
  */
 router.get('/connectSocketIO', async (req, res) => {
    let io = req.app.get('io');
+   const userId = req.user ? req.user._id : global.gConfig.port.test_id;
    try {
-      result = await connect(io);
+      result = await messaging_helper.connect(io, userId);
       res.status(200).send(result);
    } catch (err) {
       logger.error('Error connecting to socketio');

@@ -14,6 +14,7 @@ import {
 } from "antd";
 import { Link } from "react-router-dom";
 import "./Games.css";
+import config from '../config.json'
 
 const { SubMenu } = Menu;
 const { Content } = Layout;
@@ -91,7 +92,7 @@ class Games extends React.Component {
 
   search(value) {
     this.state.title = `Search for: "${value}"`;
-    fetch(`http://localhost:9000/igdb/search?title=${value}`)
+    fetch(`${config.backend_url}/igdb/search?title=${value}`)
       .then(res => res.json())
       .then(data => this.setState({ apiResponse: data }))
       .catch(err => console.log(`Error is: ${err}`));
@@ -99,7 +100,7 @@ class Games extends React.Component {
 
   popular() {
     this.state.title = `Most Popular`;
-    fetch(`http://localhost:9000/igdb/popular?limit=${this.limit}`)
+    fetch(`${config.backend_url}/igdb/popular?limit=${this.limit}`)
       .then(res => res.json())
       .then(data => this.setState({ apiResponse: data }))
       .catch(err => console.log(`Error is: ${err}`));
@@ -108,7 +109,7 @@ class Games extends React.Component {
   genre(value) {
     this.state.title = `Genre: "${value}"`;
     fetch(
-      `http://localhost:9000/igdb/searchbyGenre?genre=${value}&limit=${this.limit}`
+      `${config.backend_url}/igdb/searchbyGenre?genre=${value}&limit=${this.limit}`
     )
       .then(res => res.json())
       .then(data => this.setState({ apiResponse: data }))

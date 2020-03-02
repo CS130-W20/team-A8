@@ -57,11 +57,14 @@ var UserSchema = new mongoose.Schema({
 	fbAccessToken: {
 		type: String,
 		required: true,
-   },
-   socket: {
-      type: String,
-      required: false,
-   },
+	},
+	socket: {
+		type: String,
+		required: false,
+	},
+	bio: {
+		type: String,
+	},
 	latitude: {
 		type: Number,
 		required: false,
@@ -70,7 +73,14 @@ var UserSchema = new mongoose.Schema({
 		type: Number,
 		required: false,
    },
-   
+   chatPartners: {
+      type: [String],
+      required: false,
+   },
+   userStats: {
+      type: UserStatSchema,
+      required: false,
+   }
 });
 
 UserSchema.statics.findOrCreate = async (userInfo, done) => {
@@ -112,14 +122,18 @@ UserSchema.statics.updateUser = async (updateInfo) => {
 	}
 	try {
 		for (let key1 of Object.keys(updateInfo)) {
-			user[key1] = updateInfo[key1];
+         if (user[key1].constructor === Array) {
+            user[key1].push(updateInfo[key1]);
+         } else {
+            user[key1] = updateInfo[key1];
+         }
 
 			// Update geocoordinates too if the address is updated
 			if (key1 == 'address') {
 				const { lat, long } = map.addressToGeocoordinates(updateInfo[key1], maps_api_key);
 				user['latitude'] = lat;
 				user['longitude'] = long;
-			}
+         }
 		}
 		await user.save();
 	} catch (err) {

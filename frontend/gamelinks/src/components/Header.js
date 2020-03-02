@@ -14,24 +14,25 @@ const pmenu = (
       <Link to="/profile">profile</Link>
     </Menu.Item>
     <Menu.Item>
-      <Link to="/messages">inbox</Link>
+      <Link to="/inbox">inbox</Link>
     </Menu.Item>
   </Menu>
 );
 
 const header = () => {
   return (
-    <Menu
-      theme="dark"
-      mode="horizontal"
-      //   defaultSelectedKeys={["0"]}
-      style={{ lineHeight: "64px" }}
-      align="right"
-    >
+    <>
       <Icon style={{ size: "large", float: "left" }} type="usergroup-add" />
       <Title style={{ float: "left", color: "white" }} level={4}>
         GAMELINKS
       </Title>
+      <Menu
+        theme="dark"
+        mode="horizontal"
+        //   defaultSelectedKeys={["0"]}
+        style={{ lineHeight: "64px" }}
+        align="right"
+      >
       {/* <Menu.Item key="test">
         <Link to="/messages">
           Messages (Test)
@@ -56,12 +57,13 @@ const header = () => {
       <Menu.Item key="3">
         <Link to="/lists">lists</Link>
       </Menu.Item>
-      <Search
-        placeholder="search"
-        onSearch={value => console.log(value)}
-        style={{ width: 200 }}
-      />
     </Menu>
+    <Search
+      placeholder="search"
+      onSearch={value => console.log(value)}
+      style={{ width: 200 }}
+    />
+    </>
   );
 };
 

@@ -22,7 +22,9 @@ cloudinary.config({
  * Retrieves all information about the logged in user.
  */
 router.get('/getCurrentUserInformation', async (req, res) => {
-	logger.info ('getting current users favorite games');
+	logger.info ('getting current users');
+	console.log(req.user)
+	console.log(req.session)
 	const userId = req.user ? req.user._id : global.gConfig.port.test_id; // hard coded for testing
 	let userInfo;
 	try {
@@ -31,6 +33,7 @@ router.get('/getCurrentUserInformation', async (req, res) => {
 		logger.error('got an error finding user');
 		res.status(400).send(err);
 	}
+	console.log(userInfo);
 	res.status(200).send(userInfo);
 });
 
@@ -53,11 +56,14 @@ router.get('/getProfileUserInformation', async (req, res) => {
 	if (!user) {
 		return res.status(400).send('Could not find user');
 	}
+	console.log(user);
 	const userInfo = {
 		username: user.username,
 		favorites: user.favorites,
 		hosting: user.hosting,
 		profilePicture: user.profilePicture,
+		bio: user.bio,
+		city: user.city,
 	};
 	if (priv == 'false') {
 		userInfo.firstName = user.firstName;
@@ -74,9 +80,10 @@ router.get('/getProfileUserInformation', async (req, res) => {
  */
 router.post('/editUserInfo', async (req, res) => {
 	logger.info('Edit User Information');
-	const userId = req.user ? req.user._id : global.gConfig.port.test_id; // hard coded for testing
+	const userId = req.user ? req.user._id : '5e4dda4dff01201577298b58'; // hard coded for testing
 	const userInfo = { _id: userId };
-	const { firstName, lastName, username, email, birthday, profilePicture, address, favorites, hosting } = req.body;
+	console.log(req.body);
+	const { firstName, lastName, username, email, birthday, profilePicture, address, favorites, hosting, bio, socket } = req.body;
 	if (firstName) userInfo.firstName = firstName;
 	if (lastName) userInfo.lastName = lastName;
 	if (username) userInfo.username = username;
@@ -84,14 +91,10 @@ router.post('/editUserInfo', async (req, res) => {
 	if (birthday) userInfo.birthday = birthday;
 	if (profilePicture) userInfo.profilePicture = profilePicture;
 	if (address) userInfo.address = address;
-	if (favorites) {
-		const favoritesSplit = favorites.split(',');
-		userInfo.favorites = favoritesSplit;
-	}
-	if (hosting) {
-		const hostingSplit = hosting.split(',');
-		userInfo.hosting = hostingSplit;
-	}
+	if (bio) userInfo.bio = bio;
+	if (socket) userInfo.socket = socket;
+	if (favorites) userInfo.favorites = favorites;
+	if (hosting) userInfo.hosting = hosting;
 	let err = await User.updateUser(userInfo);
 	err ? res.status(400).send('Failed to Update User') : res.status(200).send('Updated user');
 });
@@ -105,7 +108,7 @@ router.post('/editProfilePicture', upload.single('profile'), async (req, res) =>
 	const { file } = req;
 	const cloudRes = await cloudinary.uploader.upload(file);
 	const { url } = cloudRes;
-	const userId = req.user ? req.user._id : '5e47447c9ca2a9355632dd43'; // hard coded for testing
+	const userId = req.user ? req.user._id : '5e4dda4dff01201577298b58'; // hard coded for testing
 	const userInfo = { _id: userId, profilePicture: url };
 	try {
 		await User.updateUser(userInfo);

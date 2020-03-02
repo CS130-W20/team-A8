@@ -24,6 +24,7 @@ router.get('/popular', async (req, res) => {
 	const { limit } = req.query;
 	let result = {};
 	try {
+      logger.info('got games in /popular');
 		result = await igdb_helpers.getGames(null, limit);
 		res.status(200).send(result);
 	} catch (err) {
@@ -43,6 +44,7 @@ router.get('/searchByGenre', async (req,res) => {
 	url = baseUrl + 'genres/';
 	const genreId = genres[genre.toLowerCase()];
 	try {
+      logger.info('got games in /searchByGenre');
 		let result = await igdb_helpers.getGames(genreId, limit);
 		res.status(200).send(result);
 	} catch (err) {
@@ -107,7 +109,7 @@ router.get('/game', async (req,res) => {
 	const acceptedKeys = [ 'age_ratings', 'genres', 'involved_companies', 'platforms', 'screenshots'];
 	let { id } = req.query;
 	let url = baseUrl + 'games';
-	let data = `fields age_ratings , aggregated_rating, 
+	let data = `fields age_ratings , aggregated_rating,
 			first_release_date, platforms, genres, 
 			rating, rating_count, total_rating, total_rating_count,
 			name, url, screenshots; where id = ${id};`;

@@ -3,7 +3,6 @@ const mapFunctions = require('../helpers/map');
 const igdbFunctions = require('../routes/helpers/igdb_helper');
 
 describe('Map Functions', function() {
-    
   describe('#addressToGeocoordinates()', function() {
     // A string explanation of what we're testing
     it('should return an object with a latitude and longitude specified', async function(){
