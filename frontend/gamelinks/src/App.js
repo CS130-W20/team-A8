@@ -33,7 +33,7 @@ class App extends Component {
           <Header user={this.state.user} />
           <Switch>
             <Route exact path="/" component={Home} />
-            <Route path="/messages" component={Messages} />
+            <Route path="/inbox" component={Messages} />
             <Route path="/games" component={Games} />
             <Route path="/singlegame" component={SingleGame} />
             <Route path='/profile' render={(props) => <Profile user={this.state.user} { ...props } /> } />

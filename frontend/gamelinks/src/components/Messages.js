@@ -1,11 +1,31 @@
 import React from "react";
 import { Affix, Avatar, Layout, Menu, Breadcrumb, Icon, Input } from "antd";
 import { Link, BrowserRouter, withRouter } from "react-router-dom";
+import config from '../config.json'
 
 const { Search } = Input;
 const { Content, Sider } = Layout;
 
 class Messages extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      apiResponse: [],
+      title: ""
+    };
+  }
+  inbox() {
+     this.state.title = `Inbox`;
+    fetch(`${config.backend_url}/messaging/inbox`)
+      .then(res => res.json())
+      .then(data => this.setState({ apiResponse: data }))
+      .catch(err => console.log(`Error is: ${err}`));
+  }
+
+  componentDidMount() {
+     this.inbox();
+  }
+
   render() {
     return (
       <BrowserRouter>
