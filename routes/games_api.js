@@ -38,7 +38,6 @@ router.get('/getGameInfo', async (req, res) => {
 router.post('/addHost', async (req, res) => {
 	logger.info('Adding host to game');
 	const { id, userId } = req.query;
-	console.log(id, userId)
 	const err = await Game.AddHost(id, userId);
 	return err ? res.status(400).send('Failed to add host') : res.status(200).send('Successfully added host');
 });

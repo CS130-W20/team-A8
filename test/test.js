@@ -13,8 +13,7 @@ describe('Map Functions', function() {
     });
     it('should return an error given an invalid address', async function (){
         let result = await mapFunctions.addressToGeocoordinates('!');
-        const err = new Error();
-        assert.equal(typeof result, err);
+        assert.equal(result.message, 'Invalid address');
     });
   });
 
