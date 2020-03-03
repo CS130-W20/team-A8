@@ -14,16 +14,24 @@ const headers = { 'user-key': igdb_key };
 /**
  * Helper function to get games. By default gets most popular 10 games
  * Otherwise can specify the number of games to return and a genre (more extendable as well)
- * @param {string} genre - name of genre to be used to search for games
+ * @param {[string]} genres - array of genre names to be used to search for games
  * @param {string} limit - number of games to be returned
  * @returns {Array.<Object>} - List of game objects 
  */
-async function getGames(genre, limit) {
+async function getGames(genres, limit) {
 	url = baseUrl + 'games/';
 	data = 'fields name, cover, total_rating, total_rating_count, genres; sort popularity desc; where themes != (42);' 
-	data = genre ? `${data} where themes != (42) & genres = ${genre};` : data;
+	if (genres && genres.length==1) {
+		data = genres ? `${data} where themes != (42) & genres = ${genres[0]};` : data;
+	} else if (genres && genres.length>1) {
+		let genreString = "(";
+		for(const genreId of genres) {
+			genreString += `${genreId},`;
+		}
+		genreString += ");";
+		data += genreString;
+	}
 	data = limit ? `${data} limit ${limit};` : data;
-
 	try {
 		let result = await axios.get(url, {
 			headers,

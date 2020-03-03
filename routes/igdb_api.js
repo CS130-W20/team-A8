@@ -14,13 +14,13 @@ const logger = winston.createLogger({
 const baseUrl = 'https://api-v3.igdb.com/';
 const headers = { 'user-key': global.gConfig.igdb_key };
 
-
 /**
  * Grabs most popular games
  * @param {string} limit - limit the amount of results
  * @returns {Array.<Object>} - List of JSON objects representing popular games
  */
 router.get('/popular', async (req, res) => {
+
 	const { limit } = req.query;
 	let result = {};
 	try {
@@ -34,6 +34,27 @@ router.get('/popular', async (req, res) => {
 });
 
 /**
+ * Grabs recommended games based on User viewing history
+ * @param {Array.<Object>} - list of JSON objects representing genre names to respective view counts 
+ * @returns {Array.<Object>} - List of JSON objects representing recommended games
+ */
+router.post('/recommendedGames', async (req,res) => {
+	const { genre1, genre2, genre3, limit } = req.query;
+	url = baseUrl + 'genres/';
+	let genreIds = [];
+	genreIds.push(genres[genre1.toLowerCase()]);
+	genreIds.push(genres[genre2.toLowerCase()]);
+	genreIds.push(genres[genre3.toLowerCase()]);
+	try {
+      logger.info('got games in /searchByGenre');
+		let result = await igdb_helpers.getGames(genreIds, limit);
+		res.status(200).send(result);
+	} catch (err) {
+		res.status(400).send('Error');
+	}
+})
+
+/**
  * Grabs most popular games by genre
  * @param {string} genre - genre search parameter
  * @param {string} limit - limit the amount of results
@@ -42,7 +63,7 @@ router.get('/popular', async (req, res) => {
 router.get('/searchByGenre', async (req,res) => {
 	const { genre, limit } = req.query;
 	url = baseUrl + 'genres/';
-	const genreId = genres[genre.toLowerCase()];
+	const genreId = [genres[genre.toLowerCase()]];
 	try {
       logger.info('got games in /searchByGenre');
 		let result = await igdb_helpers.getGames(genreId, limit);
@@ -111,7 +132,7 @@ router.get('/game', async (req,res) => {
 	let url = baseUrl + 'games';
 	let data = `fields age_ratings , aggregated_rating,
 			first_release_date, platforms, genres, 
-			rating, rating_count, total_rating, total_rating_count,
+			rating, rating_count, summary, total_rating, total_rating_count,
 			name, url, screenshots; where id = ${id};`;
 
 	

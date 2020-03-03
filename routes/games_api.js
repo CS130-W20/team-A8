@@ -32,4 +32,14 @@ router.get('/getGameInfo', async (req, res) => {
 	return game ? res.status(200).send(game) : res.status(400).send('Game does not exist in db');
 });
 
+/**
+ * Add host to a game in our db
+ */
+router.post('/addHost', async (req, res) => {
+	logger.info('Adding host to game');
+	const { id, userId } = req.query;
+	console.log(id, userId)
+	const err = await Game.AddHost(id, userId);
+	return err ? res.status(400).send('Failed to add host') : res.status(200).send('Successfully added host');
+});
 module.exports = router;
