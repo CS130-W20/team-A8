@@ -76,7 +76,6 @@ router.get('/getProfileUserInformation', async (req, res) => {
 /**
  * Updates fields inside of the user database. Place update information in the request body.
  * Options are firstName, lastName, username, email, birthday, profilePicture, address, hosting, and favorites.
- * For hosting and favorites, delimit with comma. These expect you to put all of the data in there, not just the new data.
  */
 router.post('/editUserInfo', async (req, res) => {
 	logger.info('Edit User Information');
@@ -119,4 +118,18 @@ router.post('/editProfilePicture', upload.single('profile'), async (req, res) =>
 	}
 });
 
+/**
+ * Updates user's genre viewing history in the user database. 
+ * (i.e. { "genres": [ 12, 17, 20 ] } )
+ */
+router.post('/incrementGenreHistory', async (req,res) => {
+	logger.info('Increment Genre History');
+	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
+	const userInfo = { _id: userId};
+	console.log(req.body);
+	let genreIds = req.body.genres;
+	userInfo.genres = genreIds
+	let err = await User.updateUserGenres(userInfo);
+	err ? res.status(400).send('Failed to Update genre history') : res.status(200).send('Updated genre history');
+})
 module.exports = router;

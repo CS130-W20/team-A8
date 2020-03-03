@@ -198,7 +198,8 @@ UserSchema.statics.findOrCreate = async (userInfo, done) => {
 	return done(null, user);
 };
 
-UserSchema.statics.updateUserGenres = async (genreInfo) => {
+
+UserSchema.statics.updateUserGenres = async (updateInfo) => {
 	logger.info('updating User genre info');
 	let user;
 	try {
@@ -214,10 +215,11 @@ UserSchema.statics.updateUserGenres = async (genreInfo) => {
 		return 'No user to update';
 	}
 	try {
-		for(let genreId in genreInfo.genres){
+		for(let genreId of updateInfo.genres){
 			let genreName = genreIdToName[genreId]
 			user.userStats.genres[genreName] += 1;
 		}
+		await user.save();
 	} catch (err) {
 		console.log(err);
 		logger.error('failed to update user genre info');
