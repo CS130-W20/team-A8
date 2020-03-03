@@ -48,6 +48,10 @@ class SingleGame extends React.Component {
     this.carousel.prev();
   }
 
+  convertDate(timestamp){
+    var ts = new Date(timestamp).toDateString().split(' ').slice(1).join(' ');
+    return ts;
+  }
   onFacebookLogin(loginStatus, resultObject) {
     // if (loginStatus === true) {
     //   this.setState({
@@ -210,7 +214,7 @@ class SingleGame extends React.Component {
                       {this.state.apiPlatforms.versions}
                     </Descriptions.Item>
                     <Descriptions.Item label="release date">
-                      {parseInt(this.state.apiResponse.first_release_date)}
+                      {this.convertDate(this.state.apiResponse.first_release_date * 1000)}
                     </Descriptions.Item>
                     <Descriptions.Item label="rating">
                       {this.state.apiResponse.rating_count}
