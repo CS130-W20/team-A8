@@ -48,6 +48,10 @@ class SingleGame extends React.Component {
     this.carousel.prev();
   }
 
+  convertDate(timestamp){
+    var ts = new Date(timestamp).toDateString().split(' ').slice(1).join(' ');
+    return ts;
+  }
   onFacebookLogin(loginStatus, resultObject) {
     // if (loginStatus === true) {
     //   this.setState({
@@ -70,7 +74,8 @@ class SingleGame extends React.Component {
           apiScreenshots: data.screenshots, // find a way to loop over all screenshots
           apiAges: data.age_ratings[0][0],
           apiGenre: data.genres[0][0], // find a way to loop over all genres so i can put in tags (use var i or something)
-          apiPlatforms: data.platforms[0][0]
+          apiPlatforms: data.platforms[0][0],
+          
         })
       )
       .catch(err => console.log(`Error is: ${err}`));
@@ -174,11 +179,12 @@ class SingleGame extends React.Component {
               <br />
                 <Row type="flex" justify="space-around" align="middle">
                   <Col span={2}><Avatar className="arrow-left" icon="left-circle" onClick={this.previous} /></Col>
+                  
                 <Col span={20}><Carousel
                   class="carousel"
                   ref={node => (this.carousel = node)}
                   {...carouselProps}
-        >
+        >       
                 {this.state.apiScreenshots.map(elem => {
                   return (
                   <div align="center" className="carousel-container">
@@ -208,8 +214,7 @@ class SingleGame extends React.Component {
                       {this.state.apiPlatforms.versions}
                     </Descriptions.Item>
                     <Descriptions.Item label="release date">
-                      {/* format this date its ugly */}
-                      {this.state.apiResponse.first_release_date}
+                      {this.convertDate(this.state.apiResponse.first_release_date * 1000)}
                     </Descriptions.Item>
                     <Descriptions.Item label="rating">
                       {this.state.apiResponse.rating_count}
