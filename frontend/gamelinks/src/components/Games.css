@@ -11,23 +11,22 @@
 
 .name-text-box {
   background: #000000;
-  color: white;
+  color: black;
   text-align: center;
-  min-height: 50px;
+  width: 325px;
   max-width: 325px;
-  max-height: 50px;
 }
 
 .name-text {
   left: 50%;
   top: 50%;
+  height: 100px;
 }
 
 .image-container {
   max-width: 325px;
   float: center;
-  /* margin-right: 5px; */
-  /* margin-bottom: 5px; */
+  min-height: 425px;
 }
 
 .elem-image {
