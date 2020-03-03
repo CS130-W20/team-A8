@@ -28,6 +28,7 @@
     position: absolute;
     bottom: 0;
     left: 55px;
+    cursor: pointer;
 }
 
 #name_and_loc {
@@ -88,7 +89,6 @@
 
 .games_list_children {
     position: absolute;
-    left: 6%;
     width: 80%;
 }
 
@@ -109,4 +109,16 @@
 
 .name-text {
     color: white;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.scroll {
+    font-size: 25px;
+}
+
+.scroll-group {
+    position: absolute;
+    left: 37%;
 }
