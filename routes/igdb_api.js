@@ -24,6 +24,7 @@ router.get('/popular', async (req, res) => {
 	const { limit } = req.query;
 	let result = {};
 	try {
+      logger.info('got games in /popular');
 		result = await igdb_helpers.getGames(null, limit);
 		res.status(200).send(result);
 	} catch (err) {
@@ -43,6 +44,7 @@ router.get('/searchByGenre', async (req,res) => {
 	url = baseUrl + 'genres/';
 	const genreId = genres[genre.toLowerCase()];
 	try {
+      logger.info('got games in /searchByGenre');
 		let result = await igdb_helpers.getGames(genreId, limit);
 		res.status(200).send(result);
 	} catch (err) {

@@ -14,7 +14,7 @@ const pmenu = (
       <Link to="/profile">profile</Link>
     </Menu.Item>
     <Menu.Item>
-      <Link to="/messages">inbox</Link>
+      <Link to="/inbox">inbox</Link>
     </Menu.Item>
   </Menu>
 );
