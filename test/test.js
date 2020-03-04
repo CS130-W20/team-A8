@@ -48,9 +48,8 @@ describe('IGDB APis', function() {
             assert.equal(typeof url, typeof '');
         });
         it('should return an error if there is an incorrect id passed', async function() {
-            let url = await igdbFunctions.getCover(9999123, null);
-            let err = new Error()
-            assert.equal(typeof url, typeof err);
+            let result = await igdbFunctions.getCover(9999123, null);
+            assert.equal(result.message, 'Error getting cover');
         });
     });    
     describe('#getGameDetail()', function() {

@@ -1,6 +1,7 @@
 const axios = require('axios');
 const winston = require('winston');
 const igdb_key = require('../../config/config.json').development.igdb_key;
+const genresToIds = require('../constants/genres');
 
 const logger = winston.createLogger({
 	transports: [
@@ -20,18 +21,22 @@ const headers = { 'user-key': igdb_key };
  */
 async function getGames(genres, limit) {
 	url = baseUrl + 'games/';
-	data = 'fields name, cover, total_rating, total_rating_count, genres; sort popularity desc; where themes != (42);' 
+	data = 'fields name, cover, total_rating, total_rating_count, genres; sort popularity desc;' 
 	if (genres && genres.length==1) {
 		data = genres ? `${data} where themes != (42) & genres = ${genres[0]};` : data;
 	} else if (genres && genres.length>1) {
-		let genreString = "(";
+		let genreString = "where themes != (42) & genres = (";
 		for(const genreId of genres) {
 			genreString += `${genreId},`;
 		}
+		genreString = genreString.slice(0,-1);
 		genreString += ");";
 		data += genreString;
+	} else {
+		data += 'where themes != (42);';
 	}
 	data = limit ? `${data} limit ${limit};` : data;
+	console.log(data)
 	try {
 		let result = await axios.get(url, {
 			headers,
@@ -72,7 +77,8 @@ async function getCover(id, resolution){
 		coverUrl = result.data[0].url.replace(regex, `t_${resolution}`).substring(2);
 		return coverUrl;
 	} catch (err) {
-        return err
+		const returnError = new Error('Error getting cover');
+        return returnError;
 	}
 }
 
@@ -123,6 +129,29 @@ async function getGameDetail(key, id){
 	}
 }
 
+async function getRecommendedGames(genres, limit) {
+	let genreCount = []
+	for(let genreName in genres) {
+		const views = genres[genreName];
+		if(Number.isInteger(views))
+			genreCount.push([views, genreName]);
+	}
+	genreCount.sort(function(a, b) {
+		return b[0] - a[0];
+	})
 
+	let randomize1 = Math.floor(Math.random() * 100);
+	let randomize2 = Math.floor(Math.random() * 100);
 
-module.exports = { getGames, getCover, coverCover, getGameDetail}
+	let selectedGenreIndex1 = (randomize1 < 30 ? 0 : (randomize1 < 55 ? 1 : (randomize1 < 75 ? 2 : (randomize1 < 90 ? 3 : 4))))
+	let selectedGenreIndex2 = (randomize2 < 30 ? 0 : (randomize2 < 55 ? 1 : (randomize2 < 75 ? 2 : (randomize2 < 90 ? 3 : 4))))
+	if (selectedGenreIndex1 == selectedGenreIndex2) {
+		selectedGenreIndex2 += 1
+	}
+	const recommendedGenres = [genresToIds[genreCount[selectedGenreIndex1][1]], genresToIds[genreCount[selectedGenreIndex2][1]]];
+	console.log(recommendedGenres)
+	let recommendedGames = await getGames(recommendedGenres, limit);
+	return recommendedGames;
+}
+
+module.exports = { getGames, getCover, coverCover, getGameDetail, getRecommendedGames}

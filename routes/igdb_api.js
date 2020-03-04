@@ -39,15 +39,10 @@ router.get('/popular', async (req, res) => {
  * @returns {Array.<Object>} - List of JSON objects representing recommended games
  */
 router.post('/recommendedGames', async (req,res) => {
-	const { genre1, genre2, genre3, limit } = req.query;
-	url = baseUrl + 'genres/';
-	let genreIds = [];
-	genreIds.push(genres[genre1.toLowerCase()]);
-	genreIds.push(genres[genre2.toLowerCase()]);
-	genreIds.push(genres[genre3.toLowerCase()]);
+	const { genres, limit } = req.body;
 	try {
-      logger.info('got games in /searchByGenre');
-		let result = await igdb_helpers.getGames(genreIds, limit);
+      logger.info('got games in /recommendedGames');
+		let result = await igdb_helpers.getRecommendedGames(genres, limit);
 		res.status(200).send(result);
 	} catch (err) {
 		res.status(400).send('Error');
@@ -62,7 +57,6 @@ router.post('/recommendedGames', async (req,res) => {
  */
 router.get('/searchByGenre', async (req,res) => {
 	const { genre, limit } = req.query;
-	url = baseUrl + 'genres/';
 	const genreId = [genres[genre.toLowerCase()]];
 	try {
       logger.info('got games in /searchByGenre');
