@@ -123,7 +123,7 @@ class Games extends React.Component {
   render() {
     const props = {
       dots: true,
-      infinite: true,
+      infinite: false,
       speed: 500,
       slidesToShow: 4,
       slidesToScroll: 6
@@ -143,10 +143,6 @@ class Games extends React.Component {
               </Dropdown>
             </div>
           </Col>
-          {/* <Col span={3}>
-            <Input placeholder="Limit (Default 50)" disabled="true" />
-          </Col> */}
-          {/* <Col span={1} /> */}
           <Col span={6}>
             <Search
               placeholder="Search by Name"
@@ -163,12 +159,12 @@ class Games extends React.Component {
         >
           {this.state.apiResponse.map(elem => {
             return (
-              <div class="image-container">
+              <div className="image-container">
                 <Link to={`/singlegame/?id=${elem.id}`}>
-                  <img class="elem-image" src={"http://" + elem.coverUrl} />
+                  <img className="elem-image" src={"http://" + elem.coverUrl} />
                 </Link>
-                <div class="name-text-box">
-                  <p class="name-text">{elem.name}</p>
+                <div className="name-text-box">
+                  <p className="name-text">{elem.name}</p>
                 </div>
               </div>
             );

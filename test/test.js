@@ -11,9 +11,9 @@ describe('Map Functions', function() {
         let keys = Object.keys(geocoordinates);
         assert.equal(keys.length, 2);
     });
-    it('should return an object with no key values if given an invalid address', async function (){
+    it('should return an error given an invalid address', async function (){
         let result = await mapFunctions.addressToGeocoordinates('!');
-        assert.equal(result, 'No results for address');
+        assert.equal(result.message, 'Invalid address');
     });
   });
 

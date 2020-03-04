@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const winston = require('winston');
 const map = require('../helpers/map');
 const maps_api_key = require('../config/config.json').development.api_key;
+const genreIdToName = require('../routes/constants/genreIdToName');
 
 const logger = winston.createLogger({
 	transports: [
@@ -9,12 +10,104 @@ const logger = winston.createLogger({
 	]
 });
 
+var GenreStatsSchema = new mongoose.Schema({
+	simulator: {
+		type: Number,
+		default: 0
+	},
+	tactical: {
+		type: Number,
+		default: 0
+	},
+	"quiz-trivia": {
+		type: Number,
+		default: 0
+	},
+	fighting: {
+		type: Number,
+		default: 0
+	},
+	strategy: {
+		type: Number,
+		default: 0
+	},
+	adventure: {
+		type: Number,
+		default: 0
+	},
+	"role-playing-rpg": {
+		type: Number,
+		default: 0
+	},
+	shooter: {
+		type: Number,
+		default: 0
+	},
+	music: {
+		type: Number,
+		default: 0
+	},
+	indie: {
+		type: Number,
+		default: 0
+	},
+	"turn-based-strategy-tbs": {
+		type: Number,
+		default: 0
+	},
+	pinball: {
+		type: Number,
+		default: 0
+	},
+	puzzle: {
+		type: Number,
+		default: 0
+	},
+	"real-time-strategy-rts": {
+		type: Number,
+		default: 0
+	},
+	"hack-and-slash-beat-em-up": {
+		type: Number,
+		default: 0
+	},
+	"visual-novel": {
+		type: Number,
+		default: 0
+	},
+	platform: {
+		type: Number,
+		default: 0
+	},
+	racing: {
+		type: Number,
+		default: 0
+	},
+	sport: {
+		type: Number,
+		default: 0
+	},
+	arcade: {
+		type: Number,
+		default: 0
+	},
+	"point-and-click": {
+		type: Number,
+		default: 0
+	},
+
+})
+
 var UserStatSchema = new mongoose.Schema({
    favoriteGames: {
       type: [String],
       required: false,
    },
-   timePlayed: Map
+   timePlayed: Map,
+   genres: {
+	   type: GenreStatsSchema,
+	   required: false
+   }
 });
 
 var UserSchema = new mongoose.Schema({
@@ -104,6 +197,34 @@ UserSchema.statics.findOrCreate = async (userInfo, done) => {
 	}
 	return done(null, user);
 };
+
+UserSchema.statics.updateUserGenres = async (genreInfo) => {
+	logger.info('updating User genre info');
+	let user;
+	try {
+		user = await User.findById(updateInfo._id);
+		console.log(user);
+	} catch (err) {
+		console.log(err);
+		logger.error('user genre update error');
+		return err;
+	}
+	if (!user) {
+		logger.error('No user to update');
+		return 'No user to update';
+	}
+	try {
+		for(let genreId in genreInfo.genres){
+			let genreName = genreIdToName[genreId]
+			user.userStats.genres[genreName] += 1;
+		}
+	} catch (err) {
+		console.log(err);
+		logger.error('failed to update user genre info');
+		return err;
+	}
+	return;
+}
 
 UserSchema.statics.updateUser = async (updateInfo) => {
 	logger.info('updateUser');
