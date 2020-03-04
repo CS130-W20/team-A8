@@ -14,8 +14,17 @@ class Messages extends React.Component {
       title: ""
     };
   }
+
+  connect() {
+     this.state.title = `Connect`;
+     fetch(`${config.backend_url}/messaging/connectSocketIO`)
+       .then(res => res.json())
+       .then(data => this.setState({ apiResponse: data }))
+       .catch(err => console.log(`Error is: ${err}`));
+  }
+
   inbox() {
-     this.state.title = `Inbox`;
+    this.state.title = `Inbox`;
     fetch(`${config.backend_url}/messaging/inbox`)
       .then(res => res.json())
       .then(data => this.setState({ apiResponse: data }))
@@ -23,6 +32,7 @@ class Messages extends React.Component {
   }
 
   componentDidMount() {
+     this.connect();
      this.inbox();
   }
 

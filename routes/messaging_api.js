@@ -13,7 +13,7 @@ const logger = winston.createLogger({
 
 router.get('/inbox', async (req, res) => {
    logger.info('getting list of chat partners');
-   const userId = req.user ? req.user._id : global.gConfig.port.test_id;
+   const userId = req.user ? req.user._id : global.gConfig.test_id;
    let user;
    try {
       user = await User.findById(userId);
@@ -36,8 +36,9 @@ router.get('/inbox', async (req, res) => {
  * @returns {string} - result of the connection 
  */
 router.get('/connectSocketIO', async (req, res) => {
+   logger.info('connecting to socketIO');
    let io = req.app.get('io');
-   const userId = req.user ? req.user._id : global.gConfig.port.test_id;
+   const userId = req.user ? req.user._id : global.gConfig.test_id;
    try {
       result = await messaging_helper.connect(io, userId);
       res.status(200).send(result);
