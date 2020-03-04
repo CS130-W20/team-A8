@@ -1,6 +1,7 @@
 const express = require('express');
 const Game = require('../models/User');
 const User = require('../models/User');
+const Chat = require('../models/ChatHistory');
 const router = express.Router();
 const winston = require('winston');
 const messaging_helper = require('./helpers/messaging_helper');
@@ -11,6 +12,9 @@ const logger = winston.createLogger({
 	]
 });
 
+/**
+ * Main inbox page for each user
+ */
 router.get('/inbox', async (req, res) => {
    logger.info('getting list of chat partners');
    const userId = req.user ? req.user._id : global.gConfig.test_id;
@@ -45,6 +49,20 @@ router.get('/connectSocketIO', async (req, res) => {
    } catch (err) {
       logger.error('Error connecting to socketio');
       res.status(400).send('Error');
+   }
+});
+
+router.get('/getChatHistory', async (req, res) => {
+   logger.info('getting chat history');
+   const { id } = req.query;
+   const userId = req.user ? req.user._id : global.gConfig.test_id;
+   try {
+      logger.info('found or creating chat history');
+      let result = await messaging_helper.getChatHistory(userId, id);
+      res.status(200).send(result);
+   } catch (err) {
+      logger.error('error getting chat history');
+      res.status(400).send(err);
    }
 });
 

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const winston = require('winston');
-const User = require('User');
+const User = require('./User');
 
 const logger = winston.createLogger({
 	transports: [
@@ -33,7 +33,7 @@ ChatHistorySchema.statics.inDatabase = async (user1, user2) => {
    return chat1 || chat2;
 }
 
-ChatHistorySchema.statics.findOrCreate = async (userInfo, done) => {
+ChatHistorySchema.statics.findOrCreate = async (userInfo) => {
    logger.info('Chat history findOrCreate');
    let user1, user2;
    let chat;
@@ -45,7 +45,7 @@ ChatHistorySchema.statics.findOrCreate = async (userInfo, done) => {
    } catch (err) {
       console.log(err);
       logger.error('find user error');
-      return done(err);
+      return err;
    }
    if (!ChatHistory.inDatabase(user1, user2)) {
       logger.info('No chat. Creating one');
@@ -54,10 +54,10 @@ ChatHistorySchema.statics.findOrCreate = async (userInfo, done) => {
          console.log(chat);
       } catch (err) {
          logger.error('failed to create chat');
-         return done(err);
+         return err;
       }
    }
-   return done(null, chat);
+   return;
 }
 
 ChatHistorySchema.statics.updateChat = async (updateInfo) => {

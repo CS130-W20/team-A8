@@ -1,4 +1,5 @@
 const User = require('../../models/User');
+const Chat = require('../../models/ChatHistory');
 const winston = require('winston');
 
 const logger = winston.createLogger({
@@ -100,4 +101,24 @@ async function privateMessage(msg, usr) {
    this_io.to(usr).emit('private message', msg);
 }
 
-module.exports = {connect, onConnect, updateUserSocket, privateMessage};
+async function getChatHistory(user1, user2) {
+   let chat;
+   const userInfo = {
+      userID1: user1,
+      userID2: user2,
+   };
+   try {
+      chat = await Chat.findOrCreate(userInfo);
+   } catch (err) {
+      logger.error('error finding chat');
+      return [""];
+   }
+   if (!chat) {
+      logger.error('error finding chat');
+      return [""];
+   }
+   console.log('chat history: ' + chat['history']);
+   return chat['history'];
+}
+
+module.exports = {connect, onConnect, updateUserSocket, privateMessage, getChatHistory};
