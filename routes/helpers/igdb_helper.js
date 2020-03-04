@@ -129,6 +129,12 @@ async function getGameDetail(key, id){
 	}
 }
 
+/**
+ * Helper function for recommended game route. 
+ * Algorithm to recommend games based on weighted averages & randomization to choose 2 genres user often interacts with to get popular games from
+ * @param {Object} genres Object mapping genre names to the user's viewcounts of each type of game
+ * @param {string} limit Number of games to be returned
+ */
 async function getRecommendedGames(genres, limit) {
 	let genreCount = []
 	for(let genreName in genres) {

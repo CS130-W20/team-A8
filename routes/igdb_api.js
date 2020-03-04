@@ -35,13 +35,13 @@ router.get('/popular', async (req, res) => {
 
 /**
  * Grabs recommended games based on User viewing history
- * @param {Array.<Object>} - list of JSON objects representing genre names to respective view counts 
+ * @param {Object} - JSON object with mandatory genre key associated to object mapping genre names to user view counts, optional limit key 
  * @returns {Array.<Object>} - List of JSON objects representing recommended games
  */
 router.post('/recommendedGames', async (req,res) => {
 	const { genres, limit } = req.body;
 	try {
-      logger.info('got games in /recommendedGames');
+    	logger.info('getting games in /recommendedGames');
 		let result = await igdb_helpers.getRecommendedGames(genres, limit);
 		res.status(200).send(result);
 	} catch (err) {
