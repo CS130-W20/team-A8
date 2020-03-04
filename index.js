@@ -46,8 +46,11 @@ app.use('/games', gamesRouter);
 app.use('/messaging', messagingRouter);
 
 app.get('/home', (req, res) => {
-	console.log('here1');
-    console.log(req.user);
+   console.log(req.user);
+});
+
+app.get('/', function(req, res) {
+   res.sendFile(__dirname + '/index.html');
 });
 
 http.listen(9000, function(){
