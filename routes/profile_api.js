@@ -63,7 +63,7 @@ router.get('/getProfileUserInformation', async (req, res) => {
 			bio: user.bio,
 			city: user.city,
 		};
-		if (user.sharedWith.includes(req.user._id) || req.user._id === user._id) {
+		if (req.user && (user.sharedWith.includes(req.user._id) || req.user._id === user._id)) {
 			userInfo.firstName = user.firstName;
 			userInfo.lastName = user.lastName;
 			userInfo.address = user.address;

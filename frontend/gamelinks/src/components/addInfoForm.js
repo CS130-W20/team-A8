@@ -55,6 +55,13 @@ class AddInfoForm extends React.Component {
                         <Input />
                     )}
                 </Form.Item>
+                <Form.Item label='Bio'>
+                    {getFieldDecorator('bio', {
+                        rules: [{required: true, message: 'Please write a short description about yourself'}]
+                    })(
+                        <Input />
+                    )}
+                </Form.Item>
                 <Form.Item>
                     <Button type='primary' htmlType='submit'>Ok</Button>
                 </Form.Item>

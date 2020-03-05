@@ -1,19 +1,14 @@
 import React from 'react';
 import {
-    Menu,
     Icon,
-    Alert,
     Layout,
     Typography,
-    Card,
     Carousel,
     Empty,
     Modal,
-    Avatar,
-    Input,
-    Form,
     Upload,
     Button,
+    message,
 } from 'antd';
 import 'antd/dist/antd.css';
 import AddInfoForm from './addInfoForm';
@@ -69,9 +64,9 @@ class Profile extends React.Component {
                     this.setState({ isProfileOwner: userInfo.data._id === this.props.user._id })  // check if the profile belongs to the current user.
                 }
             })
-            .then(() => {
+            .then(() => { // TODO: add or condition once we figure out if they shared their private info
                 console.log(this.state.userInfo)
-                if (this.state.isProfileOwner && (!this.state.userInfo.username || !this.state.userInfo.address)) { // TODO: add or condition once we figure out if they shared their private info
+                if (this.state.isProfileOwner && (!this.state.userInfo.username || !this.state.userInfo.bio || (!this.state.userInfo.address && !this.state.userInfo.city))) {
                     this.setState({ showAdditionalInfoModal: true })
                 }
             })
@@ -113,7 +108,7 @@ class Profile extends React.Component {
                 this.setState({ userInfo });
             })
             .catch(err => {
-                
+                message.error('A user with this username already exists. Please choose another.')
             })
     }
 
@@ -178,14 +173,16 @@ class Profile extends React.Component {
 
     setAddInfo = async (vals) => {
         console.log(vals);
-        const { username, addr1, addr2, city, state, zip } = vals;
-        this.setState({ showAdditionalInfoModal: false });
+        const { username, addr1, addr2, city, state, zip, bio } = vals;
         const address = addr2 ? `${addr1}, ${addr2}, ${city}, ${state}, ${zip}` : `${addr1}, ${city}, ${state}, ${zip}`;
-        const userInfo = { ...this.state.userInfo, address, username, city };
+        const userInfo = { ...this.state.userInfo, address, username, city, bio };
         axios.post(`${config.backend_url}/profile/editUserInfo`, userInfo)
             .then(() => {
-                this.setState({ userInfo });
-            });
+                this.setState({ userInfo, showAdditionalInfoModal: false });
+            })
+            .catch(() => {
+                message.error('A user with this username already exists. Please choose another.');
+            })
     }
 
     getGameList = async (type) => {
@@ -281,15 +278,15 @@ class Profile extends React.Component {
                     </form>
                 </Modal>
                 <div className='user_info'>
+                    { (!this.state.userInfo || !this.state.userInfo.profilePicture)&& <Icon style={{ fontSize: '150px' }} type="user" />}
                     { this.state.userInfo && this.state.userInfo.profilePicture && 
                         <div>
                             <img className='profile_image' src={ this.state.userInfo.profilePicture } />
-                            { !this.state.userInfo && <Icon style={{ fontSize: '150px' }} type="user" />}
-                            { this.state.isProfileOwner &&
-                                <Text id='change_profile_pic' onClick={this.openProfileModal}>Change Profile Picture</Text>
-                            }
                         </div>
-                        }
+                    }
+                    { this.state.isProfileOwner &&
+                        <Text id='change_profile_pic' onClick={this.openProfileModal}>Change Profile Picture</Text>
+                    }
                     <div id='name_and_loc'>
                         <div id='name'>
                             { (this.state.userInfo && this.state.userInfo.username) && (this.state.isProfileOwner 
