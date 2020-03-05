@@ -101,6 +101,14 @@ async function privateMessage(msg, usr) {
    this_io.to(usr).emit('private message', msg);
 }
 
+/**
+ * Helper function to get the chat history from the chat database
+ * User ids can be interchangeable
+ * 
+ * @param {String} user1 - current user's id
+ * @param {String} user2 - partner's id
+ * @return {Array.<String>} - List of previous chat messages
+ */
 async function getChatHistory(user1, user2) {
    let chat;
    const userInfo = {
@@ -111,12 +119,14 @@ async function getChatHistory(user1, user2) {
       chat = await Chat.findOrCreate(userInfo);
    } catch (err) {
       logger.error('error finding chat');
+      console.log(err);
       return [""];
    }
    if (!chat) {
       logger.error('error finding chat');
       return [""];
    }
+   console.log(chat);
    console.log('chat history: ' + chat['history']);
    return chat['history'];
 }

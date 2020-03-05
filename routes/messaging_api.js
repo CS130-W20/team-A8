@@ -52,6 +52,13 @@ router.get('/connectSocketIO', async (req, res) => {
    }
 });
 
+/**
+ * Endpoint to get the chat history. It expects the partner's id as well as your own from the request
+ * It sends the list of messages previously sent
+ * @param {string} id - id of the chat partner
+ * @param {string} userId - id of current user
+ * @returns {Array.<String>} - list of previous chat messages
+ */
 router.get('/getChatHistory', async (req, res) => {
    logger.info('getting chat history');
    const { id } = req.query;
