@@ -122,6 +122,7 @@ var UserSchema = new mongoose.Schema({
 	username: {
 		type: String,
 		required: false,
+		unique: true,
 	},
 	birthday: {
 		type: String,
@@ -144,7 +145,14 @@ var UserSchema = new mongoose.Schema({
 		type: [ String ],
 		default: [],
 	},
+	sharedWith: {
+		type: [ String ],
+		default: [],
+	},
 	address: {
+		type: String,
+	},
+	city: {
 		type: String,
 	},
 	fbAccessToken: {
@@ -230,10 +238,10 @@ UserSchema.statics.updateUserGenres = async (updateInfo) => {
 
 UserSchema.statics.updateUser = async (updateInfo) => {
 	logger.info('updateUser');
+	console.log('sup', updateInfo)
 	let user;
 	try {
 		user = await User.findById(updateInfo._id);
-		console.log(user);
 	} catch (err) {
 		console.log(err);
 		logger.error('user update error');
@@ -245,7 +253,7 @@ UserSchema.statics.updateUser = async (updateInfo) => {
 	}
 	try {
 		for (let key1 of Object.keys(updateInfo)) {
-         if (user[key1].constructor === Array) {
+         if (user[key1] && user[key1].constructor === Array) {
             user[key1].push(updateInfo[key1]);
          } else {
             user[key1] = updateInfo[key1];

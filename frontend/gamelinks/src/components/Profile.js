@@ -2,6 +2,7 @@ import React from 'react';
 import {
     Menu,
     Icon,
+    Alert,
     Layout,
     Typography,
     Card,
@@ -9,11 +10,13 @@ import {
     Empty,
     Modal,
     Avatar,
+    Input,
     Form,
     Upload,
     Button,
 } from 'antd';
 import 'antd/dist/antd.css';
+import AddInfoForm from './addInfoForm';
 import { Link, BrowserRouter as Router, withRouter } from "react-router-dom";
 import queryString from 'query-string';
 import axios from 'axios';
@@ -35,34 +38,54 @@ class Profile extends React.Component {
         this.state.userId = values.id;
         this.carouselHosting = React.createRef();
         this.carouselFavorites = React.createRef();
+        console.log(props);
     }
 
     state = {
         userId: null,
         isProfileOwner: false,
-        currMenu: 'profile',
         showProfileModal: false,
-        confirmProfileModalLoading: false,
+        showAdditionalInfoModal: false,
     };
 
     componentDidMount() {
-        this.getUserInfo()
+        axios.get(`${config.backend_url}/profile/getCurrentUserInformation`)
+            .then((user) => {
+                console.log(user);
+                this.props.setUser(user.data);
+            })
+            .then(() => {
+                return axios({ 
+                    url: `${config.backend_url}/profile/getProfileUserInformation?id=${this.state.userId}`,
+                    method: 'GET',
+                })
+            })
             .then((userInfo) => {
+                console.log(userInfo.data._id);
                 this.setState({ userInfo: userInfo.data });
+                console.log(this.props.user);
+                console.log(userInfo.data._id === this.props.user._id)
                 if (this.props.user) {
-                    this.setState({ isProfileOwner: userInfo.data.id === this.props.user.id })  // check if the profile belongs to the current user.
+                    this.setState({ isProfileOwner: userInfo.data._id === this.props.user._id })  // check if the profile belongs to the current user.
                 }
             })
             .then(() => {
-                this.getGameList('hosting');  // NOT TEST
-                //this.getGameList('testing');    // TEST
+                console.log(this.state.userInfo)
+                if (this.state.isProfileOwner && (!this.state.userInfo.username || !this.state.userInfo.address)) { // TODO: add or condition once we figure out if they shared their private info
+                    this.setState({ showAdditionalInfoModal: true })
+                }
             })
             .then(() => {
-                this.getGameList('favorites'); // NOT TEST
+                this.getGameList('hosting');
+            })
+            .then(() => {
+                this.getGameList('favorites');
+                console.log(this.state)
             })
             .catch((err) => {
                 console.log(err)
             });
+
     }
 
     nextHosting() {
@@ -81,25 +104,17 @@ class Profile extends React.Component {
         this.carouselFavorites.prev();
     }
 
-    getUserInfo() {
-        return axios({ 
-                url: `${config.backend_url}/profile/getProfileUserInformation?id=${this.state.userId}&private=false`,
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json'
-                }
-            })
-    }
-
-    handleMenuClick = event => {
-        this.setState({ currMenu: event.key });
-    }
-
-    onUsernameEdit = async (username) => {
+    // TODO: fix this part
+    onUsernameEdit = (username) => {
         const userInfo = { ...this.state.userInfo, username }
-        this.setState({ userInfo });
-        await axios.post(`${config.backend_url}/profile/editUserInfo`, userInfo);
+        axios.post(`${config.backend_url}/profile/editUserInfo`, userInfo)
+            .then(res => {
+                if (!res.ok) throw new Error();
+                this.setState({ userInfo });
+            })
+            .catch(err => {
+                
+            })
     }
 
     onBioEdit = async (bio) => {
@@ -125,7 +140,6 @@ class Profile extends React.Component {
         userInfo[type] = removedType;
         console.log(removedType);
         this.setState({ userInfo, [type]: gameInfo });
-        // TODO: UPDATE THE DB
         await axios.post(`${config.backend_url}/profile/editUserInfo`, userInfo);
     }
 
@@ -133,8 +147,15 @@ class Profile extends React.Component {
         this.setState({ showProfileModal: true });
     }
 
+    openAdditionalInfoModal = () => {
+        this.setState({ showAdditionalInfoModal: true });
+    }
+
+    closeAdditionalInfoModal = () => {
+        this.setState({ showAdditionalInfoModal: false });
+    }
+
     handleProfileModalOk = async (e) => {
-        this.setState({ confirmProfileModalLoading: true });
         e.preventDefault();
         console.log('handleok')
         if (!this.state.newProfilePicture) {
@@ -150,14 +171,21 @@ class Profile extends React.Component {
             }
             axios.post(`${config.backend_url}/profile/editProfilePicture`, formData, header)
                 .then((url) => {
-                    const userInfo = { ...this.state.userInfo, profilePicture: url }
-                    this.setState({ userInfo, confirmProfileModalLoading: false, showProfileModal: false });
+                    this.setState({ showProfileModal: false });
                 });
         }
     }
 
-    handleProfileModalCancel = () => {
-        this.setState({ showProfileModal: false });
+    setAddInfo = async (vals) => {
+        console.log(vals);
+        const { username, addr1, addr2, city, state, zip } = vals;
+        this.setState({ showAdditionalInfoModal: false });
+        const address = addr2 ? `${addr1}, ${addr2}, ${city}, ${state}, ${zip}` : `${addr1}, ${city}, ${state}, ${zip}`;
+        const userInfo = { ...this.state.userInfo, address, username, city };
+        axios.post(`${config.backend_url}/profile/editUserInfo`, userInfo)
+            .then(() => {
+                this.setState({ userInfo });
+            });
     }
 
     getGameList = async (type) => {
@@ -196,7 +224,7 @@ class Profile extends React.Component {
             const cards = [];
             for (let i = 0; i < gameInfo.length; i += 2) {
                 cards.push(
-                    <div className="card">
+                    <div className="card" key={i}>
                         <Link to={`/singlegame/?id=${gameInfo[i].data.id}`}>
                             <img src={"http://" + gameInfo[i+1].data} />
                         </Link>
@@ -224,10 +252,16 @@ class Profile extends React.Component {
         };
         return (
             <div id='main'>
+                <Modal
+                    title='Please add some additional Information'
+                    visible={this.state.showAdditionalInfoModal}
+                    footer={[]}
+                >
+                    <AddInfoForm setAddInfo={this.setAddInfo} />
+                </Modal>
                 <Modal 
                     title='Change Profile Picture' 
                     visible={this.state.showProfileModal}
-                    confirmLoading={this.state.confirmProfileModalLoading}
                     onCancel={this.handleProfileModalCancel}
                     footer={[
                         <Button key='cancel' onClick={this.handleProfileModalCancel}>Cancel</Button>,
@@ -250,12 +284,12 @@ class Profile extends React.Component {
                     { this.state.userInfo && this.state.userInfo.profilePicture && 
                         <div>
                             <img className='profile_image' src={ this.state.userInfo.profilePicture } />
+                            { !this.state.userInfo && <Icon style={{ fontSize: '150px' }} type="user" />}
                             { this.state.isProfileOwner &&
                                 <Text id='change_profile_pic' onClick={this.openProfileModal}>Change Profile Picture</Text>
                             }
                         </div>
                         }
-                    { !this.state.userInfo && <Icon style={{ fontSize: '150px' }} type="user" />}
                     <div id='name_and_loc'>
                         <div id='name'>
                             { (this.state.userInfo && this.state.userInfo.username) && (this.state.isProfileOwner 
@@ -264,7 +298,12 @@ class Profile extends React.Component {
                             }
                         </div>
                         <div id='loc'>
-                            
+                            { (this.state.userInfo && (this.state.userInfo.address))
+                                ? <Title level={3}>{ this.state.userInfo.address }</Title>
+                                : (this.state.userInfo 
+                                    ? <Title level={3}>{ this.state.userInfo.city }</Title> 
+                                    : <></>)
+                            }
                         </div>
                     </div>
                 </div>

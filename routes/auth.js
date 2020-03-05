@@ -17,16 +17,13 @@ module.exports = (router, passport) => {
 				res.status(400).send("Error Logging in");
 
 			} else {
+				const userId = user._id;
 				req.logIn(user, function(err) {
 					if (err) {
 						return next(err);
 					} else {
-						console.log('logged in');
-
-						res.set('Access-Control-Allow-Origin', `${global.gConfig.FB_callback}${global.gConfig.front_port}`)
-						res.set('Access-Control-Allow-Methods', 'GET, OPTIONS')
-						res.set('Access-Control-Allow-Headers', 'Content-Type')
-						res.status(200).send(user);
+						console.log(userId);
+						res.status(200).redirect(`/#/profile?id=${userId}`);
 					}
 				});
 			}

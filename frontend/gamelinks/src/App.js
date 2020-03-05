@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { withRouter, Route, Switch, BrowserRouter } from "react-router-dom";
+import { HashRouter, Route, Switch } from "react-router-dom";
 
 import Header from "./components/Header";
 import Home from "./components/Home";
@@ -7,39 +7,31 @@ import Messages from "./components/Messages";
 import Profile from "./components/Profile";
 import Games from "./components/Games";
 import SingleGame from "./components/SingleGame";
-import axios from 'axios';
-
-import config from './config.json';
 
 class App extends Component {
   state = {
     user: "test" // Add more states and change this when linked with backend.
   };
 
-  /**
-  componentDidMount() {
-    axios.get(`${config.backend_url}/profile/getCurrentUserInformation`)
-      .then((user) => {
-        this.setState({ user })
-        console.log(user);
-      })
+  setUser = (user) => {
+    this.setState({ user });
   }
-  */
 
   render() {
+    console.log(this.state.user);
     return (
-      <BrowserRouter>
+      <HashRouter>
         <div>
           <Header user={this.state.user} />
           <Switch>
-            <Route exact path="/" component={Home} />
-            <Route path="/inbox" component={Messages} />
-            <Route path="/games" component={Games} />
-            <Route path="/singlegame" component={SingleGame} />
-            <Route path='/profile' render={(props) => <Profile user={this.state.user} { ...props } /> } />
+            <Route exact path="/" render={(props) => <Home { ...props } /> }  />
+            <Route path="/inbox" render={(props) => <Messages user={this.state.user} { ...props } /> } />
+            <Route path="/games" render={(props) => <Games user={this.state.user} { ...props } /> } />
+            <Route path="/singlegame" render={(props) => <SingleGame user={this.state.user} { ...props } /> } />
+            <Route path='/profile' render={(props) => <Profile setUser={this.setUser} user={this.state.user} { ...props } /> } />
           </Switch>
         </div>
-      </BrowserRouter>
+      </HashRouter>
     );
   }
 }

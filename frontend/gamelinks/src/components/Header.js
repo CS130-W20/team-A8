@@ -5,21 +5,23 @@ import { Link } from "react-router-dom";
 const { Search } = Input;
 const { Title } = Typography;
 
-const pmenu = (
-  <Menu>
-    <Menu.Item>
-      <Link to="/people">hosts</Link>
-    </Menu.Item>
-    <Menu.Item>
-      <Link to="/profile">profile</Link>
-    </Menu.Item>
-    <Menu.Item>
-      <Link to="/inbox">inbox</Link>
-    </Menu.Item>
-  </Menu>
-);
 
-const header = () => {
+const header = (props) => {
+  console.log(props.user)
+  const pmenu = (
+    <Menu>
+      <Menu.Item>
+        <Link to="/people">hosts</Link>
+      </Menu.Item>
+      <Menu.Item>
+        <Link to={`/profile?id=${props.user._id}`}>profile</Link>
+      </Menu.Item>
+      <Menu.Item>
+        <Link to="/inbox">inbox</Link>
+      </Menu.Item>
+    </Menu>
+  );
+  
   return (
     <div style={{ width: "100%", backgroundColor: '#041527'}}>
       <div style={{ width: "calc(100% - 250px)" }}>
