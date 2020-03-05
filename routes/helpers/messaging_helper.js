@@ -1,4 +1,5 @@
 const User = require('../../models/User');
+const Chat = require('../../models/ChatHistory');
 const winston = require('winston');
 
 const logger = winston.createLogger({
@@ -21,7 +22,8 @@ async function connect(io, id) {
    this_io = io;
    userId = id;
    try {
-      await io.on('connection', onConnect);
+      console.log('about to connect to io');
+      io.on('connection', onConnect);
       return "Successfully connected to SocketIO";
    } catch (err) {
       logger.error('Error connecting');
@@ -34,10 +36,11 @@ async function connect(io, id) {
  * @param {<Object>} socket - socket object used to communicate with others
  * @returns {void} - does not return anything
  */
-async function onConnect(socket) {
+function onConnect(socket) {
+   console.log('in onConnect');
    let user;
    try {
-      user = await User.findById(userId);
+      user = User.findById(userId);
    } catch (err) {
       logger.error(err);
    }
@@ -49,7 +52,7 @@ async function onConnect(socket) {
       socket: socket.id
    };
    User.updateUser(userInfo);
-   // socket.on('send message', privateMessage(usr, msg));
+   socket.on('chat message', privateMessage);
 };
 
 /**
@@ -74,8 +77,9 @@ function updateUserSocket(user) {
  * @param {String} msg - holds the message the user typed and received
  * @returns {void} - does not return anything
  */
-async function privateMessage(usr, msg) {
+async function privateMessage(msg, usr) {
    // Update chat partners
+   /*
    let user;
    try {
       user = await User.findById(userId);
@@ -91,8 +95,30 @@ async function privateMessage(usr, msg) {
    };
    User.updateUser(userInfo);
 
-   // console.log(msg + "to" + usr);
-   // this_io.to(usr).emit('private message', msg);
+   console.log(msg + "to" + usr);
+   */
+   console.log(usr);
+   this_io.to(usr).emit('private message', msg);
 }
 
-module.export = {connect, onConnect, updateUserSocket, privateMessage};
+async function getChatHistory(user1, user2) {
+   let chat;
+   const userInfo = {
+      userID1: user1,
+      userID2: user2,
+   };
+   try {
+      chat = await Chat.findOrCreate(userInfo);
+   } catch (err) {
+      logger.error('error finding chat');
+      return [""];
+   }
+   if (!chat) {
+      logger.error('error finding chat');
+      return [""];
+   }
+   console.log('chat history: ' + chat['history']);
+   return chat['history'];
+}
+
+module.exports = {connect, onConnect, updateUserSocket, privateMessage, getChatHistory};

@@ -25,7 +25,7 @@ router.get('/getCurrentUserInformation', async (req, res) => {
 	logger.info ('getting current users');
 	console.log(req.user)
 	console.log(req.session)
-	const userId = req.user ? req.user._id : global.gConfig.port.test_id; // hard coded for testing
+	const userId = req.user ? req.user._id : "5e5ec0db5839764b608826c6"; // hard coded for testing
 	let userInfo;
 	try {
 		userInfo = await User.findById(userId);
@@ -76,7 +76,6 @@ router.get('/getProfileUserInformation', async (req, res) => {
 /**
  * Updates fields inside of the user database. Place update information in the request body.
  * Options are firstName, lastName, username, email, birthday, profilePicture, address, hosting, and favorites.
- * For hosting and favorites, delimit with comma. These expect you to put all of the data in there, not just the new data.
  */
 router.post('/editUserInfo', async (req, res) => {
 	logger.info('Edit User Information');
@@ -125,4 +124,34 @@ router.post('/editProfilePicture', upload, async (req, res) => {
 	}
 });
 
+/**
+ * Updates user's genre viewing history in the user database. 
+ * (i.e. { "genres": [ 12, 17, 20 ] } )
+ */
+router.post('/incrementGenreHistory', async (req,res) => {
+	logger.info('Increment Genre History');
+	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
+	const userInfo = { _id: userId};
+	console.log(req.body);
+	let genreIds = req.body.genres;
+	userInfo.genres = genreIds
+	let err = await User.updateUserGenres(userInfo);
+	err ? res.status(400).send('Failed to Update genre history') : res.status(200).send('Updated genre history');
+})
+
+router.get('/getGenreHistory', async(req,res) => {
+	logger.info ('getting current user\'s genre history');
+	console.log(req.user)
+	console.log(req.session)
+	const userId = req.user ? req.user._id : "5e5ec0db5839764b608826c6"; // hard coded for testing
+	let userInfo;
+	try {
+		userInfo = await User.findById(userId);
+	} catch (err) {
+		logger.error('got an error finding user');
+		res.status(400).send(err);
+	}
+	console.log(userInfo.userStats.genres);
+	res.status(200).send(userInfo.userStats.genres);
+})
 module.exports = router;

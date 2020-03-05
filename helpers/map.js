@@ -20,7 +20,8 @@ async function addressToGeocoordinates(address) {
         let result = await axios.get(geocodeUrl);
         logger.info("successfully received result");
         if (result.data.results.length==0) {
-            return 'No results for address';
+            const err = new Error('Invalid address');
+            return err;
         }
         let geocoordinates = result.data.results[0].geometry.location
         console.log(geocoordinates);

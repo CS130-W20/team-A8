@@ -14,13 +14,13 @@ const logger = winston.createLogger({
 const baseUrl = 'https://api-v3.igdb.com/';
 const headers = { 'user-key': global.gConfig.igdb_key };
 
-
 /**
  * Grabs most popular games
  * @param {string} limit - limit the amount of results
  * @returns {Array.<Object>} - List of JSON objects representing popular games
  */
 router.get('/popular', async (req, res) => {
+
 	const { limit } = req.query;
 	let result = {};
 	try {
@@ -34,6 +34,22 @@ router.get('/popular', async (req, res) => {
 });
 
 /**
+ * Grabs recommended games based on User viewing history
+ * @param {Object} - JSON object with mandatory genre key associated to object mapping genre names to user view counts, optional limit key 
+ * @returns {Array.<Object>} - List of JSON objects representing recommended games
+ */
+router.post('/recommendedGames', async (req,res) => {
+	const { genres, limit } = req.body;
+	try {
+    	logger.info('getting games in /recommendedGames');
+		let result = await igdb_helpers.getRecommendedGames(genres, limit);
+		res.status(200).send(result);
+	} catch (err) {
+		res.status(400).send('Error');
+	}
+})
+
+/**
  * Grabs most popular games by genre
  * @param {string} genre - genre search parameter
  * @param {string} limit - limit the amount of results
@@ -41,8 +57,7 @@ router.get('/popular', async (req, res) => {
  */
 router.get('/searchByGenre', async (req,res) => {
 	const { genre, limit } = req.query;
-	url = baseUrl + 'genres/';
-	const genreId = genres[genre.toLowerCase()];
+	const genreId = [genres[genre.toLowerCase()]];
 	try {
       logger.info('got games in /searchByGenre');
 		let result = await igdb_helpers.getGames(genreId, limit);
@@ -111,7 +126,7 @@ router.get('/game', async (req,res) => {
 	let url = baseUrl + 'games';
 	let data = `fields age_ratings , aggregated_rating,
 			first_release_date, platforms, genres, 
-			rating, rating_count, total_rating, total_rating_count,
+			rating, rating_count, summary, total_rating, total_rating_count,
 			name, url, screenshots; where id = ${id};`;
 
 	

@@ -11,9 +11,9 @@ describe('Map Functions', function() {
         let keys = Object.keys(geocoordinates);
         assert.equal(keys.length, 2);
     });
-    it('should return an object with no key values if given an invalid address', async function (){
+    it('should return an error given an invalid address', async function (){
         let result = await mapFunctions.addressToGeocoordinates('!');
-        assert.equal(result, 'No results for address');
+        assert.equal(result.message, 'Invalid address');
     });
   });
 
@@ -48,9 +48,8 @@ describe('IGDB APis', function() {
             assert.equal(typeof url, typeof '');
         });
         it('should return an error if there is an incorrect id passed', async function() {
-            let url = await igdbFunctions.getCover(9999123, null);
-            let err = new Error()
-            assert.equal(typeof url, typeof err);
+            let result = await igdbFunctions.getCover(9999123, null);
+            assert.equal(result.message, 'Error getting cover');
         });
     });    
     describe('#getGameDetail()', function() {

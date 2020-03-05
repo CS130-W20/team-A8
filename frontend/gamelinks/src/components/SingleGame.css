@@ -5,9 +5,16 @@
   margin-top: 25px;
 }
 
+.carousel-container {
+  background: black;
+}
+
 .small-container {
   display: flex;
   justify-content: space-evenly;
   flex-direction: row;
 }
 
+.image-container {
+  object-fit: contain;
+}
