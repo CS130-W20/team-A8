@@ -30,7 +30,7 @@ class Profile extends React.Component {
         this.prevHosting = this.prevHosting.bind(this);
         this.nextFavorites = this.nextFavorites.bind(this);
         this.prevFavorites = this.prevFavorites.bind(this);
-        this.changeProfilePic = this.changeProfilePic.bind(this);
+        this.setNewProfilePicture = this.setNewProfilePicture.bind(this);
         const values = queryString.parse(props.location.search);
         this.state.userId = values.id;
         this.carouselHosting = React.createRef();
@@ -131,31 +131,31 @@ class Profile extends React.Component {
         this.setState({ showProfileModal: true });
     }
 
-    handleProfileModalOk = () => {
+    handleProfileModalOk = async (e) => {
+        this.setState({ confirmProfileModalLoading: true });
+        e.preventDefault();
         console.log('handleok')
         if (!this.state.newProfilePicture) {
             this.setState({ showProfileModal: false });
         } else {
-            this.setState({ confirmProfileModalLoading: true });
-            console.log(this.state.newProfilePicture);
             const formData = new FormData();
             formData.append('myImage', this.state.newProfilePicture);
-            console.log(formData);
-            console.log('this')
-            axios.post(`${config.backend_url}/profile/editProfilePicture`, formData)
-                .then(() => {
-                    this.setState({ confirmProfileModalLoading: false, showProfileModal: false });
+            this.setState({ newProfilePicture: undefined });
+            const header = {
+                headers: {
+                    'content-type': 'multipart/form-data',
+                }
+            }
+            axios.post(`${config.backend_url}/profile/editProfilePicture`, formData, header)
+                .then((url) => {
+                    const userInfo = { ...this.state.userInfo, profilePicture: url }
+                    this.setState({ userInfo, confirmProfileModalLoading: false, showProfileModal: false });
                 });
         }
     }
 
     handleProfileModalCancel = () => {
         this.setState({ showProfileModal: false });
-    }
-
-    changeProfilePic = (picture) => {
-        this.setState({ newProfilePicture: picture });
-        console.log(picture);
     }
 
     getGameList = async (type) => {
@@ -185,7 +185,6 @@ class Profile extends React.Component {
         */
         // END TEST
         const idList = this.state.userInfo[type];
-        console.log(idList);
         const InfoPromises = [];
         for (let i = 0; i < idList.length; i += 1) {
             const gameReq = axios.get(`${config.backend_url}/igdb/game?id=${idList[i]}`);
@@ -193,7 +192,6 @@ class Profile extends React.Component {
             InfoPromises.push(gameReq, coverReq);
         }
         const gameInfo = await Promise.all(InfoPromises);
-        console.log(gameInfo);
         type === 'hosting' ? this.setState({ 'hosting': gameInfo }) : this.setState({ 'favorites': gameInfo });
     }
 
@@ -203,6 +201,11 @@ class Profile extends React.Component {
         setTimeout(() => {
             onSuccess('ok');
         }, 0);
+    }
+
+    handleUploadChange = info => {
+        let fileList = [info.fileList];
+        this.setState({ fileList: fileList[0] });
     }
 
     render() {
@@ -246,11 +249,22 @@ class Profile extends React.Component {
                     visible={this.state.showProfileModal}
                     confirmLoading={this.state.confirmProfileModalLoading}
                     onCancel={this.handleProfileModalCancel}
-                    onOk={this.handleProfileModalOk}
+                    footer={[
+                        <Button key='cancel' onClick={this.handleProfileModalCancel}>Cancel</Button>,
+                        <Button key='submit' form='profile-form' htmlType='submit'>Ok</Button>
+                    ]}
                 >
-                    <Upload.Dragger name='file' customRequest={this.setNewProfilePicture} accept='image/*'>
-                    <p className="ant-upload-text">Click or drag a picture</p>
-                    </Upload.Dragger>
+                    <form id='profile-form' onSubmit={this.handleProfileModalOk}>
+                        <Upload.Dragger 
+                            name='file' 
+                            multiple={false} 
+                            customRequest={this.setNewProfilePicture} 
+                            onChange={this.handleUploadChange}
+                            accept='image/*'
+                            fileList={this.state.fileList}>
+                        <p className="ant-upload-text">Click or drag a picture</p>
+                        </Upload.Dragger>
+                    </form>
                 </Modal>
                 <div className='user_info'>
                     { this.state.userInfo && this.state.userInfo.profilePicture && 
