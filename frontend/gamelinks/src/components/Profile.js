@@ -104,7 +104,6 @@ class Profile extends React.Component {
         const userInfo = { ...this.state.userInfo, username }
         axios.post(`${config.backend_url}/profile/editUserInfo`, userInfo)
             .then(res => {
-                if (!res.ok) throw new Error();
                 this.setState({ userInfo });
             })
             .catch(err => {
