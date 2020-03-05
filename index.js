@@ -20,6 +20,7 @@ db.once('open', () => { console.log('Successfully connected');});
 db.on('error', console.error.bind(console, 'conn error:'));
 app.set('view engine', 'ejs');
 app.use(cors());
+app.use('/', express.static('./static'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(require('express-session')({

@@ -39,7 +39,7 @@ class Profile extends React.Component {
 
     state = {
         userId: null,
-        isProfileOwner: true,
+        isProfileOwner: false,
         currMenu: 'profile',
         showProfileModal: false,
         confirmProfileModalLoading: false,
@@ -49,7 +49,9 @@ class Profile extends React.Component {
         this.getUserInfo()
             .then((userInfo) => {
                 this.setState({ userInfo: userInfo.data });
-                // this.setState({ isProfileOwner: userInfo.data.id == this.props.user.id })  check if the profile belongs to the current user. 
+                if (this.props.user) {
+                    this.setState({ isProfileOwner: userInfo.data.id === this.props.user.id })  // check if the profile belongs to the current user.
+                }
             })
             .then(() => {
                 this.getGameList('hosting');  // NOT TEST
@@ -162,28 +164,6 @@ class Profile extends React.Component {
         if (!this.state.userInfo || !this.state.userInfo[type]) {   // TEST:  if (!this.state.userInfo || !this.state.userInfo[type])
             return <Empty />;
         }
-        // BEGIN TEST
-        /*
-        if (type == 'testing') {
-            const games_list = [
-                { data: { id: "90101", name: 'dog dog dog dog dog dog dog dog asdfadfasdfadfadfa' } },
-                { data: 'hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/gettyimages-1094874726.png?crop=0.542xw:0.814xh;0.0472xw,0.127xh&resize=640:*'},
-                { data: { id: 1234, name: 'dog dog' } },
-                { data: 'hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/gettyimages-1094874726.png?crop=0.542xw:0.814xh;0.0472xw,0.127xh&resize=640:*'},
-                { data: { id: 1235 } },
-                { data: 'hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/gettyimages-1094874726.png?crop=0.542xw:0.814xh;0.0472xw,0.127xh&resize=640:*'},
-                { data: { id: 1236 } },
-                { data: 'hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/gettyimages-1094874726.png?crop=0.542xw:0.814xh;0.0472xw,0.127xh&resize=640:*'},
-                { data: { id: 1237 } },
-                { data: 'hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/gettyimages-1094874726.png?crop=0.542xw:0.814xh;0.0472xw,0.127xh&resize=640:*'},
-                { data: { id: 1238 } },
-                { data: 'hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/gettyimages-1094874726.png?crop=0.542xw:0.814xh;0.0472xw,0.127xh&resize=640:*'},
-            ]
-            this.setState({ 'testing' : games_list })
-            return;
-        }
-        */
-        // END TEST
         const idList = this.state.userInfo[type];
         const InfoPromises = [];
         for (let i = 0; i < idList.length; i += 1) {
@@ -294,32 +274,42 @@ class Profile extends React.Component {
                     <hr />
                     <div className='games_list'>
                         <div className='games_list_children'>
-                            <div className='games_list_carousel'>
-                                <Carousel ref={ node => (this.carouselHosting = node) } { ...props } slidesToShow={ Math.min(4, hostingCards.length) } >
-                                    { hostingCards }
-                                </Carousel>
-                            </div>
-                            <br />
-                            <div className='scroll-group'>
-                                <Icon type='left-circle' className='scroll' onClick={ this.prevHosting } />
-                                <Icon type='right-circle' className='scroll' onClick={ this.nextHosting } />
-                            </div>
+                            { hostingCards.length ?
+                            <>
+                                <div className='games_list_carousel'>
+                                    <Carousel ref={ node => (this.carouselHosting = node) } { ...props } slidesToShow={ Math.min(4, hostingCards.length) } >
+                                        { hostingCards }
+                                    </Carousel>
+                                </div>
+                                <br />
+                                <div className='scroll-group'>
+                                    <Icon type='left-circle' className='scroll' onClick={ this.prevHosting } />
+                                    <Icon type='right-circle' className='scroll' onClick={ this.nextHosting } />
+                                </div>
+                            </>
+                            : <Empty />
+                            }
                         </div>
                     </div>
                     <Title level={2}>Favorites</Title>
                     <hr />
                     <div className='games_list'>
                         <div className='games_list_children'>
-                            <div className='games_list_carousel'>
-                                <Carousel ref={ node => (this.carouselFavorites = node) } { ...props } slidesToShow={ Math.min(4, favoritesCards.length) } >
-                                    { favoritesCards }
-                                </Carousel>
-                            </div>
-                            <br/>
-                            <div className='scroll-group'>
-                                <Icon type='left-circle' className='scroll' onClick={ this.prevFavorites } />
-                                <Icon type='right-circle' className='scroll' onClick={ this.nextFavorites } /> 
-                            </div>
+                            { favoritesCards.length ? 
+                            <>
+                                <div className='games_list_carousel'>
+                                    <Carousel ref={ node => (this.carouselFavorites = node) } { ...props } slidesToShow={ Math.min(4, favoritesCards.length) } >
+                                        { favoritesCards }
+                                    </Carousel>
+                                </div>
+                                <br/>
+                                <div className='scroll-group'>
+                                    <Icon type='left-circle' className='scroll' onClick={ this.prevFavorites } />
+                                    <Icon type='right-circle' className='scroll' onClick={ this.nextFavorites } /> 
+                                </div>
+                            </>
+                            : <Empty />
+                            }
                         </div>
                     </div>
                 </div>
