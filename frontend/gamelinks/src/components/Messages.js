@@ -1,17 +1,17 @@
 import React from "react";
-import { 
-   Affix, 
-   Avatar, 
-   Layout, 
-   Menu, 
-   Breadcrumb, 
-   Icon, 
-   Input, 
-   Card, 
-   Button 
+import {
+  Affix,
+  Avatar,
+  Layout,
+  Menu,
+  Breadcrumb,
+  Icon,
+  Input,
+  Card,
+  Button
 } from "antd";
 import { Link, BrowserRouter, withRouter } from "react-router-dom";
-import config from '../config.json'
+import config from "../config.json";
 
 const { Search } = Input;
 const { Content, Sider } = Layout;
@@ -26,11 +26,11 @@ class Messages extends React.Component {
   }
 
   connect() {
-     this.state.title = `Connect`;
-     fetch(`${config.backend_url}/messaging/connectSocketIO`)
-       .then(res => res.json())
-       .then(data => this.setState({ apiResponse: data }))
-       .catch(err => console.log(`Error is: ${err}`));
+    this.state.title = `Connect`;
+    fetch(`${config.backend_url}/messaging/connectSocketIO`)
+      .then(res => res.json())
+      .then(data => this.setState({ apiResponse: data }))
+      .catch(err => console.log(`Error is: ${err}`));
   }
 
   inbox() {
@@ -42,16 +42,16 @@ class Messages extends React.Component {
   }
 
   getChat(partner) {
-     this.state.title = `Chat`;
-     fetch(`${config.backend_url}/messaging/getChatHistory?id=${partner}`)
-       .then(res => res.json())
-       .then(data => this.setState({ apiResponse: data }))
-       .catch(err => console.log(`Error is: ${err}`));
+    this.state.title = `Chat`;
+    fetch(`${config.backend_url}/messaging/getChatHistory?id=${partner}`)
+      .then(res => res.json())
+      .then(data => this.setState({ apiResponse: data }))
+      .catch(err => console.log(`Error is: ${err}`));
   }
 
   componentDidMount() {
-     this.connect();
-     this.inbox();
+    this.connect();
+    this.inbox();
   }
 
   render() {
@@ -83,8 +83,10 @@ class Messages extends React.Component {
                 <span className="nav-text">inbox</span>
               </Menu.Item>
               <Menu.Item key="4">
-                <Icon type="user" />
-                <span className="nav-text">back to profile</span>
+                <Link to="/profile">
+                  <Icon type="user" />
+                  <span className="nav-text">back to profile</span>
+                </Link>
               </Menu.Item>
             </Menu>
           </Sider>
@@ -101,15 +103,19 @@ class Messages extends React.Component {
                     this.container = node;
                   }}
                 >
-                {/*
+                  {/*
                   <div className="background">
                     <Affix target={() => this.container}></Affix>
                   </div>
                 */}
                   <div className="p1">
-                     <Card title="Person 1">
-                        <Button onClick={() => this.getChat("5e38acfa52525645babd8719")}>Click me!</Button>
-                     </Card>
+                    <Card title="Person 1">
+                      <Button
+                        onClick={() => this.getChat("5e38acfa52525645babd8719")}
+                      >
+                        Click me!
+                      </Button>
+                    </Card>
                   </div>
                 </div>
               </div>

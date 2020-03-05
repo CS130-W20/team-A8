@@ -5,9 +5,8 @@ import { Link } from "react-router-dom";
 const { Search } = Input;
 const { Title } = Typography;
 
-
-const header = (props) => {
-  console.log(props.user)
+const header = props => {
+  console.log(props.user);
   const pmenu = (
     <Menu>
       <Menu.Item>
@@ -21,21 +20,30 @@ const header = (props) => {
       </Menu.Item>
     </Menu>
   );
-  
+
   return (
-    <div style={{ width: "100%", backgroundColor: '#041527'}}>
+    <div style={{ width: "100%", backgroundColor: "#041527" }}>
       <div style={{ width: "calc(100% - 250px)" }}>
-        <Title style={{ float: "left", color: "white", position: 'absolute', left: '10px', top: '16px'}} level={4}>
+        <Title
+          style={{
+            float: "left",
+            color: "white",
+            position: "absolute",
+            left: "10px",
+            top: "16px"
+          }}
+          level={4}
+        >
           GAMELINKS
         </Title>
         <Menu
           theme="dark"
           mode="horizontal"
           //   defaultSelectedKeys={["0"]}
-          style={{ lineHeight: "64px"}}
+          style={{ lineHeight: "64px" }}
           align="right"
         >
-        {/* <Menu.Item key="test">
+          {/* <Menu.Item key="test">
           <Link to="/messages">
             Messages (Test)
           </Link>
@@ -47,7 +55,10 @@ const header = (props) => {
           </Menu.Item>
           <Menu.Item key="1">
             <Dropdown overlay={pmenu}>
-              <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+              <a
+                className="ant-dropdown-link"
+                onClick={e => e.preventDefault()}
+              >
                 people
                 <Icon type="down" />
               </a>
@@ -64,7 +75,7 @@ const header = (props) => {
       <Search
         placeholder="search"
         onSearch={value => console.log(value)}
-        style={{ width: 200, right: '10px', top: '16px', position: "absolute" }}
+        style={{ width: 200, right: "10px", top: "16px", position: "absolute" }}
       />
     </div>
   );
