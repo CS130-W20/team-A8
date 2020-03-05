@@ -1,5 +1,15 @@
 import React from "react";
-import { Affix, Avatar, Layout, Menu, Breadcrumb, Icon, Input } from "antd";
+import { 
+   Affix, 
+   Avatar, 
+   Layout, 
+   Menu, 
+   Breadcrumb, 
+   Icon, 
+   Input, 
+   Card, 
+   Button 
+} from "antd";
 import { Link, BrowserRouter, withRouter } from "react-router-dom";
 import config from '../config.json'
 
@@ -91,16 +101,25 @@ class Messages extends React.Component {
                     this.container = node;
                   }}
                 >
+                {/*
                   <div className="background">
                     <Affix target={() => this.container}></Affix>
                   </div>
+                */}
+                  <div className="p1">
+                     <Card title="Person 1">
+                        <Button onClick={() => this.getChat("5e38acfa52525645babd8719")}>Click me!</Button>
+                     </Card>
+                  </div>
                 </div>
               </div>
+              {/*
               <Search
                 size="large"
                 enterButton="Send"
                 onSearch={value => console.log(value)}
               />
+              */}
             </Content>
           </Layout>
         </Layout>

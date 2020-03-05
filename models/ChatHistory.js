@@ -24,13 +24,17 @@ var ChatHistorySchema = new mongoose.Schema({
 });
 
 ChatHistorySchema.statics.inDatabase = async (user1, user2) => {
-   if (!user1 || !user2) {
-      return false;
-   }
+   logger.info('checking in database');
    let chat1, chat2;
    chat1 = await ChatHistory.findOne({ userID1: user1, userID2: user2 }).exec();
    chat2 = await ChatHistory.findOne({ userID1: user2, userID2: user1 }).exec();
-   return chat1 || chat2;
+   if (chat1) {
+      return chat1;
+   }
+   if (chat2) {
+      return chat2;
+   }
+   return null;
 }
 
 ChatHistorySchema.statics.findOrCreate = async (userInfo) => {
@@ -39,15 +43,16 @@ ChatHistorySchema.statics.findOrCreate = async (userInfo) => {
    let chat;
    try {
       user1 = await User.findById(userInfo.userID1);
-      console.log(user1);
+      // console.log(user1);
       user2 = await User.findById(userInfo.userID2);
-      console.log(user2);
+      // console.log(user2);
    } catch (err) {
       console.log(err);
       logger.error('find user error');
       return err;
    }
-   if (!ChatHistory.inDatabase(user1, user2)) {
+   chat = await ChatHistory.inDatabase(user1._id, user2._id);
+   if (!chat) {
       logger.info('No chat. Creating one');
       try {
          chat = await ChatHistory.create(userInfo);
@@ -57,7 +62,7 @@ ChatHistorySchema.statics.findOrCreate = async (userInfo) => {
          return err;
       }
    }
-   return;
+   return chat;
 }
 
 ChatHistorySchema.statics.updateChat = async (updateInfo) => {
