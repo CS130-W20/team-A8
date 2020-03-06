@@ -51,6 +51,10 @@ class Messages extends React.Component {
       .catch(err => console.log(`Error is: ${err}`));
   }
 
+  onSendMessage(value) {
+     console.log(value);
+  }
+
   showModal = () => {
     this.setState({
       visible: true
@@ -158,7 +162,7 @@ class Messages extends React.Component {
                       <Search
                         size="large"
                         enterButton="Send"
-                        onSearch={value => console.log(value)} // log to chat history too
+                        onSearch={value => this.onSendMessage(value)} // log to chat history too
                       />
                     </Modal>
                   </div>
