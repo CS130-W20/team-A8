@@ -27,6 +27,7 @@ class App extends Component {
           <Switch>
             <Route exact path="/" render={(props) => <Home { ...props } /> }  />
             <Route path="/inbox" render={(props) => <Messages user={this.state.user} { ...props } /> } />
+            <Route path="/messages" render={(props) => <PrivateMessage user={this.state.user} { ...props } /> } />
             <Route path="/games" render={(props) => <Games user={this.state.user} { ...props } /> } />
             <Route path="/singlegame" render={(props) => <SingleGame user={this.state.user} { ...props } /> } />
             <Route path='/profile' render={(props) => <Profile setUser={this.setUser} user={this.state.user} { ...props } /> } />
