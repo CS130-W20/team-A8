@@ -1,0 +1,15 @@
+#main {
+  position: absolute;
+  margin-top: 30px;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.host_card {
+  display: flex;
+  flex-direction: column;
+}
+
+.games_container {
+  display: flex;
+}

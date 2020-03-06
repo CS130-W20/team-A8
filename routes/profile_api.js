@@ -63,7 +63,7 @@ router.get('/getProfileUserInformation', async (req, res) => {
 			bio: user.bio,
 			city: user.city,
 		};
-		if (req.user && (user.sharedWith.includes(req.user._id) || req.user._id === user._id)) {
+		if (req.user && (user.sharedWith.includes(JSON.stringify(req.user._id)) || JSON.stringify(req.user._id) == JSON.stringify(user._id))) {
 			userInfo.firstName = user.firstName;
 			userInfo.lastName = user.lastName;
 			userInfo.address = user.address;
@@ -80,22 +80,7 @@ router.get('/getProfileUserInformation', async (req, res) => {
 router.post('/editUserInfo', async (req, res) => {
 	logger.info('Edit User Information');
 	const userId = req.user ? req.user._id : '5e4dda4dff01201577298b58'; // hard coded for testing
-	const userInfo = { _id: userId };
-	const { firstName, lastName, username, email, sharedWith, birthday, city, profilePicture, address, favorites, hosting, bio, socket } = req.body;
-	if (firstName) userInfo.firstName = firstName;
-	if (lastName) userInfo.lastName = lastName;
-	if (username) userInfo.username = username;
-	if (email) userInfo.email = email;
-	if (birthday) userInfo.birthday = birthday;
-	if (profilePicture) userInfo.profilePicture = profilePicture;
-	if (address) userInfo.address = address;
-	if (bio) userInfo.bio = bio;
-	if (socket) userInfo.socket = socket;
-	if (favorites) userInfo.favorites = favorites;
-	if (sharedWith) userInfo.sharedWith = sharedWith;
-	if (hosting) userInfo.hosting = hosting;
-	if (city) userInfo.city = city;
-	console.log(userInfo);
+	const userInfo = { _id: userId, ...req.body };
 	let err = await User.updateUser(userInfo);
 	err ? res.status(400).send('Failed to Update User') : res.status(200).send('Updated user');
 });
