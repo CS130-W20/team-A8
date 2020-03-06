@@ -7,6 +7,7 @@ import Messages from "./components/Messages";
 import Profile from "./components/Profile";
 import Games from "./components/Games";
 import SingleGame from "./components/SingleGame";
+import PrivateMessage from "./components/PrivateMessage";
 
 class App extends Component {
   state = {
