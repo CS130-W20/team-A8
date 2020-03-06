@@ -152,7 +152,7 @@ class Messages extends React.Component {
                         </Button>
                       ]}
                     >
-                      <TextArea>
+                      <TextArea size="large">
                         {this.getChat("5e38acfa52525645babd8719")}
                       </TextArea>
                       <Search
