@@ -22,6 +22,7 @@ import "./SingleGame.css";
 const { Content } = Layout;
 const { Search } = Input;
 const { Title, Text } = Typography;
+const queryString = require('query-string');
 
 class SingleGame extends React.Component {
   constructor(props) {
@@ -30,11 +31,9 @@ class SingleGame extends React.Component {
       apiResponse: {},
       apiScreenshots: [],
       apiAges: {},
-      apiDescription: {},
-      apiGenre: {},
+      apiGenre: [],
       apiPlatforms: {},
       coverUrl: "",
-      descriptionFound: false
     };
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
@@ -67,33 +66,20 @@ class SingleGame extends React.Component {
   }
 
   getGame() {
+    const purl = queryString.parse(this.props.location.search); 
+    console.log(purl);
     var url =
       `http://localhost:9000/igdb/game?id=` +
-      new URLSearchParams(window.location.search).get("id");
+      queryString.parse(this.props.location.search).id;
     fetch(url)
       .then(res => res.json())
       .then(data =>
         this.setState({
           apiResponse: data,
-          apiScreenshots: data.screenshots, // find a way to loop over all screenshots
+          apiScreenshots: data.screenshots,
           apiAges: data.age_ratings[0][0],
-          apiGenre: data.genres[0][0], // find a way to loop over all genres so i can put in tags (use var i or something)
+          apiGenre: data.genres, 
           apiPlatforms: data.platforms[0][0]
-        })
-      )
-      .catch(err => console.log(`Error is: ${err}`));
-  }
-
-  getDescription() {
-    var url =
-      `http://localhost:9000/igdb/game?id=` +
-      new URLSearchParams(window.location.search).get("id");
-    fetch(url)
-      .then(res => res.json())
-      .then(data =>
-        this.setState({
-          apiDescription: data.age_ratings[1][0],
-          descriptionFound: true
         })
       )
       .catch(err => console.log(`Error is: ${err}`));
@@ -102,7 +88,7 @@ class SingleGame extends React.Component {
   cover() {
     var url =
       `http://localhost:9000/igdb/cover?id=` +
-      new URLSearchParams(window.location.search).get("id");
+      queryString.parse(this.props.location.search).id;
     fetch(url)
       .then(res => res.text())
       .then(data => this.setState({ coverUrl: data }))
@@ -111,7 +97,6 @@ class SingleGame extends React.Component {
 
   componentDidMount() {
     this.getGame();
-    this.getDescription();
     this.cover();
   }
 
@@ -161,15 +146,9 @@ class SingleGame extends React.Component {
             <div class="container">
               <Title>{this.state.apiResponse.name}</Title>
               <br />
-              {(() => {
-                if (this.state.descriptionFound) {
-                  return <Text>{this.state.apiDescription.synopsis}</Text>;
-                } else {
-                  return <Text>No description found.</Text>;
-                }
-              })()}
+              <Text>{this.state.apiResponse.summary}</Text>
               <br />
-              <Title level={2}>Screencaps</Title>
+              <Title level={2}>Screencap</Title>
             </div>
             <br />
             <Row type="flex" justify="space-around" align="middle">
@@ -240,9 +219,11 @@ class SingleGame extends React.Component {
                   </Descriptions.Item>
                 </Descriptions>
                 <div class="small-container">
-                  <Tag>{this.state.apiGenre.name}</Tag>
-                  <Tag>Action</Tag>
-                  <Tag>Classics</Tag>
+                  {this.state.apiGenre.map(elem => {
+                    return (
+                      <Tag>{elem[0].name}</Tag>
+                    );
+                  })}
                 </div>
               </Card>
             </div>

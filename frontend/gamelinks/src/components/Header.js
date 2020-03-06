@@ -13,7 +13,7 @@ const header = props => {
         <Link to="/people">hosts</Link>
       </Menu.Item>
       <Menu.Item>
-        <Link to={`/profile?id=${props.user._id}`}>profile</Link>
+        <Link to={`/profile?id=${props.user ? props.user._id : undefined}`}>profile</Link>
       </Menu.Item>
       <Menu.Item>
         <Link to="/inbox">inbox</Link>

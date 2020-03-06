@@ -11,7 +11,7 @@ import PrivateMessage from "./components/PrivateMessage";
 
 class App extends Component {
   state = {
-    user: "test" // Add more states and change this when linked with backend.
+    user: null,
   };
 
   setUser = (user) => {
@@ -26,7 +26,7 @@ class App extends Component {
         <div>
           <Header user={this.state.user} />
           <Switch>
-            <Route exact path="/" render={(props) => <Home user={this.state.user} { ...props } /> }  />
+            <Route exact path="/" render={(props) => <Home setUser={this.setUser} user={this.state.user} { ...props } /> }  />
             <Route path="/inbox" render={(props) => <Messages user={this.state.user} { ...props } /> } />
             <Route path="/messages" render={(props) => <PrivateMessage user={this.state.user} { ...props } /> } />
             <Route path="/games" render={(props) => <Games user={this.state.user} { ...props } /> } />

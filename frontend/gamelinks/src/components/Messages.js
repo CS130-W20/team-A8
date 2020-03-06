@@ -8,12 +8,13 @@ import {
   Icon,
   Input,
   Card,
-  Button
+  Button,
+  Modal
 } from "antd";
 import { Link, BrowserRouter, withRouter } from "react-router-dom";
 import config from "../config.json";
 
-const { Search } = Input;
+const { Search, TextArea } = Input;
 const { Content, Sider } = Layout;
 
 class Messages extends React.Component {
@@ -21,7 +22,8 @@ class Messages extends React.Component {
     super(props);
     this.state = {
       apiResponse: [],
-      title: ""
+      title: "",
+      visible: false
     };
   }
 
@@ -49,27 +51,42 @@ class Messages extends React.Component {
       .catch(err => console.log(`Error is: ${err}`));
   }
 
+  showModal = () => {
+    this.setState({
+      visible: true
+    });
+  };
+
+  // send dm
+  handleOk = e => {
+    console.log(e);
+    this.setState({
+      visible: false
+    });
+  };
+
+  // exit messaging modal
+  handleCancel = e => {
+    console.log(e);
+    this.setState({
+      visible: false
+    });
+  };
+
   componentDidMount() {
     this.connect();
     this.inbox();
   }
 
   render() {
+    const { visible, loading } = this.state;
+
     return (
       <BrowserRouter>
         <Layout style={{ minHeight: "90vh" }}>
           <Sider>
             <Avatar size={64} icon="user" />
-            {/* <Menu mode="inline">
-              <Menu.Item key="1">
-                <Link to="/profile">
-                  <Icon type="cross" />
-                  <span>Close Chat</span>
-                </Link>
-              </Menu.Item>
-              
-            </Menu> */}
-            <Menu theme="dark" mode="inline" defaultSelectedKeys={["4"]}>
+            <Menu theme="dark" mode="inline" defaultSelectedKeys={["3"]}>
               <Menu.Item key="1">
                 <Icon type="export" />
                 <span className="nav-text">refer host</span>
@@ -83,9 +100,9 @@ class Messages extends React.Component {
                 <span className="nav-text">inbox</span>
               </Menu.Item>
               <Menu.Item key="4">
-                <Link to="/profile">
+                <Link to={`/profile#/profile?id=undefined`}>
                   <Icon type="user" />
-                  <span className="nav-text">back to profile</span>
+                  back to profile
                 </Link>
               </Menu.Item>
             </Menu>
@@ -109,23 +126,44 @@ class Messages extends React.Component {
                   </div>
                 */}
                   <div className="p1">
-                    <Card title="Person 1">
-                      <Button
-                        onClick={() => this.getChat("5e38acfa52525645babd8719")}
-                      >
-                        Click me!
+                    <Card hoverable title="Person 1">
+                      <Button size="large" onClick={this.showModal}>
+                        Message
                       </Button>
                     </Card>
+                    {/* have a pop up modal with text area and messaging */}
+                    <Modal
+                      visible={this.state.visible}
+                      icon="user"
+                      title="Person Name"
+                      onOk={this.handleOk}
+                      onCancel={this.handleCancel}
+                      footer={[
+                        <Button key="back" onClick={this.handleCancel}>
+                          Return
+                          {/* </Button>,
+                        <Button
+                          key="submit"
+                          type="primary"
+                          // loading={loading}
+                          onClick={this.handleOk}
+                        >
+                          Send */}
+                        </Button>
+                      ]}
+                    >
+                      <TextArea>
+                        {this.getChat("5e38acfa52525645babd8719")}
+                      </TextArea>
+                      <Search
+                        size="large"
+                        enterButton="Send"
+                        onSearch={value => console.log(value)} // log to chat history too
+                      />
+                    </Modal>
                   </div>
                 </div>
               </div>
-              {/*
-              <Search
-                size="large"
-                enterButton="Send"
-                onSearch={value => console.log(value)}
-              />
-              */}
             </Content>
           </Layout>
         </Layout>

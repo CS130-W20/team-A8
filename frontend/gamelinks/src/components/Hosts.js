@@ -37,7 +37,38 @@ class Hosts extends React.Component {
   }
   state = {};
 
-  componentDidMount() {}
+  componentDidMount() {
+    // get host infos
+    axios
+      .get(`${config.backend_url}/profile/getCurrentUserInformation`)
+      .then(user => {
+        console.log(user);
+        this.props.setUser(user.data);
+      })
+      .then(() => {
+        return axios({
+          url: `${config.backend_url}/profile/getProfileUserInformation?id=${this.state.userId}`,
+          method: "GET"
+        });
+      })
+      .then(userInfo => {
+        console.log(userInfo.data._id);
+        this.setState({ userInfo: userInfo.data });
+        console.log(this.props.user);
+        console.log(userInfo.data._id === this.props.user._id);
+        if (this.props.user) {
+          this.setState({
+            isProfileOwner: userInfo.data._id === this.props.user._id
+          }); // check if the profile belongs to the current user.
+        }
+      })
+      .then(() => {
+        this.getGameList("hosting");
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
   render() {
     let createCards = type => {
       console.log("creatingCards");
