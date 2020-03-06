@@ -236,6 +236,41 @@ UserSchema.statics.updateUserGenres = async (updateInfo) => {
 	return;
 }
 
+UserSchema.statics.updateUserSharedWith = async (updateInfo) => {
+	logger.info('updating User sharedWith');
+	let user;
+	try {
+		user = await User.findById(updateInfo._id);
+		console.log(user);
+	} catch (err) {
+		console.log(err);
+		logger.error('user genre update error');
+		return err;
+	}
+	if (!user) {
+		logger.error('No user to update');
+		return 'No user to update';
+	}
+	try {
+		const updateId = updateInfo.updateId;
+		const operation = updateInfo.operation;
+		if (operation == "add"){
+			user.sharedWith.push(updateId);
+		} else if (operation == "remove" ) {
+			const index = user.sharedWith.indexOf(updateId);
+			if (index > -1){
+				user.sharedWith.splice(index, 1);
+			}
+		}
+		await user.save();
+	} catch (err) {
+		console.log(err);
+		logger.error('failed to update user sharedWith');
+		return err;
+	}
+	return;
+}
+
 UserSchema.statics.updateUser = async (updateInfo) => {
 	logger.info('updateUser');
 	console.log('sup', updateInfo)

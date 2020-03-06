@@ -126,6 +126,10 @@ router.post('/incrementGenreHistory', async (req,res) => {
 	err ? res.status(400).send('Failed to Update genre history') : res.status(200).send('Updated genre history');
 })
 
+/**
+ * Gets the current user's genre history
+ * Returns object mapping genre names to user's view counts
+ */
 router.get('/getGenreHistory', async(req,res) => {
 	logger.info ('getting current user\'s genre history');
 	console.log(req.user)
@@ -140,5 +144,31 @@ router.get('/getGenreHistory', async(req,res) => {
 	}
 	console.log(userInfo.userStats.genres);
 	res.status(200).send(userInfo.userStats.genres);
+})
+
+/**
+ * Adds a userId to the current user's sharedWith attribute
+ * @param {String} id the id of the person we are adding to the array
+ */
+router.post('/addSharedWith', async(req,res) => {
+	logger.info('adding to User\'s sharedWith attribute');
+	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
+	const { id } = req.query;
+	const updateJson = { _id: userId, updateId: id, operation: "add" };
+	let err = await User.updateUserSharedWith(updateJson);
+	err ? res.status(400).send('Failed to add to sharedWith attribute') : res.status(200).send('Updated sharedWith attribute');
+})
+
+/**
+ * Removes a userId from the current user's sharedWith attribute
+ * @param {String} id the id of the person we are removing from the array
+ */
+router.post('/removeSharedWith', async(req,res) => {
+	logger.info('removing from User\'s sharedWith attribute');
+	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
+	const { id } = req.query;
+	const updateJson = { _id: userId, updateId: id, operation: "remove" };
+	let err = await User.updateUserSharedWith(updateJson);
+	err ? res.status(400).send('Failed to remove from sharedWith attribute') : res.status(200).send('Updated sharedWith attribute');
 })
 module.exports = router;
