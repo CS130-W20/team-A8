@@ -15,7 +15,17 @@ class Home extends React.Component {
         <br /> <Title type="secondary">share what's good.</Title>
         <br />
         <div align="center">
-          <a href={`${config.backend_url}/auth/facebook`}><Button type='primary'>Login with Facebook</Button></a>
+          <a href={`${config.backend_url}/auth/facebook`}>
+            <div
+              class="fb-login-button"
+              data-width=""
+              data-size="large"
+              data-button-type="login_with"
+              data-layout="default"
+              data-auto-logout-link="true"
+              data-use-continue-as="false"
+            ></div>
+          </a>
         </div>
       </Content>
     );
