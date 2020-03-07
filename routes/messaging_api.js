@@ -73,6 +73,23 @@ router.get('/getChatHistory', async (req, res) => {
    }
 });
 
+router.post('/addToChatHistory', async (req, res) => {
+   logger.info('adding to chat history');
+   const message = {
+      userID1: req.body.userID1,
+      userID2: req.body.userID2,
+      text: req.body.message
+   };
+   try {
+      logger.info('found message');
+      await Chat.updateChat(message);
+      res.status(200).send('All good');
+   } catch (err) {
+      logger.error('error getting message');
+      res.status(400).send(err);
+   }
+});
+
 /**
  * Send private message to person you clicked on
  */

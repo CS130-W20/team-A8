@@ -81,12 +81,17 @@ ChatHistorySchema.statics.updateChat = async (updateInfo) => {
       return 'No chat to update'
    }
    try {
-      chat['history'].push(updateInfo['history']);
+      console.log(updateInfo['text']);
+      chat['history'].push(updateInfo['text']);
    } catch (err) {
       console.log(err);
       logger.error('failed to update chat');
       return err;
    }
+   chat.save(function(err) {
+      if (err) console.log(err);
+      else console.log("Successfully updated");
+   });
    return;
 }
 
