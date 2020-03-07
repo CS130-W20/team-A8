@@ -13,9 +13,13 @@ import {
 } from "antd";
 import { Link, BrowserRouter, withRouter } from "react-router-dom";
 import config from "../config.json";
+import { Socket, Event } from "react-socket-io";
 
 const { Search, TextArea } = Input;
 const { Content, Sider } = Layout;
+
+const uri = "http://localhost:9000";
+const options = { transports: ["websocket"] };
 
 class Messages extends React.Component {
   constructor(props) {
@@ -52,7 +56,12 @@ class Messages extends React.Component {
   }
 
   onSendMessage(value) {
-     console.log(value);
+    console.log(value);
+  }
+
+  // change this to log and append to string array in chatHistory db
+  onReceiveMessage(value) {
+    console.log(value);
   }
 
   showModal = () => {
@@ -86,6 +95,9 @@ class Messages extends React.Component {
     const { visible, loading } = this.state;
 
     return (
+      //   <Socket uri={uri} options={options}>
+      //   {this.props.children}
+      // </Socket>
       <BrowserRouter>
         <Layout style={{ minHeight: "90vh" }}>
           <Sider>
