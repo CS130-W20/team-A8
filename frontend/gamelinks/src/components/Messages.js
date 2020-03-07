@@ -14,6 +14,7 @@ import {
 import { Link, BrowserRouter, withRouter } from "react-router-dom";
 import config from "../config.json";
 import { Socket, Event } from "react-socket-io";
+import axios from "axios";
 
 const { Search, TextArea } = Input;
 const { Content, Sider } = Layout;
@@ -56,36 +57,36 @@ class Messages extends React.Component {
   }
 
   onSendMessage(value) {
-<<<<<<< HEAD
+    // const messageInfo = { ...this.state.userID1, userID2, history };
+    this.state.title = `Send Message`;
+    console.log("In onSendMessage");
     console.log(value);
-  }
-
-  // change this to log and append to string array in chatHistory db
-  onReceiveMessage(value) {
-    console.log(value);
-=======
-    this.state.title = `Send Message`
-    console.log('In onSendMessage');
-    console.log(value);
+    // replace with messageIndo
     var body_ = JSON.stringify({
-       userID1: "5e38acfa52525645babd8719", // Replace this with current user id
-       userID2: "5e38acfa52525645babd8719", // Replace this with chat partner id
-       message: value
+      userID1: "5e38acfa52525645babd8719", // Replace this with current user id
+      userID2: "5e38acfa52525645babd8719", // Replace this with chat partner id
+      message: value
     });
     console.log(body_);
     fetch(`${config.backend_url}/messaging/addToChatHistory`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json"
       },
       body: body_
     })
       .then(res => res.json())
       .then(data => this.setState({ apiResponse: data }))
       .catch(err => console.log(`Error is ${err}`));
->>>>>>> 566cdff4784493f6368f05e2f8ca8e7b3aaa18a2
+    // clear the message
   }
+
+  onReceiveMessage = async value => {
+    const messageInfo = { ...this.state.userID, value };
+    this.state.title = `Receive Message`;
+    await axios.post(`${config.backend_url}/messaging/addToChatHistory`, value);
+  };
 
   showModal = () => {
     this.setState({
@@ -112,16 +113,17 @@ class Messages extends React.Component {
   componentDidMount() {
     this.connect();
     this.inbox();
+    // connect w axios
   }
 
   render() {
     const { visible, loading } = this.state;
 
     return (
-      //   <Socket uri={uri} options={options}>
-      //   {this.props.children}
-      // </Socket>
       <BrowserRouter>
+        {/* <Socket uri={uri} options={options}>
+          {this.props}
+        </Socket> */}
         <Layout style={{ minHeight: "90vh" }}>
           <Sider>
             <Avatar size={64} icon="user" />
@@ -164,23 +166,26 @@ class Messages extends React.Component {
                     <Affix target={() => this.container}></Affix>
                   </div>
                 */}
-                  <div className="p1">
-                    <Card hoverable title="Person 1">
-                      <Button size="large" onClick={this.showModal}>
-                        Message
-                      </Button>
-                    </Card>
-                    {/* have a pop up modal with text area and messaging */}
-                    <Modal
-                      visible={this.state.visible}
-                      icon="user"
-                      title="Person Name"
-                      onOk={this.handleOk}
-                      onCancel={this.handleCancel}
-                      footer={[
-                        <Button key="back" onClick={this.handleCancel}>
-                          Return
-                          {/* </Button>,
+                  {/* have a pop up modal with text area and messaging */}
+
+                  {/* <div className="p1"> */}
+                  {this.state.apiResponse.map(elem => {
+                    return (
+                      <div className="p1">
+                        <Card hoverable title={elem.id}>
+                          <Button size="large" onClick={this.showModal}>
+                            Message
+                          </Button>
+                        </Card>
+                        <Modal
+                          visible={this.state.visible}
+                          title={elem.id}
+                          onOk={this.handleOk}
+                          onCancel={this.handleCancel}
+                          footer={[
+                            <Button key="back" onClick={this.handleCancel}>
+                              Return
+                              {/* </Button>,
                         <Button
                           key="submit"
                           type="primary"
@@ -188,19 +193,22 @@ class Messages extends React.Component {
                           onClick={this.handleOk}
                         >
                           Send */}
-                        </Button>
-                      ]}
-                    >
-                      <TextArea size="large">
-                        {this.getChat("5e38acfa52525645babd8719")}
-                      </TextArea>
-                      <Search
-                        size="large"
-                        enterButton="Send"
-                        onSearch={value => this.onSendMessage(value)} // log to chat history too
-                      />
-                    </Modal>
-                  </div>
+                            </Button>
+                          ]}
+                        >
+                          <TextArea size="large">
+                            {this.getChat("5e38acfa52525645babd8719")}
+                          </TextArea>
+                          <Search
+                            size="large"
+                            enterButton="Send"
+                            onSearch={value => this.onSendMessage(value)}
+                          />
+                        </Modal>
+                      </div>
+                    );
+                  })}
+                  {/* </div> */}
                 </div>
               </div>
             </Content>
