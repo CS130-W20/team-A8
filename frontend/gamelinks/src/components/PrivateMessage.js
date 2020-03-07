@@ -34,9 +34,28 @@ class PrivateMessage extends React.Component {
       console.log(message);
    }
 
-   onSendMessage(message) {
-      console.log(message);
-   }
+   onSendMessage(value) {
+      this.state.title = `Send Message`
+      console.log('In onSendMessage');
+      console.log(value);
+      var body_ = JSON.stringify({
+         userID1: "5e38acfa52525645babd8719", // Replace this with current user id
+         userID2: "5e38acfa52525645babd8719", // Replace this with chat partner id
+         message: value
+      });
+      console.log(body_);
+      fetch(`${config.backend_url}/messaging/addToChatHistory`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: body_
+      })
+        .then(res => res.json())
+        .then(data => this.setState({ apiResponse: data }))
+        .catch(err => console.log(`Error is ${err}`));
+    }
 
    render() {
       return(
