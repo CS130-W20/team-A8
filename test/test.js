@@ -1,7 +1,32 @@
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const app = require('../index');
+chai.use(chaiHttp);
+chai.should();
+
 const assert = require('assert');
 const mapFunctions = require('../helpers/map');
 const igdbFunctions = require('../routes/helpers/igdb_helper');
 
+describe("Routes", () => {
+    describe("GET /getGameInfo", () => {
+        it("should get a single game info from db", (done) => {
+            const id = 1;
+            chai.request(app)
+                .get('/games/getGameInfo/?id=123')
+                .end((err,res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    console.log(res.body)
+
+                    done();
+                });
+
+        })
+    })
+})
+
+/*
 describe('Map Functions', function() {
   describe('#addressToGeocoordinates()', function() {
     // A string explanation of what we're testing
@@ -65,3 +90,4 @@ describe('IGDB APis', function() {
         });
     });
 });
+*/

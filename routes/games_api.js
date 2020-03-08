@@ -17,8 +17,12 @@ const logger = winston.createLogger({
 router.post('/IncOrDecLikes', async (req, res) => {
 	logger.info('Incrementing or decrementing number of likes');
 	const { id, inc } = req.query;
-	const err = (inc == 'true') ? await Game.IncrementLike(id, true) : await Game.IncrementLike(id, false);
-	return err ? res.status(400).send('Failed to change likes') : res.status(200).send('Successfully changed likes');
+	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
+	const userInfo = { _id: userId, favorites: { id: id}};
+	userInfo.favorites.operation = (inc == 'true') ? "add" : "remove";
+	const errUser = await User.updateUser(userInfo);
+	const errGame = (inc == 'true') ? await Game.IncrementLike(id, true) : await Game.IncrementLike(id, false);
+	return (errUser || errGame) ? res.status(400).send('Failed to change likes or add to user favorites') : res.status(200).send('Successfully changed likes');
 });
 
 /**
@@ -41,4 +45,15 @@ router.post('/addHost', async (req, res) => {
 	const err = await Game.AddHost(id, userId);
 	return err ? res.status(400).send('Failed to add host') : res.status(200).send('Successfully added host');
 });
+
+/**
+ * Remove host from game in our db
+ */
+router.post('/removeHost', async (req, res) => {
+	logger.info('Removing host from game');
+	const { id, userId } = req.query;
+	const err = await Game.RemoveHost(id, userId);
+	return err ? res.status(400).send('Failed to remove host') : res.status(200).send('Successfully removed host');
+});
+
 module.exports = router;

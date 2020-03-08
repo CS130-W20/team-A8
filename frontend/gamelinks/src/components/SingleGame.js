@@ -16,6 +16,7 @@ import {
 } from "antd";
 import { BrowserRouter, Link } from "react-router-dom";
 import FacebookLoginButton from "./FacebookLoginButton";
+import config from "../config.json";
 
 import "./SingleGame.css";
 
@@ -55,19 +56,8 @@ class SingleGame extends React.Component {
       .join(" ");
     return ts;
   }
-  onFacebookLogin(loginStatus, resultObject) {
-    // if (loginStatus === true) {
-    //   this.setState({
-    //     username: resultObject.user.name
-    //   });
-    // } else {
-    //   alert("Facebook login error");
-    // }
-  }
 
   getGame() {
-    const purl = queryString.parse(this.props.location.search); 
-    console.log(purl);
     var url =
       `http://localhost:9000/igdb/game?id=` +
       queryString.parse(this.props.location.search).id;
@@ -98,6 +88,7 @@ class SingleGame extends React.Component {
   componentDidMount() {
     this.getGame();
     this.cover();
+    console.log(this.props.user);
   }
 
   render() {
@@ -191,13 +182,13 @@ class SingleGame extends React.Component {
           </Col>
           <Col span={8}>
             <div class="container">
-              {/* if user is not logged in, show this button and link to the facebook*/}
-              <FacebookLoginButton onLogin={this.onFacebookLogin}>
-                <Button>sign in to log, rate, or review</Button>
-              </FacebookLoginButton>
-              <br />
-              <Button>share</Button>
-              <br />
+              { this.props.user
+              ? <Button>share</Button>
+              : <a href={`${config.backend_url}/auth/facebook`}>
+                  <Button>Log in with Facebook</Button>
+                </a>
+              }
+              <br/>
               <Card title="Details" style={{ width: 350 }}>
                 <Descriptions>
                   <Descriptions.Item label="platform">

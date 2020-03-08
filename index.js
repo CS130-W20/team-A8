@@ -57,3 +57,5 @@ app.get('/', function(req, res) {
 http.listen(9000, function(){
 	console.log('listening on *:9000');
 });
+
+module.exports = app;

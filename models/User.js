@@ -236,6 +236,41 @@ UserSchema.statics.updateUserGenres = async (updateInfo) => {
 	return;
 }
 
+UserSchema.statics.updateUserSharedWith = async (updateInfo) => {
+	logger.info('updating User sharedWith');
+	let user;
+	try {
+		user = await User.findById(updateInfo._id);
+		console.log(user);
+	} catch (err) {
+		console.log(err);
+		logger.error('user genre update error');
+		return err;
+	}
+	if (!user) {
+		logger.error('No user to update');
+		return 'No user to update';
+	}
+	try {
+		const updateId = updateInfo.updateId;
+		const operation = updateInfo.operation;
+		if (operation == "add"){
+			user.sharedWith.push(updateId);
+		} else if (operation == "remove" ) {
+			const index = user.sharedWith.indexOf(updateId);
+			if (index > -1){
+				user.sharedWith.splice(index, 1);
+			}
+		}
+		await user.save();
+	} catch (err) {
+		console.log(err);
+		logger.error('failed to update user sharedWith');
+		return err;
+	}
+	return;
+}
+
 UserSchema.statics.updateUser = async (updateInfo) => {
 	logger.info('updateUser');
 	console.log('sup', updateInfo)
@@ -253,8 +288,18 @@ UserSchema.statics.updateUser = async (updateInfo) => {
 	}
 	try {
 		for (let key1 of Object.keys(updateInfo)) {
-         if (user[key1] && user[key1].constructor === Array) {
-            user[key1].push(updateInfo[key1]);
+         if (user[key1] && Number.isInteger(user[key1].length)) {
+			 const { id, operation } = updateInfo[key1];
+			 const index = user[key1].indexOf(id);
+			 if (operation == "add") {
+				if (index == -1) {
+					user[key1].push(id);
+				}
+			 } else if (operation == "remove") {
+				if (index > -1){
+					user[key1].splice(index, 1);
+				}
+			 }
          } else {
             user[key1] = updateInfo[key1];
          }
