@@ -13,6 +13,8 @@ import {
 } from "antd";
 import { Link, BrowserRouter, withRouter } from "react-router-dom";
 import config from "../config.json";
+// diff package
+import io from "socket.io-client";
 import { Socket, Event } from "react-socket-io";
 import axios from "axios";
 
@@ -29,6 +31,27 @@ class Messages extends React.Component {
       apiResponse: [],
       title: "",
       visible: false
+    };
+
+    this.socket = io("localhost:8080");
+
+    this.socket.on("RECEIVE_MESSAGE", function(data) {
+      addMessage(data);
+    });
+
+    const addMessage = data => {
+      console.log(data);
+      this.setState({ messages: [...this.state.messages, data] });
+      console.log(this.state.messages);
+    };
+
+    this.sendMessage = ev => {
+      ev.preventDefault();
+      this.socket.emit("SEND_MESSAGE", {
+        author: this.state.username,
+        message: this.state.message
+      });
+      this.setState({ message: "" });
     };
   }
 
@@ -197,6 +220,14 @@ class Messages extends React.Component {
                           ]}
                         >
                           <TextArea size="large">
+                            {this.state.messages.map(message => {
+                              return (
+                                <div>
+                                  {message.author}: {message.message}
+                                </div>
+                              );
+                            })}
+
                             {this.getChat(this.props.user._id)}
                           </TextArea>
                           <Search
