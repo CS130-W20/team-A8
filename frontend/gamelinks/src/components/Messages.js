@@ -63,8 +63,8 @@ class Messages extends React.Component {
     console.log(value);
     // replace with messageIndo
     var body_ = JSON.stringify({
-      userID1: "5e38acfa52525645babd8719", // Replace this with current user id
-      userID2: "5e38acfa52525645babd8719", // Replace this with chat partner id
+      userID1: this.props.user._id, // Replace this with current user id
+      userID2: this.props.user._id, // Replace this with chat partner id
       message: value
     });
     console.log(body_);
@@ -197,7 +197,7 @@ class Messages extends React.Component {
                           ]}
                         >
                           <TextArea size="large">
-                            {this.getChat("5e38acfa52525645babd8719")}
+                            {this.getChat(this.props.user._id)}
                           </TextArea>
                           <Search
                             size="large"
