@@ -30,6 +30,11 @@ module.exports = (router, passport) => {
 		})(req, res, next);
 	});
 
+	router.get('/logout', async (req, res) => {
+		req.logout();
+		res.redirect('/#/');
+	});
+
 	router.get('/deauth', async (req, res) => {
 		console.log('/deauth')
 		const { _id } = req.user
