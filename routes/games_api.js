@@ -45,4 +45,15 @@ router.post('/addHost', async (req, res) => {
 	const err = await Game.AddHost(id, userId);
 	return err ? res.status(400).send('Failed to add host') : res.status(200).send('Successfully added host');
 });
+
+/**
+ * Remove host from game in our db
+ */
+router.post('/removeHost', async (req, res) => {
+	logger.info('Removing host from game');
+	const { id, userId } = req.query;
+	const err = await Game.RemoveHost(id, userId);
+	return err ? res.status(400).send('Failed to remove host') : res.status(200).send('Successfully removed host');
+});
+
 module.exports = router;

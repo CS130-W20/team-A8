@@ -86,4 +86,37 @@ GameSchema.statics.AddHost = async (gameId, userId) => {
 		return 'Failed to update hosts'
 	}
 }
+
+/**
+ * Removes user ID from a given game's hosts array
+ * @param {string} gameId the ID of the game
+ * @param {string} userId the ID of the user
+ */
+GameSchema.statics.RemoveHost = async (gameId, userId) => {
+	logger.info('remove host');
+	let game;
+	try {
+		game = await Game.findOne({id: gameId});
+	} catch (err) {
+		logger.error('Error finding game');
+		return 'Error finding game';
+	}
+	if (!game) {
+		const gameInfo = { id: gameId, likes: 0, hosts: [userId] };
+		await Game.create(gameInfo);
+		return;
+	}
+	try {
+		let newHosts = game.hosts;
+		const index = newHosts.indexOf(userId)
+		if (index > -1) {
+			newHosts.splice(index, 1);
+		}
+		const gameInfo = { "id": gameId, "hosts": newHosts};
+		await Game.update(gameInfo);
+	} catch (err) {
+		logger.error('failed to update hosts');
+		return 'Failed to update hosts'
+	}
+}
 module.exports = Game = mongoose.model('Game', GameSchema);
