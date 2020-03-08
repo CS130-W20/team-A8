@@ -14,6 +14,7 @@ import {
   Input,
   Carousel
 } from "antd";
+import axios from 'axios';
 import { BrowserRouter, Link } from "react-router-dom";
 import FacebookLoginButton from "./FacebookLoginButton";
 import config from "../config.json";
@@ -35,6 +36,9 @@ class SingleGame extends React.Component {
       apiGenre: [],
       apiPlatforms: {},
       coverUrl: "",
+
+      hosting: false,
+      hosts: []
     };
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
@@ -85,10 +89,57 @@ class SingleGame extends React.Component {
       .catch(err => console.log(`Error is: ${err}`));
   }
 
+  hostGame = async () => {
+    const id = queryString.parse(this.props.location.search).id;
+    const userId = this.props.user._id;
+    console.log("Adding Host for game " + id + " for user " + userId);
+    await axios.post(`${config.backend_url}/games/addHost`, 
+      null, 
+      { params: {id, userId}})
+      .then(res => {
+        this.setState( {hosting: true});
+        console.log(res);
+      })
+      .catch(err => console.warn(err));
+  }
+
+  unhostGame = async () => {
+    const id = queryString.parse(this.props.location.search).id;
+    const userId = this.props.user._id;
+    console.log("Removing Host for game " + id + " for user " + userId);
+    await axios.post(`${config.backend_url}/games/removeHost`, 
+      null, 
+      { params: {id, userId}})
+      .then(res => {
+        this.setState( {hosting: false})
+        console.log(res);
+      })
+      .catch(err => console.warn(err));
+  }
+
+  getHosts() {
+    const id = queryString.parse(this.props.location.search).id;
+    var url = `${config.backend_url}/games/getGameInfo?id=${id}`
+    fetch(url)
+      .then(res => res.json())
+      .then(data => this.checkHost(data.hosts))
+      .catch(err => console.warn(err));
+  }
+  
+  checkHost(hosts) {
+    this.state.hosts = hosts;
+    const userId = this.props.user._id;
+    if(hosts.indexOf(userId) > -1)
+      this.state.hosting = true;
+    console.log(this.state.hosts);
+    console.log("hosting is " + this.state.hosting);
+  }
+
+  
   componentDidMount() {
     this.getGame();
     this.cover();
-    console.log(this.props.user);
+    this.getHosts();
   }
 
   render() {
@@ -182,11 +233,13 @@ class SingleGame extends React.Component {
           </Col>
           <Col span={8}>
             <div class="container">
-              { this.props.user
-              ? <Button>share</Button>
-              : <a href={`${config.backend_url}/auth/facebook`}>
-                  <Button>Log in with Facebook</Button>
-                </a>
+              { this.props.user ? 
+                  this.state.hosting ?
+                    <Button onClick={this.unhostGame}>Stop Hosting</Button>
+                    :<Button onClick={this.hostGame}>Host</Button>
+                  :<a href={`${config.backend_url}/auth/facebook`}>
+                    <Button>Log in with Facebook</Button>
+                  </a>
               }
               <br/>
               <Card title="Details" style={{ width: 350 }}>
