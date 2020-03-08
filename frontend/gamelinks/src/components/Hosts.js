@@ -11,16 +11,19 @@ import {
   Avatar,
   Form,
   Upload,
-  Button
+  Button,
+  message
 } from "antd";
 import "antd/dist/antd.css";
+import AddInfoForm from "./addInfoForm";
+
 import { Link, BrowserRouter as Router, withRouter } from "react-router-dom";
 import queryString from "query-string";
 import axios from "axios";
 import "./Hosts.css";
 import config from "../config.json";
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 const { Content } = Layout;
 
 class Hosts extends React.Component {
@@ -28,13 +31,12 @@ class Hosts extends React.Component {
     super(props);
     this.nextHosting = this.nextHosting.bind(this);
     this.prevHosting = this.prevHosting.bind(this);
-    this.nextFavorites = this.nextFavorites.bind(this);
-    this.prevFavorites = this.prevFavorites.bind(this);
     const values = queryString.parse(props.location.search);
     this.state.userId = values.id;
     this.carouselHosting = React.createRef();
+    console.log(props);
   }
-  state = {};
+  state = { userId: null };
 
   componentDidMount() {
     // get host infos
@@ -53,16 +55,9 @@ class Hosts extends React.Component {
       .then(userInfo => {
         console.log(userInfo.data._id);
         this.setState({ userInfo: userInfo.data });
-        console.log(this.props.user);
-        console.log(userInfo.data._id === this.props.user._id);
-        if (this.props.user) {
-          this.setState({
-            isProfileOwner: userInfo.data._id === this.props.user._id
-          }); // check if the profile belongs to the current user.
-        }
       })
       .then(() => {
-        this.getHostList(userInfo.data.city);
+        this.getHostList(this.state.userInfo.data.city);
       })
       // .then(() => {
       //   this.getGameList("hosting");
@@ -81,7 +76,7 @@ class Hosts extends React.Component {
 
   getHostList = async loc => {
     // once google maps api is set up we can post people near user location
-    if (!this.state.userInfo || !this.state.userInfo[type]) {
+    if (!this.state.userInfo) {
       // TEST:  if (!this.state.userInfo || !this.state.userInfo[type])
       return <Empty />;
     }

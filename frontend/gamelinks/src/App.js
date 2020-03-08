@@ -6,6 +6,7 @@ import Home from "./components/Home";
 import Messages from "./components/Messages";
 import Profile from "./components/Profile";
 import Games from "./components/Games";
+import Hosts from "./components/Hosts";
 import SingleGame from "./components/SingleGame";
 
 class App extends Component {
@@ -40,13 +41,17 @@ class App extends Component {
               path="/inbox"
               render={props => <Messages user={this.state.user} {...props} />}
             />
-            {/* <Route
+            <Route
               path="/messages"
-              render={props => <Message user={this.state.user} {...props} />}
-            /> */}
+              render={props => <Messages user={this.state.user} {...props} />}
+            />
             <Route
               path="/games"
               render={props => <Games user={this.state.user} {...props} />}
+            />
+            <Route
+              path="/people"
+              render={props => <Hosts user={this.state.user} {...props} />}
             />
             <Route
               path="/singlegame"
