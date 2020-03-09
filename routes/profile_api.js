@@ -24,7 +24,7 @@ cloudinary.config({
 router.get('/getCurrentUserInformation', async (req, res) => {
 	logger.info ('getting current users');
 	console.log('req', req.user);
-	const userId = req.user ? req.user._id : null; // hard coded for testing
+	const userId = req.user ? req.user._id : "5e5ec0db5839764b608826c6"; // hard coded for testing
 	let userInfo;
 	try {
 		userInfo = await User.findById(userId);
@@ -79,7 +79,7 @@ router.get('/getProfileUserInformation', async (req, res) => {
  */
 router.post('/editUserInfo', async (req, res) => {
 	logger.info('Edit User Information');
-	const userId = req.user ? req.user._id : '5e4dda4dff01201577298b58'; // hard coded for testing
+	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
 	const userInfo = { _id: userId, ...req.body };
 	let err = await User.updateUser(userInfo);
 	err ? res.status(400).send('Failed to Update User') : res.status(200).send('Updated user');
@@ -100,7 +100,7 @@ router.post('/editProfilePicture', upload, async (req, res) => {
 		console.log(err);
 	}
 	const { url } = cloudRes;
-	const userId = req.user ? req.user._id : '5e4dda4dff01201577298b58'; // hard coded for testing
+	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
 	const userInfo = { _id: userId, profilePicture: url };
 	try {
 		await User.updateUser(userInfo);

@@ -99,14 +99,13 @@ var GenreStatsSchema = new mongoose.Schema({
 })
 
 var UserStatSchema = new mongoose.Schema({
-   favoriteGames: {
-      type: [String],
-      required: false,
+   timePlayed: {
+	   type: Map
    },
-   timePlayed: Map,
    genres: {
 	   type: GenreStatsSchema,
-	   required: false
+	   required: false,
+	   default: {}
    }
 });
 
@@ -179,7 +178,8 @@ var UserSchema = new mongoose.Schema({
       required: false,
    },
    userStats: {
-      type: UserStatSchema,
+	  type: UserStatSchema,
+	  default: {},
       required: false,
    }
 });
@@ -306,9 +306,9 @@ UserSchema.statics.updateUser = async (updateInfo) => {
 
 			// Update geocoordinates too if the address is updated
 			if (key1 == 'address') {
-				const { lat, long } = map.addressToGeocoordinates(updateInfo[key1], maps_api_key);
+				const { lat, lng } = await map.addressToGeocoordinates(updateInfo[key1], maps_api_key);
 				user['latitude'] = lat;
-				user['longitude'] = long;
+				user['longitude'] = lng;
          }
 		}
 		await user.save();
