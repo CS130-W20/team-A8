@@ -24,7 +24,6 @@ cloudinary.config({
  */
 router.get('/getCurrentUserInformation', async (req, res) => {
 	logger.info ('getting current users');
-	console.log('req', req.user);
 	const userId = req.user ? req.user._id : "5e5ec0db5839764b608826c6"; // hard coded for testing
 	let userInfo;
 	try {
@@ -33,7 +32,6 @@ router.get('/getCurrentUserInformation', async (req, res) => {
 		logger.error('got an error finding user');
 		res.status(400).send(err);
 	}
-	console.log('userinfo', userInfo);
 	res.status(200).send(userInfo);
 });
 
@@ -71,7 +69,6 @@ router.get('/getProfileUserInformation', async (req, res) => {
 			userInfo.lastName = user.lastName;
 			userInfo.address = user.address;
 		}
-		console.log('profile', userInfo);
 		res.status(200).send(userInfo);
 	}
 });
@@ -120,6 +117,7 @@ router.post('/editProfilePicture', upload, async (req, res) => {
  * Finds the distance between a given user and the current user;
  */
 router.get('/distance', async (req, res) => {
+	logger.info('/distance')
 	const userId = req.user ? req.user._id : '5e658f62f143961df1ac0bb5';
 	const { lat, long } = req.query;
 	let userInfo;
@@ -129,10 +127,9 @@ router.get('/distance', async (req, res) => {
 		logger.error('got an error finding user');
 		return res.status(400).send(err);
 	}
-	console.log(userInfo);
-	const distance = { distance: map.distanceBtwnGeocoords(lat, long, userInfo.latitude, userInfo.longitude) };
-	
-	res.status(200).send(distance);
+	const distance = map.distanceBtwnGeocoords(lat, long, userInfo.latitude, userInfo.longitude)
+	console.log('DISTANCE-----------------------------------------------', distance)
+	res.status(200).send({distance});
 });
 
 /**
@@ -143,7 +140,6 @@ router.post('/incrementGenreHistory', async (req,res) => {
 	logger.info('Increment Genre History');
 	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
 	const userInfo = { _id: userId};
-	console.log(req.body);
 	let genreIds = req.body.genres;
 	userInfo.genres = genreIds
 	let err = await User.updateUserGenres(userInfo);
@@ -156,8 +152,6 @@ router.post('/incrementGenreHistory', async (req,res) => {
  */
 router.get('/getGenreHistory', async(req,res) => {
 	logger.info ('getting current user\'s genre history');
-	console.log(req.user)
-	console.log(req.session)
 	const userId = req.user ? req.user._id : "5e5ec0db5839764b608826c6"; // hard coded for testing
 	let userInfo;
 	try {
@@ -166,7 +160,6 @@ router.get('/getGenreHistory', async(req,res) => {
 		logger.error('got an error finding user');
 		res.status(400).send(err);
 	}
-	console.log(userInfo.userStats.genres);
 	res.status(200).send(userInfo.userStats.genres);
 })
 
