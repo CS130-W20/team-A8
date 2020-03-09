@@ -51,16 +51,17 @@ class Messages extends React.Component {
       console.log(this.state.messages);
     };
 
-    this.sendMessage = () => {
+    this.sendMessage = msg => {
       console.log('Sending message');
-      this.setState({ partner: "5e62cc6ce58febae4fe096f7" });
+      this.setState({ partner: "5e62c499cb2728634289d6ab" });
       // ev.preventDefault();
+      // this.setState({ message: msg })
       this.socket.emit("SEND_MESSAGE", {
         author: this.state.username,
         user: this.state.partner,
-        message: this.state.message
+        message: msg
       });
-      this.setState({ message: "" });
+      // this.setState({ message: "" });
     };
   }
 
@@ -92,7 +93,7 @@ class Messages extends React.Component {
   onSendMessage(value) {
     const m = {author: this.props.user.firstName, user: this.state.partner, message: value};
     this.addMessage(m);
-    this.sendMessage();
+    this.sendMessage(value);
 
     // const messageInfo = { ...this.state.userID1, userID2, history };
     this.state.title = `Send Message`;
@@ -101,7 +102,7 @@ class Messages extends React.Component {
     // replace with messageIndo
     var body_ = JSON.stringify({
       userID1: this.props.user._id, // Replace this with current user id
-      userID2: "5e62cc6ce58febae4fe096f7", // Replace this with chat partner id
+      userID2: "5e62c499cb2728634289d6ab", // Replace this with chat partner id
       message: m
     });
     console.log(body_);
@@ -151,6 +152,15 @@ class Messages extends React.Component {
     this.connect();
     this.inbox();
     // connect w axios
+  }
+
+  onChange = (e) => {
+     this.setState({ message: e.target.value });
+  }
+
+  handleEnter = (e) => {
+    this.onSendMessage(this.state.message);
+    this.setState({ message: '' }); 
   }
 
   render() {
@@ -233,10 +243,11 @@ class Messages extends React.Component {
                           </List>
                           <Search
                             size="large"
+                            placeholder="Enter here"
+                            value={this.state.message || ''}
                             enterButton="Send"
-                            onSearch={value => {
-                               this.onSendMessage(value);
-                            }}
+                            onChange={this.onChange}
+                            onPressEnter={this.handleEnter}
                           />
                         </Modal>
                       </div>
