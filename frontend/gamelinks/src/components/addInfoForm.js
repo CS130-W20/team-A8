@@ -12,7 +12,7 @@ class AddInfoForm extends React.Component {
     }
     render() {
         const { getFieldDecorator } = this.props.form;
-        const address = this.props.user.address.split(',');
+        const address = this.props.user.address ? this.props.user.address.split(',') : ['', '', '', '', ''];
         let addr1, addr2, city, state, zip;
         if (address.length == 5) {
             [addr1, addr2, city, state, zip] = address;
