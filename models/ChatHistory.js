@@ -18,7 +18,7 @@ var ChatHistorySchema = new mongoose.Schema({
       required: true,
    },
    history: {
-      type: [String],
+      type: [mongoose.Schema.Types.Mixed],
       required: false,
    }
 });

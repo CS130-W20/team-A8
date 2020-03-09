@@ -28,10 +28,30 @@ router.get('/inbox', async (req, res) => {
    if (!user) {
       return res.status(400).send('Could not find user');
    }
-   const userInfo = {
-      chatPartners: user.chatPartners,
-   };
-   res.status(200).send(userInfo.chatPartners);
+
+   const resArr = user.chatPartners.map(async elem => {
+      let u;
+      try {
+         u = await User.findById(elem);
+      } catch (err) {
+         logger.error('error finding user');
+         res.status(400).sendDate(err);
+      }
+      if (!u) {
+         return res.status(400).send('Could not find user');
+      }
+      const userInfo = {
+         id: elem,
+         name: u.firstName
+      };
+      return userInfo;
+   });
+
+   const users = await Promise.all(resArr);
+   console.log(users);
+
+   // Await the populate function
+   res.status(200).send(users);
 });
 
 /**
@@ -82,6 +102,7 @@ router.post('/addToChatHistory', async (req, res) => {
    };
    try {
       logger.info('found message');
+      console.log(message);
       await Chat.updateChat(message);
       res.status(200).send('All good');
    } catch (err) {
