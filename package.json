@@ -30,5 +30,10 @@
    },
    "scripts": {
       "test": "mocha --timeout 10000 --exit"
+   },
+   "apidoc": {
+      "name": "Gamelinks",
+      "title": "Gamelinks",
+      "url": "localhost/"
    }
 }

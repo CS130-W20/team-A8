@@ -74,14 +74,20 @@ class SingleGame extends React.Component {
       this.gid;
     fetch(url)
       .then(res => res.json())
-      .then(data =>
+      .then(data => {
         this.setState({
           apiResponse: data,
           apiScreenshots: data.screenshots,
-          apiAges: data.age_ratings[0][0],
           apiGenre: data.genres, 
           apiPlatforms: data.platforms[0][0]
         })
+        if (data.has("screenshots")) {
+          this.setState({apiScreenshots: data.screenshots});
+        }
+        if (data.has("age_ratings")) {
+          this.setState({apiAges: data.age_ratings[0][0]});
+        }
+      }
       )
       .catch(err => console.log(`Error is: ${err}`));
   }
@@ -274,7 +280,8 @@ class SingleGame extends React.Component {
                   ref={node => (this.carousel = node)}
                   {...carouselProps}
                 >
-                  {this.state.apiScreenshots.map(elem => {
+                  {this.state.apiScreenshots ?
+                  this.state.apiScreenshots.map(elem => {
                     return (
                       <div align="center" className="carousel-container">
                         <img
@@ -285,7 +292,7 @@ class SingleGame extends React.Component {
                         />
                       </div>
                     );
-                  })}
+                  }): false}
                 </Carousel>
               </Col>
               <Col span={2}>

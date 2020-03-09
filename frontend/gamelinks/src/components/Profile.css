@@ -125,16 +125,19 @@
     width: 200px;
 }
 
-.name-text-box {
-    position: absolute;
-    width: 150px;
+.card-text-box {
+    max-width: 200px;
+    width: 100%;
+    float: center;
+    background: black;
 }
 
-.name-text {
+.card-text {
     color: white;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    width: 200px;
 }
 
 .scroll {

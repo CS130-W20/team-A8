@@ -10,7 +10,6 @@ import {
     Button,
     message,
 } from 'antd';
-import 'antd/dist/antd.css';
 import AddInfoForm from './addInfoForm';
 import { Link, BrowserRouter as Router, withRouter } from "react-router-dom";
 import queryString from 'query-string';
@@ -59,9 +58,9 @@ class Profile extends React.Component {
                 this.setState({ userInfo: userInfo.data });
                 if (this.props.user) {
                     this.setState({ isProfileOwner: userInfo.data._id === this.props.user._id })  // check if the profile belongs to the current user.
-                    if (this.props.user.latitude && this.props.user.longitude) {
+                    if (userInfo.data.latitude && userInfo.data.longitude) {
                         return axios({
-                            url: `${config.backend_url}/profile/distance?lat=${this.props.user.latitude}&long=${this.props.user.longitude}`,
+                            url: `${config.backend_url}/profile/distance?lat=${userInfo.data.latitude}&long=${userInfo.data.longitude}`,
                             method: 'GET'
                         })
                     }
@@ -234,6 +233,7 @@ class Profile extends React.Component {
     }
 
     render() {
+        
         let createCards = (type) => {
             console.log('creatingCards')
             const gameInfo = this.state[type];
@@ -245,11 +245,11 @@ class Profile extends React.Component {
                         <Link to={`/singlegame/?id=${gameInfo[i].data.id}`}>
                             <img src={"http://" + gameInfo[i+1].data} />
                         </Link>
-                        <div className="name-text-box">
-                            <a className="name-text">{gameInfo[i].data.name}</a>
+                        <div className="card-text-box">
+                            <span className="card-text">{gameInfo[i].data.name}</span>
                             <br/>
                             { this.state.isProfileOwner && 
-                                <Text className='name-text' style={{ cursor: 'pointer' }}onClick={ () => { this.removeCard(type, gameInfo[i].data.id) }}>Remove</Text>
+                                <Text className='card-text' style={{ cursor: 'pointer' }}onClick={ () => { this.removeCard(type, gameInfo[i].data.id) }}>Remove</Text>
                             }
                         </div>
                     </div>
@@ -265,7 +265,8 @@ class Profile extends React.Component {
             dots: true,
             speed: 500,
             circular: false,
-            slidesToScroll: 4
+            slidesToScroll: 4,
+            slidesToShow: 4
         };
         return (
             <div id='main'>

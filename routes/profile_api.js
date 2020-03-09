@@ -20,11 +20,10 @@ cloudinary.config({
 });
 
 /**
- * Retrieves all information about the logged in user.
+ * @api {get} /profile/getCurrentUserInformation Retrieves all information about the logged in user.
  */
 router.get('/getCurrentUserInformation', async (req, res) => {
 	logger.info ('getting current users');
-	console.log('req', req.user);
 	const userId = req.user ? req.user._id : "5e5ec0db5839764b608826c6"; // hard coded for testing
 	let userInfo;
 	try {
@@ -33,14 +32,13 @@ router.get('/getCurrentUserInformation', async (req, res) => {
 		logger.error('got an error finding user');
 		res.status(400).send(err);
 	}
-	console.log('userinfo', userInfo);
 	res.status(200).send(userInfo);
 });
 
 /**
  * TODO: Once Google Maps API is set up, use the location of the user in order to find distance. put this in public information.
- * This will give the information of another person's profile. The next two params are query parameters
- * @param {Integer} id the id of the person we want to get info from.
+ * @api {get} /profile/getProfileUserInformation Get information from another user's profile
+ * @apiParam {Integer} id the id of the person we want to get info from.
  */
 router.get('/getProfileUserInformation', async (req, res) => {
 	logger.info('getting profile users information');
@@ -71,14 +69,14 @@ router.get('/getProfileUserInformation', async (req, res) => {
 			userInfo.lastName = user.lastName;
 			userInfo.address = user.address;
 		}
-		console.log('profile', userInfo);
 		res.status(200).send(userInfo);
 	}
 });
 
 /**
- * Updates fields inside of the user database. Place update information in the request body.
- * Options are firstName, lastName, username, email, birthday, profilePicture, address, hosting, and favorites.
+ * @api {post} /profile/editUserInfo Updates fields inside of the user database 
+ * @apiDescription Options are firstName, lastName, username, email, birthday, profilePicture, address, hosting, and favorites.
+ * Place update information in the request body.
  */
 router.post('/editUserInfo', async (req, res) => {
 	logger.info('Edit User Information');
@@ -92,7 +90,9 @@ router.post('/editUserInfo', async (req, res) => {
 
 /**
  * TODO: test with req.file after FrontEnd finished code for it
- * this endpoint allows users to edit their profile picture. Frontend: this is coded to work with an upload function
+ *  Frontend: this is coded to work with an upload function
+ * @api {post} /profile/editProfilePicture Allows users to edit their profile picture.
+ * @apiParam {Object} file object file representing profile picture
  */
 
 router.post('/editProfilePicture', upload, async (req, res) => {
@@ -117,9 +117,12 @@ router.post('/editProfilePicture', upload, async (req, res) => {
 });
 
 /**
- * Finds the distance between a given user and the current user;
+ * @api {get} /profile/distance Finds the distance between a given user and the current user;
+ * @apiParam {Number} lat latitude
+ * @apiParam {Number} long longitude
  */
 router.get('/distance', async (req, res) => {
+	logger.info('/distance')
 	const userId = req.user ? req.user._id : '5e658f62f143961df1ac0bb5';
 	const { lat, long } = req.query;
 	let userInfo;
@@ -129,21 +132,20 @@ router.get('/distance', async (req, res) => {
 		logger.error('got an error finding user');
 		return res.status(400).send(err);
 	}
-	console.log(userInfo);
-	const distance = { distance: map.distanceBtwnGeocoords(lat, long, userInfo.latitude, userInfo.longitude) };
-	
-	res.status(200).send(distance);
+	const distance = map.distanceBtwnGeocoords(lat, long, userInfo.latitude, userInfo.longitude)
+	console.log('DISTANCE-----------------------------------------------', distance)
+	res.status(200).send({distance});
 });
 
 /**
- * Updates user's genre viewing history in the user database. 
- * (i.e. { "genres": [ 12, 17, 20 ] } )
+ * @api {post} /profile/incrementGenreHistory Updates user's genre viewing history in the user database. 
+ * @apiParam {[String]} genres String array representing genres in the req.body 
+ * @apiDescription (i.e. { "genres": [ 12, 17, 20 ] } )
  */
 router.post('/incrementGenreHistory', async (req,res) => {
 	logger.info('Increment Genre History');
 	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
 	const userInfo = { _id: userId};
-	console.log(req.body);
 	let genreIds = req.body.genres;
 	userInfo.genres = genreIds
 	let err = await User.updateUserGenres(userInfo);
@@ -151,13 +153,11 @@ router.post('/incrementGenreHistory', async (req,res) => {
 })
 
 /**
- * Gets the current user's genre history
- * Returns object mapping genre names to user's view counts
+ * @api {get} /profile/getGenreHistory Gets the current user's genre history
+ * @apiDescription Returns object mapping genre names to user's view counts
  */
 router.get('/getGenreHistory', async(req,res) => {
 	logger.info ('getting current user\'s genre history');
-	console.log(req.user)
-	console.log(req.session)
 	const userId = req.user ? req.user._id : "5e5ec0db5839764b608826c6"; // hard coded for testing
 	let userInfo;
 	try {
@@ -166,13 +166,12 @@ router.get('/getGenreHistory', async(req,res) => {
 		logger.error('got an error finding user');
 		res.status(400).send(err);
 	}
-	console.log(userInfo.userStats.genres);
 	res.status(200).send(userInfo.userStats.genres);
 })
 
 /**
- * Adds a userId to the current user's sharedWith attribute
- * @param {String} id the id of the person we are adding to the array
+ * @api /profile/addSharedWith Adds a userId to the current user's sharedWith attribute
+ * @apiParam {String} id the id of the person we are adding to the array
  */
 router.post('/addSharedWith', async(req,res) => {
 	logger.info('adding to User\'s sharedWith attribute');
@@ -184,8 +183,8 @@ router.post('/addSharedWith', async(req,res) => {
 })
 
 /**
- * Removes a userId from the current user's sharedWith attribute
- * @param {String} id the id of the person we are removing from the array
+ * @api /profile/removeSharedWith Removes a userId from the current user's sharedWith attribute
+ * @apiParam {String} id the id of the person we are removing from the array
  */
 router.post('/removeSharedWith', async(req,res) => {
 	logger.info('removing from User\'s sharedWith attribute');
