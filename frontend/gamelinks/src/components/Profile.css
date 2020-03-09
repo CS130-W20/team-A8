@@ -13,6 +13,12 @@
     margin-left: 50px;
 }
 
+#edit {
+    right: 30px;
+    position: absolute;
+    bottom: 20px;
+}
+
 .profile_image {
     position: absolute;
     height: 150px;
@@ -49,6 +55,11 @@
 #loc {
     position: absolute;
     bottom: 0;
+}
+
+#distance {
+    position: absolute;
+    bottom: -20px;
 }
 
 #name {
