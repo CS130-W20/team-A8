@@ -31,7 +31,7 @@ router.get('/inbox', async (req, res) => {
    const userInfo = {
       chatPartners: user.chatPartners,
    };
-   res.status(200).send(userInfo);
+   res.status(200).send(userInfo.chatPartners);
 });
 
 /**

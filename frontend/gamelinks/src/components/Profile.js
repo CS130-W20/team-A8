@@ -56,12 +56,22 @@ class Profile extends React.Component {
                 })
             })
             .then((userInfo) => {
-                console.log(userInfo.data._id);
                 this.setState({ userInfo: userInfo.data });
-                console.log(this.props.user);
-                console.log(userInfo.data._id === this.props.user._id)
                 if (this.props.user) {
                     this.setState({ isProfileOwner: userInfo.data._id === this.props.user._id })  // check if the profile belongs to the current user.
+                    if (this.props.user.latitude && this.props.user.longitude) {
+                        return axios({
+                            url: `${config.backend_url}/profile/distance?lat=${this.props.user.latitude}&long=${this.props.user.longitude}`,
+                            method: 'GET'
+                        })
+                    }
+                }
+                return null;
+            })
+            .then((distance) => {
+                console.log(distance);
+                if (distance) {
+                    this.setState({ distance: distance.data.distance });
                 }
             })
             .then(() => { // TODO: add or condition once we figure out if they shared their private info
@@ -253,7 +263,8 @@ class Profile extends React.Component {
                     visible={this.state.showAdditionalInfoModal}
                     footer={[]}
                 >
-                    <AddInfoForm setAddInfo={this.setAddInfo} />
+                    <Text>Other users will only be able to see the City you are in. You can choose to share your full address with other users.</Text>
+                    <AddInfoForm setAddInfo={this.setAddInfo} user={this.props.user} />
                 </Modal>
                 <Modal 
                     title='Change Profile Picture' 
@@ -293,6 +304,7 @@ class Profile extends React.Component {
                                 : <Title>{ this.state.userInfo.username }</Title>)
                             }
                         </div>
+                        <br />
                         <div id='loc'>
                             { (this.state.userInfo && (this.state.userInfo.address))
                                 ? <Title level={3}>{ this.state.userInfo.address }</Title>
@@ -300,8 +312,14 @@ class Profile extends React.Component {
                                     ? <Title level={3}>{ this.state.userInfo.city }</Title> 
                                     : <></>)
                             }
+                            { this.state.distance && 
+                                <Title level={3}>Distance: { this.state.distance } miles</Title>
+                            }
                         </div>
                     </div>
+                    { this.state.isProfileOwner && 
+                        <Text id='edit_info' onClick={this.openAdditionalInfoModal}>Edit profile</Text>
+                    }
                 </div>
                 <hr />
                 <div id='hosting'>
