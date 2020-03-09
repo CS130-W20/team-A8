@@ -288,7 +288,9 @@ UserSchema.statics.updateUser = async (updateInfo) => {
 	}
 	try {
 		for (let key1 of Object.keys(updateInfo)) {
-         if (user[key1] && Number.isInteger(user[key1].length)) {
+         if (user[key1] && Number.isInteger(user[key1].length) && !(typeof user[key1] === 'string' || user[key1] instanceof String)) {
+			 console.log(user[key1])
+			 console.log(user[key1].length)
 			 const { id, operation } = updateInfo[key1];
 			 const index = user[key1].indexOf(id);
 			 if (operation == "add") {
@@ -301,6 +303,7 @@ UserSchema.statics.updateUser = async (updateInfo) => {
 				}
 			 }
          } else {
+			 console.log('hi', key1)
             user[key1] = updateInfo[key1];
          }
 
@@ -311,6 +314,7 @@ UserSchema.statics.updateUser = async (updateInfo) => {
 				user['longitude'] = lng;
          }
 		}
+		console.log(user);
 		await user.save();
 	} catch (err) {
 		console.log(err);
