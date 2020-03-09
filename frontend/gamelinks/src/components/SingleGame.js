@@ -109,6 +109,15 @@ class SingleGame extends React.Component {
         console.log(res);
       })
       .catch(err => console.warn(err));
+    const userInfo = {...this.state.userInfo, hosting: { id: id, operation: "add"}};
+    axios.post(`${config.backend_url}/profile/editUserInfo`, userInfo)
+      .then(res => {
+        this.setState({ userInfo })
+        console.log(res);
+      })
+      .catch(err => {
+        console.warn(err)
+      });
   }
 
   unhostGame = async () => {
@@ -123,6 +132,15 @@ class SingleGame extends React.Component {
         console.log(res);
       })
       .catch(err => console.warn(err));
+    const userInfo = {...this.state.userInfo, hosting: { id: id, operation: "remove"}};
+    axios.post(`${config.backend_url}/profile/editUserInfo`, userInfo)
+      .then(res => {
+        this.setState({ userInfo })
+        console.log(res);
+      })
+      .catch(err => {
+        console.warn(err)
+      });
   }
 
   initialize() {
