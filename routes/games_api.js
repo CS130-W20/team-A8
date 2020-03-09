@@ -17,7 +17,7 @@ const logger = winston.createLogger({
 router.post('/IncOrDecLikes', async (req, res) => {
 	logger.info('Incrementing or decrementing number of likes');
 	const { id, inc } = req.query;
-	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
+	const userId = req.user ? req.user._id : '5e65afa04f3f0246e8e01740'; // hard coded for testing
 	const userInfo = { _id: userId, favorites: { id: id}};
 	userInfo.favorites.operation = (inc == 'true') ? "add" : "remove";
 	const errUser = await User.updateUser(userInfo);

@@ -31,6 +31,13 @@
     cursor: pointer;
 }
 
+#edit_info {
+    position: absolute;
+    cursor: pointer;
+    bottom: 0;
+    right: 110px;
+}
+
 #name_and_loc {
     position: absolute;
     left: 300px;
