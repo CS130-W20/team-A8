@@ -10,7 +10,6 @@ import {
     Button,
     message,
 } from 'antd';
-import 'antd/dist/antd.css';
 import AddInfoForm from './addInfoForm';
 import { Link, BrowserRouter as Router, withRouter } from "react-router-dom";
 import queryString from 'query-string';
@@ -238,7 +237,7 @@ class Profile extends React.Component {
                             <img src={"http://" + gameInfo[i+1].data} />
                         </Link>
                         <div className="name-text-box">
-                            <a className="name-text">{gameInfo[i].data.name}</a>
+                            <span className="name-text">{gameInfo[i].data.name}</span>
                             <br/>
                             { this.state.isProfileOwner && 
                                 <Text className='name-text' style={{ cursor: 'pointer' }}onClick={ () => { this.removeCard(type, gameInfo[i].data.id) }}>Remove</Text>

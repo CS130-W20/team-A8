@@ -126,8 +126,7 @@
 }
 
 .name-text-box {
-    position: absolute;
-    width: 150px;
+    max-width: 200px;
 }
 
 .name-text {
@@ -135,6 +134,7 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    width: 200px;
 }
 
 .scroll {

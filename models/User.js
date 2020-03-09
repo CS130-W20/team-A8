@@ -19,7 +19,7 @@ var GenreStatsSchema = new mongoose.Schema({
 		type: Number,
 		default: 0
 	},
-	"quiz-trivia": {
+	'quiz-trivia': {
 		type: Number,
 		default: 0
 	},
@@ -35,7 +35,7 @@ var GenreStatsSchema = new mongoose.Schema({
 		type: Number,
 		default: 0
 	},
-	"role-playing-rpg": {
+	'role-playing-rpg': {
 		type: Number,
 		default: 0
 	},
@@ -51,7 +51,7 @@ var GenreStatsSchema = new mongoose.Schema({
 		type: Number,
 		default: 0
 	},
-	"turn-based-strategy-tbs": {
+	'turn-based-strategy-tbs': {
 		type: Number,
 		default: 0
 	},
@@ -63,15 +63,15 @@ var GenreStatsSchema = new mongoose.Schema({
 		type: Number,
 		default: 0
 	},
-	"real-time-strategy-rts": {
+	'real-time-strategy-rts': {
 		type: Number,
 		default: 0
 	},
-	"hack-and-slash-beat-em-up": {
+	'hack-and-slash-beat-em-up': {
 		type: Number,
 		default: 0
 	},
-	"visual-novel": {
+	'visual-novel': {
 		type: Number,
 		default: 0
 	},
@@ -91,22 +91,22 @@ var GenreStatsSchema = new mongoose.Schema({
 		type: Number,
 		default: 0
 	},
-	"point-and-click": {
+	'point-and-click': {
 		type: Number,
 		default: 0
 	},
 
-})
+});
 
 var UserStatSchema = new mongoose.Schema({
-   timePlayed: {
+	timePlayed: {
 	   type: Map
-   },
-   genres: {
+	},
+	genres: {
 	   type: GenreStatsSchema,
 	   required: false,
 	   default: {}
-   }
+	}
 });
 
 var UserSchema = new mongoose.Schema({
@@ -120,8 +120,7 @@ var UserSchema = new mongoose.Schema({
 	},
 	username: {
 		type: String,
-		required: false,
-		unique: true,
+		required: false
 	},
 	birthday: {
 		type: String,
@@ -172,16 +171,16 @@ var UserSchema = new mongoose.Schema({
 	longitude: {
 		type: Number,
 		required: false,
-   },
-   chatPartners: {
-      type: [String],
-      required: false,
-   },
-   userStats: {
+	},
+	chatPartners: {
+		type: [String],
+		required: false,
+	},
+	userStats: {
 	  type: UserStatSchema,
 	  default: {},
-      required: false,
-   }
+		required: false,
+	}
 });
 
 UserSchema.statics.findOrCreate = async (userInfo, done) => {
@@ -224,7 +223,7 @@ UserSchema.statics.updateUserGenres = async (updateInfo) => {
 	}
 	try {
 		for(let genreId of updateInfo.genres){
-			let genreName = genreIdToName[genreId]
+			let genreName = genreIdToName[genreId];
 			user.userStats.genres[genreName] += 1;
 		}
 		await user.save();
@@ -234,7 +233,7 @@ UserSchema.statics.updateUserGenres = async (updateInfo) => {
 		return err;
 	}
 	return;
-}
+};
 
 UserSchema.statics.updateUserSharedWith = async (updateInfo) => {
 	logger.info('updating User sharedWith');
@@ -254,9 +253,9 @@ UserSchema.statics.updateUserSharedWith = async (updateInfo) => {
 	try {
 		const updateId = updateInfo.updateId;
 		const operation = updateInfo.operation;
-		if (operation == "add"){
+		if (operation == 'add'){
 			user.sharedWith.push(updateId);
-		} else if (operation == "remove" ) {
+		} else if (operation == 'remove' ) {
 			const index = user.sharedWith.indexOf(updateId);
 			if (index > -1){
 				user.sharedWith.splice(index, 1);
@@ -269,11 +268,11 @@ UserSchema.statics.updateUserSharedWith = async (updateInfo) => {
 		return err;
 	}
 	return;
-}
+};
 
 UserSchema.statics.updateUser = async (updateInfo) => {
 	logger.info('updateUser');
-	console.log('sup', updateInfo)
+	console.log('sup', updateInfo);
 	let user;
 	try {
 		user = await User.findById(updateInfo._id);
@@ -288,28 +287,28 @@ UserSchema.statics.updateUser = async (updateInfo) => {
 	}
 	try {
 		for (let key1 of Object.keys(updateInfo)) {
-         if (user[key1] && Number.isInteger(user[key1].length)) {
+			if (user[key1] && Number.isInteger(user[key1].length) && !(typeof user[key1] === 'string' || user[key1] instanceof String)) {
 			 const { id, operation } = updateInfo[key1];
 			 const index = user[key1].indexOf(id);
-			 if (operation == "add") {
-				if (index == -1) {
-					user[key1].push(id);
-				}
-			 } else if (operation == "remove") {
-				if (index > -1){
-					user[key1].splice(index, 1);
-				}
+			 if (operation == 'add') {
+					if (index == -1) {
+						user[key1].push(id);
+					}
+			 } else if (operation == 'remove') {
+					if (index > -1){
+						user[key1].splice(index, 1);
+					}
 			 }
-         } else {
-            user[key1] = updateInfo[key1];
-         }
+			} else {
+				user[key1] = updateInfo[key1];
+			}
 
 			// Update geocoordinates too if the address is updated
 			if (key1 == 'address') {
 				const { lat, lng } = await map.addressToGeocoordinates(updateInfo[key1], maps_api_key);
 				user['latitude'] = lat;
 				user['longitude'] = lng;
-         }
+			}
 		}
 		await user.save();
 	} catch (err) {

@@ -85,7 +85,9 @@ router.post('/editUserInfo', async (req, res) => {
 	logger.info('Edit User Information');
 	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
 	const userInfo = { _id: userId, ...req.body };
+	console.log(req.body);
 	let err = await User.updateUser(userInfo);
+	console.log(err);
 	err ? res.status(400).send('Failed to Update User') : res.status(200).send('Updated user');
 });
 

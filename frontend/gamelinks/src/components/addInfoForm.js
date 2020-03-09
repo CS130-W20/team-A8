@@ -12,8 +12,13 @@ class AddInfoForm extends React.Component {
     }
     render() {
         const { getFieldDecorator } = this.props.form;
-        const address = this.props.user.address.split(',');
-        const addr2 = address.length === 5 ? address[1] : '';
+        const address = this.props.user.address ? this.props.user.address.split(',') : ['', '', '', '', ''];
+        let addr1, addr2, city, state, zip;
+        if (address.length == 5) {
+            [addr1, addr2, city, state, zip] = address;
+        } else {
+            [addr1, city, state, zip] = address;
+        }
         return (
             <Form name='addInfo-form' onSubmit={this.handleAdditionalInfoOk}>
                 <Form.Item label='Username'>
@@ -27,7 +32,7 @@ class AddInfoForm extends React.Component {
                 <Form.Item label='Address Line 1'>
                     {getFieldDecorator('addr1', {
                         rules: [{required: true, message: 'Please input an Address'}],
-                        initialValue: address[0],
+                        initialValue: addr1,
                     })(
                         <Input />
                     )}
@@ -42,7 +47,7 @@ class AddInfoForm extends React.Component {
                 <Form.Item label='City'>
                     {getFieldDecorator('city', {
                         rules: [{required: true, message: 'Please input a city'}],
-                        initialValue: address[2]
+                        initialValue: city,
                     })(
                         <Input />
                     )}
@@ -50,7 +55,7 @@ class AddInfoForm extends React.Component {
                 <Form.Item label='State'>
                     {getFieldDecorator('state', {
                         rules: [{required: true, message: 'Please input a state'}],
-                        initialValue: address[3],
+                        initialValue: state,
                     })(
                         <Input />
                     )}
@@ -58,7 +63,7 @@ class AddInfoForm extends React.Component {
                 <Form.Item label='Zip Code'>
                     {getFieldDecorator('zip', {
                         rules: [{required: true, message: 'Please input a zip code'}],
-                        initialValue: address[4],
+                        initialValue: zip,
                     })(
                         <Input />
                     )}
