@@ -39,7 +39,7 @@ ChatHistorySchema.statics.inDatabase = async (user1, user2) => {
 
 ChatHistorySchema.statics.findOrCreate = async (userInfo) => {
    logger.info('Chat history findOrCreate');
-   let user1, user2;
+   let user, user1, user2;
    let chat;
    try {
       user1 = await User.findById(userInfo.userID1);
@@ -51,14 +51,42 @@ ChatHistorySchema.statics.findOrCreate = async (userInfo) => {
       logger.error('find user error');
       return err;
    }
+   if (!user1 || !user2) {
+      logger.error('Did not find one or both of the users');
+      return 'Error';
+   }
    chat = await ChatHistory.inDatabase(user1._id, user2._id);
    if (!chat) {
       logger.info('No chat. Creating one');
       try {
          chat = await ChatHistory.create(userInfo);
          console.log(chat);
+         
+         // Add to my chat partner
+         const usrInfo1 = {
+            _id: user1._id,
+            chatPartners: {
+               id: user2._id,
+               operation: 'add'
+            }
+         }
+         user1 = await User.updateUser(usrInfo1);
+
+         // Add myself to partner's chat partner
+         const usrInfo2 = {
+            _id: user2._id,
+            chatPartners: {
+               id: user1._id,
+               operation: 'add'
+            }
+         }
+         user2 = await User.updateUser(usrInfo2);
       } catch (err) {
          logger.error('failed to create chat');
+         return err;
+      }
+      if (!user1 || !user2) {
+         logger.error('failed to add chat partner');
          return err;
       }
    }

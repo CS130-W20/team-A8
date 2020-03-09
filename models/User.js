@@ -288,17 +288,17 @@ UserSchema.statics.updateUser = async (updateInfo) => {
 	try {
 		for (let key1 of Object.keys(updateInfo)) {
 			if (user[key1] && Number.isInteger(user[key1].length) && !(typeof user[key1] === 'string' || user[key1] instanceof String)) {
-			 const { id, operation } = updateInfo[key1];
-			 const index = user[key1].indexOf(id);
-			 if (operation == 'add') {
-					if (index == -1) {
-						user[key1].push(id);
-					}
-			 } else if (operation == 'remove') {
-					if (index > -1){
-						user[key1].splice(index, 1);
-					}
-			 }
+			  const { id, operation } = updateInfo[key1];
+			  const index = user[key1].indexOf(id);
+			  if (operation == 'add') {
+			 		if (index == -1) {
+			 			user[key1].push(id);
+			 		}
+			  } else if (operation == 'remove') {
+			 		if (index > -1){
+			 			user[key1].splice(index, 1);
+			 		}
+			  }
 			} else {
 				user[key1] = updateInfo[key1];
 			}

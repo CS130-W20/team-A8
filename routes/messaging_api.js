@@ -26,19 +26,20 @@ router.get('/inbox', async (req, res) => {
       res.status(400).sendDate(err);
    }
    if (!user) {
-      return res.status(400).send('Could not find user');
+      return res.status(400).send('Could not find user (before chat parnters)');
    }
 
    const resArr = user.chatPartners.map(async elem => {
       let u;
       try {
+         console.log(elem);
          u = await User.findById(elem);
       } catch (err) {
          logger.error('error finding user');
          res.status(400).sendDate(err);
       }
       if (!u) {
-         return res.status(400).send('Could not find user');
+         return res.status(400).send('Could not find user (after chat partners)');
       }
       const userInfo = {
          id: elem,
