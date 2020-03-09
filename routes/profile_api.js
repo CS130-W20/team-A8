@@ -3,6 +3,7 @@ const winston = require('winston');
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 const User = require('../models/User');
+const map = require('../helpers/map');
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' }).single('myImage');
 
@@ -62,6 +63,8 @@ router.get('/getProfileUserInformation', async (req, res) => {
 			profilePicture: user.profilePicture,
 			bio: user.bio,
 			city: user.city,
+			latitude: user.latitude,
+			longitude: user.longitude,
 		};
 		if (req.user && (user.sharedWith.includes(JSON.stringify(req.user._id)) || JSON.stringify(req.user._id) == JSON.stringify(user._id))) {
 			userInfo.firstName = user.firstName;
@@ -112,6 +115,25 @@ router.post('/editProfilePicture', upload, async (req, res) => {
 });
 
 /**
+ * Finds the distance between a given user and the current user;
+ */
+router.get('/distance', async (req, res) => {
+	const userId = req.user ? req.user._id : '5e658f62f143961df1ac0bb5';
+	const { lat, long } = req.query;
+	let userInfo;
+	try {
+		userInfo = await User.findById(userId);
+	} catch (err) {
+		logger.error('got an error finding user');
+		return res.status(400).send(err);
+	}
+	console.log(userInfo);
+	const distance = { distance: map.distanceBtwnGeocoords(lat, long, userInfo.latitude, userInfo.longitude) };
+	
+	res.status(200).send(distance);
+});
+
+/**
  * Updates user's genre viewing history in the user database. 
  * (i.e. { "genres": [ 12, 17, 20 ] } )
  */
@@ -152,7 +174,7 @@ router.get('/getGenreHistory', async(req,res) => {
  */
 router.post('/addSharedWith', async(req,res) => {
 	logger.info('adding to User\'s sharedWith attribute');
-	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
+	const userId = req.user ? req.user._id : '5e575cf533813248d7906079'; // hard coded for testing
 	const { id } = req.query;
 	const updateJson = { _id: userId, updateId: id, operation: "add" };
 	let err = await User.updateUserSharedWith(updateJson);

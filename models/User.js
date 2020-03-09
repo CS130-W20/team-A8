@@ -306,9 +306,9 @@ UserSchema.statics.updateUser = async (updateInfo) => {
 
 			// Update geocoordinates too if the address is updated
 			if (key1 == 'address') {
-				const { lat, long } = map.addressToGeocoordinates(updateInfo[key1], maps_api_key);
+				const { lat, lng } = await map.addressToGeocoordinates(updateInfo[key1], maps_api_key);
 				user['latitude'] = lat;
-				user['longitude'] = long;
+				user['longitude'] = lng;
          }
 		}
 		await user.save();
