@@ -87,9 +87,10 @@ class Messages extends React.Component {
     }
   }
 
-  getChat(partner) {
+  getChat(partnerID) {
     this.state.title = `Chat`;
-    fetch(`${config.backend_url}/messaging/getChatHistory?id=${partner}`)
+    this.setState({ partner: partnerID });
+    fetch(`${config.backend_url}/messaging/getChatHistory?id=${partnerID}`)
       .then(res => res.json())
       .then(data => this.setState({ messages: data }))
       .catch(err => console.log(`Error is: ${err}`));
