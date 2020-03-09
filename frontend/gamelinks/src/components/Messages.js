@@ -54,7 +54,6 @@ class Messages extends React.Component {
 
     this.sendMessage = msg => {
       console.log('Sending message');
-      this.setState({ partner: "5e65fe3ca75f63546b2d1250" });
       // ev.preventDefault();
       // this.setState({ message: msg })
       this.socket.emit("SEND_MESSAGE", {
@@ -82,10 +81,8 @@ class Messages extends React.Component {
        .then(data => this.setState({ apiResponse: data }))
        .catch(err => console.log(`Error is: ${err}`));
     if (window.location.href.includes('messages')) {
-       console.log('TRYING TO GET MAIN CHAT');
-       this.setState({ visible: true });
        const partnerID = window.location.href.split("?id=");
-       console.log(partnerID);
+       this.setState({ visible: true, partner: partnerID[1] });
        this.getChat(partnerID[1]);
     }
   }
@@ -111,7 +108,7 @@ class Messages extends React.Component {
     // replace with messageIndo
     var body_ = JSON.stringify({
       userID1: this.props.user._id, // Replace this with current user id
-      userID2: "5e65fe3ca75f63546b2d1250", // Replace this with chat partner id
+      userID2: this.state.partner, // Replace this with chat partner id
       message: m
     });
     console.log(body_);

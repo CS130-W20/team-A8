@@ -26,8 +26,12 @@ var ChatHistorySchema = new mongoose.Schema({
 ChatHistorySchema.statics.inDatabase = async (user1, user2) => {
    logger.info('checking in database');
    let chat1, chat2;
+   console.log(user1);
+   console.log(user2);
    chat1 = await ChatHistory.findOne({ userID1: user1, userID2: user2 }).exec();
    chat2 = await ChatHistory.findOne({ userID1: user2, userID2: user1 }).exec();
+   console.log(chat1);
+   console.log(chat2);
    if (chat1) {
       return chat1;
    }
@@ -39,6 +43,7 @@ ChatHistorySchema.statics.inDatabase = async (user1, user2) => {
 
 ChatHistorySchema.statics.findOrCreate = async (userInfo) => {
    logger.info('Chat history findOrCreate');
+   console.log(userInfo);
    let user, user1, user2;
    let chat;
    try {
@@ -64,29 +69,25 @@ ChatHistorySchema.statics.findOrCreate = async (userInfo) => {
          
          // Add to my chat partner
          const usrInfo1 = {
-            _id: user1._id,
+            _id: userInfo.userID1,
             chatPartners: {
-               id: user2._id,
+               id: userInfo.userID2,
                operation: 'add'
             }
          }
-         user1 = await User.updateUser(usrInfo1);
+         await User.updateUser(usrInfo1);
 
          // Add myself to partner's chat partner
          const usrInfo2 = {
-            _id: user2._id,
+            _id: userInfo.userID2,
             chatPartners: {
-               id: user1._id,
+               id: userInfo.userID1,
                operation: 'add'
             }
          }
-         user2 = await User.updateUser(usrInfo2);
+         await User.updateUser(usrInfo2);
       } catch (err) {
          logger.error('failed to create chat');
-         return err;
-      }
-      if (!user1 || !user2) {
-         logger.error('failed to add chat partner');
          return err;
       }
    }
@@ -95,6 +96,7 @@ ChatHistorySchema.statics.findOrCreate = async (userInfo) => {
 
 ChatHistorySchema.statics.updateChat = async (updateInfo) => {
    logger.info('updateChat');
+   console.log(updateInfo);
    let chat;
    try {
       chat = await ChatHistory.inDatabase(updateInfo.userID1, updateInfo.userID2);
