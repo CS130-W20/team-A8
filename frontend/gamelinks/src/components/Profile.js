@@ -69,9 +69,8 @@ class Profile extends React.Component {
                 return null;
             })
             .then((distance) => {
-                console.log(distance);
                 if (distance) {
-                    this.setState({ distance: distance.data.distance });
+                    this.setState({ distance: distance.data.distance.toString() });
                 }
             })
             .then(() => { // TODO: add or condition once we figure out if they shared their private info
@@ -157,6 +156,10 @@ class Profile extends React.Component {
 
     closeAdditionalInfoModal = () => {
         this.setState({ showAdditionalInfoModal: false });
+    }
+
+    handleProfileModalCancel = () => {
+        this.setState({ showProfileModal: false });
     }
 
     handleProfileModalOk = async (e) => {
@@ -312,13 +315,13 @@ class Profile extends React.Component {
                                     ? <Title level={3}>{ this.state.userInfo.city }</Title> 
                                     : <></>)
                             }
-                            { this.state.distance && 
-                                <Title level={3}>Distance: { this.state.distance } miles</Title>
-                            }
                         </div>
+                        { this.state.distance && 
+                            <Text id='distance'>{ this.state.distance } miles away</Text>
+                        }
                     </div>
                     { this.state.isProfileOwner && 
-                        <Text id='edit_info' onClick={this.openAdditionalInfoModal}>Edit profile</Text>
+                        <Button type='primary' id='edit' onClick={this.openAdditionalInfoModal}>Edit profile</Button>
                     }
                 </div>
                 <hr />
@@ -367,6 +370,7 @@ class Profile extends React.Component {
                     </div>
                 </div>
                 <div id='bio'>
+                    
                     <div id='bio_title'>
                         <Title level={3}>bio</Title>
                     </div>

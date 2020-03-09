@@ -52,7 +52,7 @@ function onConnect(socket) {
       socket: socket.id
    };
    User.updateUser(userInfo);
-   socket.on('chat message', privateMessage);
+   socket.on('SEND_MESSAGE', privateMessage);
 };
 
 /**
@@ -77,7 +77,7 @@ function updateUserSocket(user) {
  * @param {String} msg - holds the message the user typed and received
  * @returns {void} - does not return anything
  */
-async function privateMessage(msg, usr) {
+async function privateMessage(msg_info) {
    // Update chat partners
    /*
    let user;
@@ -97,8 +97,8 @@ async function privateMessage(msg, usr) {
 
    console.log(msg + "to" + usr);
    */
-   console.log(usr);
-   this_io.to(usr).emit('private message', msg);
+   console.log(msg_info);
+   this_io.to(msg_info.user).emit('RECEIVE_MESSAGE', msg_info.message);
 }
 
 /**
