@@ -10,11 +10,11 @@ chai.should();
 describe("Profile Page Lifecycle Scenario", () => {
     let currentUser;
     const userInfo = {
-        firstName: "Billy",
-        lastName: "Bob",
-        username: "user1",
-        email: "user1@email.com",
-        fbAccessToken: "123",
+        firstName: "Michelle",
+        lastName: "Tran",
+        username: "michellet",
+        email: "michellet3302@gmail.com",
+        fbAccessToken: "abcdefg12345",
     };
     describe("User Creation", () => {
         it("should create a new user in our db", async () => {
