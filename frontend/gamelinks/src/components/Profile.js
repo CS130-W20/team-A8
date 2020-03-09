@@ -58,9 +58,9 @@ class Profile extends React.Component {
                 this.setState({ userInfo: userInfo.data });
                 if (this.props.user) {
                     this.setState({ isProfileOwner: userInfo.data._id === this.props.user._id })  // check if the profile belongs to the current user.
-                    if (this.props.user.latitude && this.props.user.longitude) {
+                    if (userInfo.data.latitude && userInfo.data.longitude) {
                         return axios({
-                            url: `${config.backend_url}/profile/distance?lat=${this.props.user.latitude}&long=${this.props.user.longitude}`,
+                            url: `${config.backend_url}/profile/distance?lat=${userInfo.data.latitude}&long=${userInfo.data.longitude}`,
                             method: 'GET'
                         })
                     }
