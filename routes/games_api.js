@@ -10,9 +10,11 @@ const logger = winston.createLogger({
 });
 
 /**
- * Increments or decrements the number of likes that a game has. 
+ * @api {post} /games/IncOrDecLikes
+ * @apiParam {String} id Game ID
+ * @apiParam {String} inc String for increment/decrement
+ * @apiDescription Increments or decrements the number of likes that a game has. 
  * query string inc=true/false to either increment or decrement.
- * query string id for the game id.
  */
 router.post('/IncOrDecLikes', async (req, res) => {
 	logger.info('Incrementing or decrementing number of likes');
@@ -26,8 +28,8 @@ router.post('/IncOrDecLikes', async (req, res) => {
 });
 
 /**
- * Gets game information.
- * query string id for the game id.
+ * @api {get} /getGameInfo Gets game information.
+ * @apiParam {String} id game id.
  */
 router.get('/getGameInfo', async (req, res) => {
 	logger.info('Finding Host');
@@ -37,7 +39,9 @@ router.get('/getGameInfo', async (req, res) => {
 });
 
 /**
- * Add host to a game in our db
+ * @api {post} /addHost Add host to a game in our db
+ * @apiParam {String} id game id
+ * @apiParam {String} userId user id
  */
 router.post('/addHost', async (req, res) => {
 	logger.info('Adding host to game');
@@ -47,7 +51,9 @@ router.post('/addHost', async (req, res) => {
 });
 
 /**
- * Remove host from game in our db
+ * @api {post} /remove Remove host from a game in our db
+ * @apiParam {String} id game id
+ * @apiParam {String} userId user id
  */
 router.post('/removeHost', async (req, res) => {
 	logger.info('Removing host from game');
