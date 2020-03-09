@@ -16,8 +16,9 @@ import { Link, BrowserRouter, withRouter } from "react-router-dom";
 import config from "../config.json";
 // diff package
 import io from "socket.io-client";
-import { Socket, Event } from "react-socket-io";
 import axios from "axios";
+const queryString = require('query-string');
+
 
 const { Search, TextArea } = Input;
 const { Content, Sider } = Layout;
@@ -37,7 +38,7 @@ class Messages extends React.Component {
       title: "",
       visible: false
     };
-
+    this.gid = "";
     this.socket = io("localhost:9000");
 
     this.socket.on("RECEIVE_MESSAGE", function(data) {
@@ -53,7 +54,7 @@ class Messages extends React.Component {
 
     this.sendMessage = msg => {
       console.log('Sending message');
-      this.setState({ partner: "5e62c499cb2728634289d6ab" });
+      this.setState({ partner: "5e62cc6ce58febae4fe096f7" });
       // ev.preventDefault();
       // this.setState({ message: msg })
       this.socket.emit("SEND_MESSAGE", {
@@ -74,16 +75,23 @@ class Messages extends React.Component {
   }
 
   inbox() {
+    console.log(window.location.href);
     this.state.title = `Inbox`;
     fetch(`${config.backend_url}/messaging/inbox`)
-      .then(res => res.json())
-      .then(data => this.setState({ apiResponse: data }))
-      .catch(err => console.log(`Error is: ${err}`));
+       .then(res => res.json())
+       .then(data => this.setState({ apiResponse: data }))
+       .catch(err => console.log(`Error is: ${err}`));
+    if (window.location.href.includes('messages')) {
+       console.log('TRYING TO GET MAIN CHAT');
+       this.setState({ visible: true });
+       const partnerID = window.location.href.split("?id=");
+       this.getChat(partnerID);
+    }
   }
 
   getChat(partner) {
     this.state.title = `Chat`;
-    return fetch(`${config.backend_url}/messaging/getChatHistory?id=${partner}`)
+    fetch(`${config.backend_url}/messaging/getChatHistory?id=${partner}`)
       .then(res => res.json())
       .then(data => this.setState({ messages: data }))
       .catch(err => console.log(`Error is: ${err}`));
@@ -102,7 +110,7 @@ class Messages extends React.Component {
     // replace with messageIndo
     var body_ = JSON.stringify({
       userID1: this.props.user._id, // Replace this with current user id
-      userID2: "5e62c499cb2728634289d6ab", // Replace this with chat partner id
+      userID2: "5e62cc6ce58febae4fe096f7", // Replace this with chat partner id
       message: m
     });
     console.log(body_);
