@@ -97,6 +97,7 @@ async function privateMessage(msg_info) {
 
    console.log(msg + "to" + usr);
    */
+   console.log('Got SEND_MESSAGE request');
    console.log(msg_info);
    this_io.to(msg_info.user).emit('RECEIVE_MESSAGE', msg_info.message);
 }

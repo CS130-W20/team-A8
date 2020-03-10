@@ -59,24 +59,6 @@ router.get('/inbox', async (req, res) => {
 });
 
 /**
- * Connects user to socketio to allow them to communicate with other people
- * @param {<Object>} io - the io object from index.js needed to connect
- * @returns {string} - result of the connection 
- */
-router.get('/connectSocketIO', async (req, res) => {
-   logger.info('connecting to socketIO');
-   let io = req.app.get('io');
-   const userId = req.user ? req.user._id : global.gConfig.test_id;
-   try {
-      result = await messaging_helper.connect(io, userId);
-      res.status(200).send(result);
-   } catch (err) {
-      logger.error('Error connecting to socketio');
-      res.status(400).send('Error');
-   }
-});
-
-/**
  * Endpoint to get the chat history. It expects the partner's id as well as your own from the request
  * It sends the list of messages previously sent
  * @param {string} id - id of the chat partner
@@ -147,16 +129,5 @@ router.post('/addToChatHistory', async (req, res) => {
       res.status(400).send(err);
    }
 });
-
-/**
- * Send private message to person you clicked on
- */
-// Need to work on this once backend developed
-// router.get('/privateMessage', async (req, res) => {
-//    let partner_id = req.socketID;
-//    this_socket.on('private message', function(msg) {
-//       this_io.to(partner_id).emit('private message', msg);
-//    });
-// });
 
 module.exports = router;

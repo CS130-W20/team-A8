@@ -5,6 +5,8 @@ const cors = require('cors');
 const io = require('socket.io')(http);
 const mongoose = require('mongoose');
 const passport = require('passport');
+const ChatIO = require('./helpers/chat');
+var chat = ChatIO.Chat.getInstance(io);
 
 process.env.NODE_ENV = 'development';
 const config = require('./config/config.js');
@@ -53,5 +55,12 @@ app.get('/home', (req, res) => {
 http.listen(9000, function(){
 	console.log('listening on *:9000');
 });
+
+// Socket io stuff
+io.on('connection', (socket) => {
+   // Connect to chat?
+   console.log('connecting io');
+   chat.onConnect(socket);
+})
 
 module.exports = app;

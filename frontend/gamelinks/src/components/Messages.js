@@ -43,40 +43,50 @@ class Messages extends React.Component {
     this.socket = io("localhost:9000");
 
     this.socket.on("RECEIVE_MESSAGE", function(data) {
-      this.addMessage(data);
+      console.log('RECEIVED MESSAGE');
+      addMessageFromSocket(data);
     });
 
-    this.addMessage = data => {
-      console.log('In add message');
+    const addMessageFromSocket = data => {
+      console.log('In add message from socket');
       console.log(data);
       this.setState({ messages: [...this.state.messages, data] });
       console.log(this.state.messages);
+      var body_ = JSON.stringify({
+         userID1: this.props.user._id, // Replace this with current user id
+         userID2: this.state.partner, // Replace this with chat partner id
+         message: data
+       });
+       console.log(body_);
+       fetch(`${config.backend_url}/messaging/addToChatHistory`, {
+         method: "POST",
+         headers: {
+           Accept: "application/json",
+           "Content-Type": "application/json"
+         },
+         body: body_
+       })
+         .then(res => res.json())
+         .then(data => this.setState({ apiResponse: data }))
+         .catch(err => console.log(`Error is ${err}`));   
     };
 
     this.sendMessage = msg => {
       console.log('Sending message');
-      // ev.preventDefault();
-      // this.setState({ message: msg })
-      this.socket.emit("SEND_MESSAGE", {
-        author: this.state.username,
-        user: this.state.partner,
-        message: msg
-      });
-      // this.setState({ message: "" });
+      const msg_info = {
+         author: this.state.username,
+         user: this.state.partner,
+         message: msg
+      };
+      console.log(msg_info);
+      this.socket.emit("SEND_MESSAGE", msg_info);
     };
-  }
-
-  connect() {
-    this.state.title = `Connect`;
-    fetch(`${config.backend_url}/messaging/connectSocketIO`)
-      .then(res => res.json())
-      .then(data => this.setState({ apiResponse: data }))
-      .catch(err => console.log(`Error is: ${err}`));
   }
 
   inbox() {
     console.log(window.location.href);
     this.state.title = `Inbox`;
+    this.setState({ username: this.props.user.firstName });
     fetch(`${config.backend_url}/messaging/inbox`)
        .then(res => res.json())
        .then(data => {
@@ -84,6 +94,13 @@ class Messages extends React.Component {
          this.setState({ apiResponse: data });
        })
        .catch(err => console.log(`Error is: ${err}`));
+  }
+
+  addMessage(data) {
+    console.log('In add message');
+    console.log(data);
+    this.setState({ messages: [...this.state.messages, data] });
+    console.log(this.state.messages);
   }
 
   messages() {
@@ -179,7 +196,6 @@ class Messages extends React.Component {
   };
 
   componentDidMount() {
-    this.connect();
     if (window.location.href.includes('messages')) {
       this.messages();
     } else {

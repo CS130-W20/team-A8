@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const winston = require('winston');
+const ChatIO = require('../helpers/chat');
+var chat = ChatIO.Chat.getInstance(null);
 
 const logger = winston.createLogger({
     transports: [
@@ -22,7 +24,8 @@ module.exports = (router, passport) => {
 					if (err) {
 						return next(err);
 					} else {
-						console.log(userId);
+                  console.log(userId);
+                  chat.updateSocketID(userId);
 						res.status(200).redirect(`/#/profile?id=${userId}`);
 					}
 				});
