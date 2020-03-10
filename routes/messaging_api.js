@@ -21,6 +21,8 @@ router.get('/inbox', async (req, res) => {
    let user;
    try {
       user = await User.findById(userId);
+      console.log('user is: ');
+      console.log(user);
    } catch (err) {
       logger.error('got an error finding user');
       res.status(400).sendDate(err);
@@ -29,6 +31,7 @@ router.get('/inbox', async (req, res) => {
       return res.status(400).send('Could not find user (before chat parnters)');
    }
 
+   logger.info('getting result array');
    const resArr = user.chatPartners.map(async elem => {
       let u;
       try {
@@ -93,6 +96,39 @@ router.get('/getChatHistory', async (req, res) => {
       res.status(400).send(err);
    }
 });
+
+router.get('/addChatPartner', async (req, res) => {
+   logger.info('adding this profile as chat partner');
+   const { id } = req.query;
+   const userId = req.user ? req.user._id : global.gConfig.test_id;
+   try {
+      logger.info('adding this partner to list');
+      console.log(id);
+      const userInfo1 = {
+         _id: userId,
+         chatPartners: {
+            id: id,
+            operation: 'add'
+         }
+      }
+      await User.updateUser(userInfo1);
+
+      const userInfo2 = {
+         _id: id,
+         chatPartners: {
+            id: userId,
+            operation: 'add'
+         }
+      }
+      await User.updateUser(userInfo2);
+
+      console.log('successfully updated chat partner?');
+      res.status(200).send('Successfully added chat partner');
+   } catch (err) {
+      logger.error('error adding chat partner');
+      res.status(400).send(err);
+   }
+})
 
 router.post('/addToChatHistory', async (req, res) => {
    logger.info('adding to chat history');

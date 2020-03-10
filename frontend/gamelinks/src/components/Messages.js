@@ -34,6 +34,7 @@ class Messages extends React.Component {
       messages: [],
       message: "",
       username: "",
+      name: "",
       partner: "",
       title: "",
       visible: false
@@ -78,21 +79,43 @@ class Messages extends React.Component {
     this.state.title = `Inbox`;
     fetch(`${config.backend_url}/messaging/inbox`)
        .then(res => res.json())
-       .then(data => this.setState({ apiResponse: data }))
+       .then(data => {
+         console.log(data); 
+         this.setState({ apiResponse: data });
+       })
        .catch(err => console.log(`Error is: ${err}`));
-    if (window.location.href.includes('messages')) {
-       const partnerID = window.location.href.split("?id=");
-       this.setState({ visible: true, partner: partnerID[1] });
-       this.getChat(partnerID[1]);
-    }
+  }
+
+  messages() {
+     this.state.title = `Messages`;
+     console.log('finding or creating chat');
+     this.state.title = `Chat`;
+     const partner = window.location.href.split("?id=");
+     fetch(`${config.backend_url}/messaging/addChatPartner?id=${partner[1]}`)
+       .then(() => {
+         console.log('GETTING NEW MESSAGE');
+         this.setState({ visible: true });
+         this.getChat(partner[1]);    
+       })
+       .then(() => {
+          this.inbox();
+       })
+       .catch(err => console.log(`Error is: ${err}`));  
   }
 
   getChat(partnerID) {
     this.state.title = `Chat`;
     this.setState({ partner: partnerID });
-    fetch(`${config.backend_url}/messaging/getChatHistory?id=${partnerID}`)
-      .then(res => res.json())
-      .then(data => this.setState({ messages: data }))
+    console.log('getting chat');
+    axios.get(`${config.backend_url}/profile/getNameByID?id=${partnerID}`)
+      .then((name) => {
+         console.log('now, getting chat history');
+         console.log(name.data["fname"]);
+         this.setState({ name: name.data["fname"] })
+         return fetch(`${config.backend_url}/messaging/getChatHistory?id=${partnerID}`)
+      })
+      .then((chatHist) => chatHist.json())
+      .then((msgs) => this.setState({ messages: msgs }))
       .catch(err => console.log(`Error is: ${err}`));
   }
 
@@ -157,7 +180,11 @@ class Messages extends React.Component {
 
   componentDidMount() {
     this.connect();
-    this.inbox();
+    if (window.location.href.includes('messages')) {
+      this.messages();
+    } else {
+      this.inbox();
+    }
     // connect w axios
   }
 
@@ -229,7 +256,7 @@ class Messages extends React.Component {
                         </Card>
                         <Modal
                           visible={this.state.visible}
-                          title={elem.name}
+                          title={this.state.name}
                           onOk={this.handleOk}
                           onCancel={this.handleCancel}
                           footer={[
