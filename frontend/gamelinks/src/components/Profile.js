@@ -225,6 +225,7 @@ class Profile extends React.Component {
     }
 
     render() {
+        
         let createCards = (type) => {
             console.log('creatingCards')
             const gameInfo = this.state[type];
@@ -236,11 +237,11 @@ class Profile extends React.Component {
                         <Link to={`/singlegame/?id=${gameInfo[i].data.id}`}>
                             <img src={"http://" + gameInfo[i+1].data} />
                         </Link>
-                        <div className="name-text-box">
-                            <span className="name-text">{gameInfo[i].data.name}</span>
+                        <div className="card-text-box">
+                            <span className="card-text">{gameInfo[i].data.name}</span>
                             <br/>
                             { this.state.isProfileOwner && 
-                                <Text className='name-text' style={{ cursor: 'pointer' }}onClick={ () => { this.removeCard(type, gameInfo[i].data.id) }}>Remove</Text>
+                                <Text className='card-text' style={{ cursor: 'pointer' }}onClick={ () => { this.removeCard(type, gameInfo[i].data.id) }}>Remove</Text>
                             }
                         </div>
                     </div>
@@ -256,7 +257,8 @@ class Profile extends React.Component {
             dots: true,
             speed: 500,
             circular: false,
-            slidesToScroll: 4
+            slidesToScroll: 4,
+            slidesToShow: 4
         };
         return (
             <div id='main'>
@@ -379,7 +381,9 @@ class Profile extends React.Component {
                             : <Paragraph ellipsis={{ rows: 5, expandable: true }}>{ this.state.userInfo.bio }</Paragraph>)
                         }
                     </div>
-                    <Link to={ `/messages?id=${ this.state.userId }` }><Title level={3}><Icon type="mail" /> Message this host</Title></Link>
+                    <Link to={ `/messages?id=${ this.state.userId }`}>
+                       <Title level={3}><Icon type="mail" /> Message this host</Title>
+                    </Link>
                 </div>
             </div>
         );

@@ -1,7 +1,8 @@
 import React from "react";
 import { Avatar, Menu, Input, Typography, Icon, Dropdown } from "antd";
-import { Link } from "react-router-dom";
-
+import { Link, Redirect, BrowserRouter } from "react-router-dom";
+import axios from "axios";
+import config from "../config.json";
 const { Search } = Input;
 const { Title } = Typography;
 
@@ -13,13 +14,28 @@ const header = props => {
         <Link to="/people">hosts</Link>
       </Menu.Item>
       <Menu.Item>
-        <Link to={`/profile?id=${props.user ? props.user._id : undefined}`}>profile</Link>
+        <Link to={`/profile?id=${props.user ? props.user._id : undefined}`}>
+          profile
+        </Link>
       </Menu.Item>
       <Menu.Item>
         <Link to="/inbox">inbox</Link>
       </Menu.Item>
     </Menu>
   );
+
+  const search = name => {
+    // this.state.title = `Search by user: "${name}"`;
+    fetch(`${config.backend_url}/profile/searchByUser?nickname=${name}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        window.location.pathname = `/profile?id=${data}`;
+        // return data;
+        // return <Link to={`/profile?id=${data}`}>search by name</Link>;
+      })
+      .catch(err => console.log(`Error: ${err}`));
+  };
 
   return (
     <div style={{ width: "100%", backgroundColor: "#041527" }}>
@@ -73,10 +89,13 @@ const header = props => {
         </Menu>
       </div>
       <Search
-        placeholder="search"
-        onSearch={value => console.log(value)}
+        placeholder="Search" // search by user only for now bc no page in between
+        onSearch={
+          value => search(value)
+          // <Route render={`/profile?id=${search(value)}`}></Route>
+        }
         style={{ width: 200, right: "10px", top: "16px", position: "absolute" }}
-      />
+      ></Search>
     </div>
   );
 };
