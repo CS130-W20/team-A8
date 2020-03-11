@@ -1,7 +1,8 @@
 import React from "react";
 import { Avatar, Menu, Input, Typography, Icon, Dropdown } from "antd";
-import { Link } from "react-router-dom";
-
+import { Link, BrowserRouter } from "react-router-dom";
+import axios from "axios";
+import config from "../config.json";
 const { Search } = Input;
 const { Title } = Typography;
 
@@ -13,13 +14,29 @@ const header = props => {
         <Link to="/people">hosts</Link>
       </Menu.Item>
       <Menu.Item>
-        <Link to={`/profile?id=${props.user ? props.user._id : undefined}`}>profile</Link>
+        <Link to={`/profile?id=${props.user ? props.user._id : undefined}`}>
+          profile
+        </Link>
       </Menu.Item>
       <Menu.Item>
         <Link to="/inbox">inbox</Link>
       </Menu.Item>
     </Menu>
   );
+
+  const search = name => {
+    // this.state.title = `Search by user: "${name}"`;
+    fetch(`${config.backend_url}/profile/searchByUser?nickname=${name}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+      })
+      .catch(err => console.log(`Error: ${err}`));
+  };
+
+  // const searchres = (
+  //   <Link to={`/profile?id=${props.user ? props.user._id : undefined}`}></Link>
+  // )
 
   return (
     <div style={{ width: "100%", backgroundColor: "#041527" }}>
@@ -74,7 +91,7 @@ const header = props => {
       </div>
       <Search
         placeholder="search"
-        onSearch={value => console.log(value)}
+        onSearch={value => search(value)}
         style={{ width: 200, right: "10px", top: "16px", position: "absolute" }}
       />
     </div>
