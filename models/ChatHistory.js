@@ -26,12 +26,8 @@ var ChatHistorySchema = new mongoose.Schema({
 ChatHistorySchema.statics.inDatabase = async (user1, user2) => {
    logger.info('checking in database');
    let chat1, chat2;
-   console.log(user1);
-   console.log(user2);
    chat1 = await ChatHistory.findOne({ userID1: user1, userID2: user2 }).exec();
    chat2 = await ChatHistory.findOne({ userID1: user2, userID2: user1 }).exec();
-   console.log(chat1);
-   console.log(chat2);
    if (chat1) {
       return chat1;
    }
@@ -68,24 +64,24 @@ ChatHistorySchema.statics.findOrCreate = async (userInfo) => {
          console.log(chat);
          
          // Add to my chat partner
-         const usrInfo1 = {
-            _id: userInfo.userID1,
-            chatPartners: {
-               id: userInfo.userID2,
-               operation: 'add'
-            }
-         }
-         await User.updateUser(usrInfo1);
+         // const usrInfo1 = {
+         //    _id: userInfo.userID1,
+         //    chatPartners: {
+         //       id: userInfo.userID2,
+         //       operation: 'add'
+         //    }
+         // }
+         // await User.updateUser(usrInfo1);
 
-         // Add myself to partner's chat partner
-         const usrInfo2 = {
-            _id: userInfo.userID2,
-            chatPartners: {
-               id: userInfo.userID1,
-               operation: 'add'
-            }
-         }
-         await User.updateUser(usrInfo2);
+         // // Add myself to partner's chat partner
+         // const usrInfo2 = {
+         //    _id: userInfo.userID2,
+         //    chatPartners: {
+         //       id: userInfo.userID1,
+         //       operation: 'add'
+         //    }
+         // }
+         // await User.updateUser(usrInfo2);
       } catch (err) {
          logger.error('failed to create chat');
          return err;

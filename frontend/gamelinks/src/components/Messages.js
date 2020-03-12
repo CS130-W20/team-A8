@@ -34,6 +34,7 @@ class Messages extends React.Component {
       messages: [],
       message: "",
       username: "",
+      name: "",
       partner: "",
       title: "",
       visible: false
@@ -42,57 +43,96 @@ class Messages extends React.Component {
     this.socket = io("localhost:9000");
 
     this.socket.on("RECEIVE_MESSAGE", function(data) {
-      this.addMessage(data);
+      console.log('RECEIVED MESSAGE');
+      addMessageFromSocket(data);
     });
 
-    this.addMessage = data => {
-      console.log('In add message');
+    const addMessageFromSocket = data => {
+      console.log('In add message from socket');
       console.log(data);
       this.setState({ messages: [...this.state.messages, data] });
       console.log(this.state.messages);
+      var body_ = JSON.stringify({
+         userID1: this.props.user._id, // Replace this with current user id
+         userID2: this.state.partner, // Replace this with chat partner id
+         message: data
+       });
+       console.log(body_);
+       fetch(`${config.backend_url}/messaging/addToChatHistory`, {
+         method: "POST",
+         headers: {
+           Accept: "application/json",
+           "Content-Type": "application/json"
+         },
+         body: body_
+       })
+         .then(res => res.json())
+         .then(data => this.setState({ apiResponse: data }))
+         .catch(err => console.log(`Error is ${err}`));   
     };
 
     this.sendMessage = msg => {
       console.log('Sending message');
-      // ev.preventDefault();
-      // this.setState({ message: msg })
-      this.socket.emit("SEND_MESSAGE", {
-        author: this.state.username,
-        user: this.state.partner,
-        message: msg
-      });
-      // this.setState({ message: "" });
+      const msg_info = {
+         author: this.state.username,
+         user: this.state.partner,
+         message: msg
+      };
+      console.log(msg_info);
+      this.socket.emit("SEND_MESSAGE", msg_info);
     };
-  }
-
-  connect() {
-    this.state.title = `Connect`;
-    fetch(`${config.backend_url}/messaging/connectSocketIO`)
-      .then(res => res.json())
-      .then(data => this.setState({ apiResponse: data }))
-      .catch(err => console.log(`Error is: ${err}`));
   }
 
   inbox() {
     console.log(window.location.href);
     this.state.title = `Inbox`;
+    this.setState({ username: this.props.user.firstName });
     fetch(`${config.backend_url}/messaging/inbox`)
        .then(res => res.json())
-       .then(data => this.setState({ apiResponse: data }))
+       .then(data => {
+         console.log(data); 
+         this.setState({ apiResponse: data });
+       })
        .catch(err => console.log(`Error is: ${err}`));
-    if (window.location.href.includes('messages')) {
-       const partnerID = window.location.href.split("?id=");
-       this.setState({ visible: true, partner: partnerID[1] });
-       this.getChat(partnerID[1]);
-    }
+  }
+
+  addMessage(data) {
+    console.log('In add message');
+    console.log(data);
+    this.setState({ messages: [...this.state.messages, data] });
+    console.log(this.state.messages);
+  }
+
+  messages() {
+     this.state.title = `Messages`;
+     console.log('finding or creating chat');
+     this.state.title = `Chat`;
+     const partner = window.location.href.split("?id=");
+     fetch(`${config.backend_url}/messaging/addChatPartner?id=${partner[1]}`)
+       .then(() => {
+         console.log('GETTING NEW MESSAGE');
+         this.setState({ visible: true });
+         this.getChat(partner[1]);    
+       })
+       .then(() => {
+          this.inbox();
+       })
+       .catch(err => console.log(`Error is: ${err}`));  
   }
 
   getChat(partnerID) {
     this.state.title = `Chat`;
     this.setState({ partner: partnerID });
-    fetch(`${config.backend_url}/messaging/getChatHistory?id=${partnerID}`)
-      .then(res => res.json())
-      .then(data => this.setState({ messages: data }))
+    console.log('getting chat');
+    axios.get(`${config.backend_url}/profile/getNameByID?id=${partnerID}`)
+      .then((name) => {
+         console.log('now, getting chat history');
+         console.log(name.data["fname"]);
+         this.setState({ name: name.data["fname"] })
+         return fetch(`${config.backend_url}/messaging/getChatHistory?id=${partnerID}`)
+      })
+      .then((chatHist) => chatHist.json())
+      .then((msgs) => this.setState({ messages: msgs }))
       .catch(err => console.log(`Error is: ${err}`));
   }
 
@@ -156,8 +196,11 @@ class Messages extends React.Component {
   };
 
   componentDidMount() {
-    this.connect();
-    this.inbox();
+    if (window.location.href.includes('messages')) {
+      this.messages();
+    } else {
+      this.inbox();
+    }
     // connect w axios
   }
 
@@ -229,7 +272,7 @@ class Messages extends React.Component {
                         </Card>
                         <Modal
                           visible={this.state.visible}
-                          title={elem.name}
+                          title={this.state.name}
                           onOk={this.handleOk}
                           onCancel={this.handleCancel}
                           footer={[

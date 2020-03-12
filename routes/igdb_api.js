@@ -15,7 +15,7 @@ const baseUrl = 'https://api-v3.igdb.com/';
 const headers = { 'user-key': global.gConfig.igdb_key };
 
 /**
- * @api /igdb/popular Grabs most popular games
+ * @api {get} /igdb/popular Grabs most popular games
  * @apiParam {String} limit - limit the amount of results
  * @apiDescription Returns list of JSON objects representing popular games
  */
@@ -34,7 +34,7 @@ router.get('/popular', async (req, res) => {
 });
 
 /**
- * @api /igdb/recommendedGames Grabs recommended games based on User viewing history
+ * @api {post} /igdb/recommendedGames Grabs recommended games based on User viewing history
  * @apiParam {Object} - JSON object with mandatory genre key associated to object mapping genre names to user view counts, optional limit key 
  * @apiDescription  Returns list of JSON objects representing recommended games
  */
@@ -50,7 +50,7 @@ router.post('/recommendedGames', async (req,res) => {
 })
 
 /**
- * @api /igdb/searchByGenre Grabs most popular games by genre
+ * @api {get} /igdb/searchByGenre Grabs most popular games by genre
  * @apiParam {string} genre - genre search parameter
  * @apiParam {string} limit - limit the amount of results
  * @apiDescription Returns list of JSON objects representing popular games in genre
@@ -68,7 +68,7 @@ router.get('/searchByGenre', async (req,res) => {
 });
 
 /**
- * @api /igdb/search Searches for a games. Returns name and cover picture 
+ * @api {get} /igdb/search Searches for a games. Returns name and cover picture 
  * @apiParam {string} title - title to search for
  * @apiDescription returns list of relevant games based on search parameter
  */
@@ -99,7 +99,7 @@ router.get('/search', async (req, res) => {
 });
 
 /**
- * @api /igdb/cover Finds the cover picture for a game. Returns a URL to the image
+ * @api {get} /igdb/cover Finds the cover picture for a game. Returns a URL to the image
  * @apiParam {string} resolution - the resolution of the picture. Options: 720p, 1080p. Defaults to 720p. lmk if you need more resolutions.
  * @apiParam {string} id - the id of the game
  * @apiDescription Returns URL for the cover image of the relevant game
@@ -116,7 +116,7 @@ router.get('/cover', async (req, res) => {
 });
 
 /**
- * @api /igdb/game Gets all the relevant details needed for the game page
+ * @api {get} /igdb/game Gets all the relevant details needed for the game page
  * @apiParam {string} id - the id of the game
  * @apiDescription returns object with Game details
  */

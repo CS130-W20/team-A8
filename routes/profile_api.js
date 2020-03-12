@@ -213,4 +213,23 @@ router.get('/searchByUser', async (req, res) => {
    res.status(200).send(user._id);
 })
 
+router.get('/getNameByID', async (req, res) => {
+   logger.info('search by id');
+   const { id } = req.query;
+   let user;
+   try {
+      user = await User.findById(id);
+      console.log(user);
+   } catch (err) {
+      logger.error('error findind user');
+      res.status(400).send(err);
+   }
+   if (!user) {
+      logger.error('unable to find user');
+      res.status(400).send('error finding user');
+   }
+   const fname = user.firstName;
+   res.status(200).send({fname});
+})
+
 module.exports = router;

@@ -223,15 +223,6 @@ class Profile extends React.Component {
         this.setState({ fileList: fileList[0] });
     }
 
-    findOrCreateChat(partner) {
-      console.log('finding or creating chat');
-      this.state.title = `Chat`;
-      fetch(`${config.backend_url}/messaging/getChatHistory?id=${partner}`)
-        .then(res => res.json())
-        .then(data => console.log(data))
-        .catch(err => console.log(`Error is: ${err}`));  
-    }
-
     render() {
         
         let createCards = (type) => {
@@ -389,7 +380,7 @@ class Profile extends React.Component {
                             : <Paragraph ellipsis={{ rows: 5, expandable: true }}>{ this.state.userInfo.bio }</Paragraph>)
                         }
                     </div>
-                    <Link to={ `/messages?id=${ this.state.userId }`} onClick={() => this.findOrCreateChat(this.state.userId)}>
+                    <Link to={ `/messages?id=${ this.state.userId }`}>
                        <Title level={3}><Icon type="mail" /> Message this host</Title>
                     </Link>
                 </div>
