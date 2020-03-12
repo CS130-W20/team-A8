@@ -139,8 +139,7 @@ class Profile extends React.Component {
         const gameInfo = this.state[type];
         gameInfo.splice(2 * removeInd, 2);
         const userInfo = { ...this.state.userInfo }
-        userInfo[type] = removedType;
-        console.log(removedType);
+        userInfo[type] = { id, operation: 'remove'};
         this.setState({ userInfo, [type]: gameInfo });
         await axios.post(`${config.backend_url}/profile/editUserInfo`, userInfo);
     }
