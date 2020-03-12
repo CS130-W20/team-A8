@@ -195,6 +195,10 @@ router.post('/removeSharedWith', async(req,res) => {
 	err ? res.status(400).send('Failed to remove from sharedWith attribute') : res.status(200).send('Updated sharedWith attribute');
 })
 
+/**
+ * @api /profile/searchByUser - returns the mongo id of the user based on their username
+ * @apiParam {String} nickname - username of the person whose mongo id is desired
+ */
 router.get('/searchByUser', async (req, res) => {
    logger.info('searching by user');
    const { nickname } = req.query;
@@ -213,6 +217,10 @@ router.get('/searchByUser', async (req, res) => {
    res.status(200).send(user._id);
 })
 
+/**
+ * @api /profile/getNameByID - returns the first name of the person based on their mongo id
+ * @apiParam {String} id - mongo id of the person whose first name is requested
+ */
 router.get('/getNameByID', async (req, res) => {
    logger.info('search by id');
    const { id } = req.query;

@@ -14,6 +14,9 @@ const logger = winston.createLogger({
 
 /**
  * Main inbox page for each user
+ * @api {get} /messaging/inbox - get's the current users chat partners to display them
+ * @apiParam {[String]} id - user id of the current user
+ * @apiDescription Returns formatted list of chat partners, with their id and first name
  */
 router.get('/inbox', async (req, res) => {
    logger.info('getting list of chat partners');
@@ -60,10 +63,9 @@ router.get('/inbox', async (req, res) => {
 
 /**
  * Endpoint to get the chat history. It expects the partner's id as well as your own from the request
- * It sends the list of messages previously sent
- * @param {string} id - id of the chat partner
- * @param {string} userId - id of current user
- * @returns {Array.<String>} - list of previous chat messages
+ * @api {get} /messaging/getChatHistory - It sends the list of messages previously sent
+ * @apiParam {string} id - id of the chat partner
+ * @apiDescription - returns list of previous chat messages
  */
 router.get('/getChatHistory', async (req, res) => {
    logger.info('getting chat history');
@@ -79,6 +81,12 @@ router.get('/getChatHistory', async (req, res) => {
    }
 });
 
+
+/**
+ * @api {get} /messaging/addChatPartner - add a chat partner to the current user
+ * @apiParam {String} id - mongo id of the partner current user wishes to chat with
+ * @apiDescription - Returns success upon updating current users chat partner with new chat partner
+ */
 router.get('/addChatPartner', async (req, res) => {
    logger.info('adding this profile as chat partner');
    const { id } = req.query;
@@ -112,6 +120,11 @@ router.get('/addChatPartner', async (req, res) => {
    }
 })
 
+/**
+ * @api {post} /messaging/addToChatHistory - Updates user's chat history with new message
+ * @apiParam {String, String, String} message - formatted message that contains current user id, chat partner id and message
+ * @apiDescription (i.e. { "message": { "userID1": 198hf017y28a, "userID2": AIUF9109u4AH, "message": "hello" } })
+ */
 router.post('/addToChatHistory', async (req, res) => {
    logger.info('adding to chat history');
    const message = {

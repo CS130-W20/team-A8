@@ -22,7 +22,7 @@ var Chat = (function () {
       async function onReceiveMessage(msg_info) {
          console.log('GOT SEND_MESSAGE REQUEST');
          console.log(msg_info);
-         io_/*.to(msg_info.user)*/.emit('RECEIVE_MESSAGE', msg_info);
+         io_.to(msg_info.user).emit('RECEIVE_MESSAGE', msg_info);
       }
    
       // Public method
