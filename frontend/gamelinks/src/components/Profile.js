@@ -9,6 +9,7 @@ import {
     Upload,
     Button,
     message,
+    Input
 } from 'antd';
 import AddInfoForm from './addInfoForm';
 import { Link, BrowserRouter as Router, withRouter } from "react-router-dom";
@@ -19,6 +20,7 @@ import config from '../config.json';
 
 const { Title, Text, Paragraph } = Typography;
 const { Content } = Layout;
+const { Search } = Input;
 
 class Profile extends React.Component {
     constructor(props) {
@@ -223,6 +225,20 @@ class Profile extends React.Component {
         this.setState({ fileList: fileList[0] });
     }
 
+    search(value) {
+        fetch(`${config.backend_url}/profile/searchByUser?nickname=${value}`)
+            .then(res => res.json())
+          .then(res => {
+                this.setState({ userId: res });
+                this.componentDidMount();
+                console.log("Found user with id " + res)
+            })
+          .catch(() => {
+              message.error("User with that name not found");
+              console.log("Did not find user with name " + value);
+          });
+      }
+
     render() {
         
         let createCards = (type) => {
@@ -306,6 +322,15 @@ class Profile extends React.Component {
                                 ? <Title editable={{ onChange: this.onUsernameEdit }}>{ this.state.userInfo.username }</Title>
                                 : <Title>{ this.state.userInfo.username }</Title>)
                             }
+                        </div>
+                        <div align="right">
+                        <Search
+                            placeholder="search user" 
+                            onSearch={value => this.search(value)}
+                            style={{ 
+                            width: 200,
+                            justify: "right" }}
+                            enterButton/>
                         </div>
                         <br />
                         <div id='loc'>

@@ -24,22 +24,9 @@ const header = props => {
     </Menu>
   );
 
-  const search = name => {
-    // this.state.title = `Search by user: "${name}"`;
-    fetch(`${config.backend_url}/profile/searchByUser?nickname=${name}`)
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
-        window.location.pathname = `/profile?id=${data}`;
-        // return data;
-        // return <Link to={`/profile?id=${data}`}>search by name</Link>;
-      })
-      .catch(err => console.log(`Error: ${err}`));
-  };
-
   return (
     <div style={{ width: "100%", backgroundColor: "#041527" }}>
-      <div style={{ width: "calc(100% - 250px)" }}>
+      <div>
         <Title
           style={{
             float: "left",
@@ -88,14 +75,6 @@ const header = props => {
           </Menu.Item>
         </Menu>
       </div>
-      <Search
-        placeholder="Search" // search by user only for now bc no page in between
-        onSearch={
-          value => search(value)
-          // <Route render={`/profile?id=${search(value)}`}></Route>
-        }
-        style={{ width: 200, right: "10px", top: "16px", position: "absolute" }}
-      ></Search>
     </div>
   );
 };
