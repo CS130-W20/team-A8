@@ -1,4 +1,4 @@
-/*const assert = require('assert');
+const assert = require('assert');
 const mapFunctions = require('../helpers/map');
 const igdbFunctions = require('../routes/helpers/igdb_helper');
 
@@ -66,4 +66,3 @@ describe('IGDB APis', function() {
         });
     });
 });
-*/
