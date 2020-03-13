@@ -142,29 +142,29 @@ class Messages extends React.Component {
     this.addMessage(m);
     this.sendMessage(value);
 
-    // const messageInfo = { ...this.state.userID1, userID2, history };
-    this.state.title = `Send Message`;
-    console.log("In onSendMessage");
-    console.log(value);
-    // replace with messageIndo
-    var body_ = JSON.stringify({
-      userID1: this.props.user._id, // Replace this with current user id
-      userID2: this.state.partner, // Replace this with chat partner id
-      message: m
-    });
-    console.log(body_);
-    fetch(`${config.backend_url}/messaging/addToChatHistory`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: body_
-    })
-      .then(res => res.json())
-      .then(data => this.setState({ apiResponse: data }))
-      .catch(err => console.log(`Error is ${err}`));
-    // clear the message
+   //  // const messageInfo = { ...this.state.userID1, userID2, history };
+   //  this.state.title = `Send Message`;
+   //  console.log("In onSendMessage");
+   //  console.log(value);
+   //  // replace with messageIndo
+   //  var body_ = JSON.stringify({
+   //    userID1: this.props.user._id, // Replace this with current user id
+   //    userID2: this.state.partner, // Replace this with chat partner id
+   //    message: m
+   //  });
+   //  console.log(body_);
+   //  fetch(`${config.backend_url}/messaging/addToChatHistory`, {
+   //    method: "POST",
+   //    headers: {
+   //      Accept: "application/json",
+   //      "Content-Type": "application/json"
+   //    },
+   //    body: body_
+   //  })
+   //    .then(res => res.json())
+   //    .then(data => this.setState({ apiResponse: data }))
+   //    .catch(err => console.log(`Error is ${err}`));
+   //  // clear the message
   }
 
   onReceiveMessage = async value => {

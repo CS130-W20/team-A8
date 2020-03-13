@@ -22,7 +22,19 @@ var Chat = (function () {
       async function onReceiveMessage(msg_info) {
          console.log('GOT SEND_MESSAGE REQUEST');
          console.log(msg_info);
-         io_.to(msg_info.user).emit('RECEIVE_MESSAGE', msg_info);
+         // Get socket
+         let user;
+         try {
+            user = await User.findById(msg_info.user);
+         } catch(err) {
+            logger.error(`Error finding user: ${err}`);
+         }
+         if (!user) {
+            logger.error('User non existent');
+         }
+         let socket = user.socket;
+         console.log(`Socket is ${socket}`);
+         io_.to(socket).emit('RECEIVE_MESSAGE', msg_info);
       }
    
       // Public method
