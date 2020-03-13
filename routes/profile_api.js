@@ -20,6 +20,19 @@ cloudinary.config({
 });
 
 /**
+ * @api {get} /profile/getAllUsers Returns all users information in the db
+ */
+router.get('/getAllUsers', async (req, res) => {
+	logger.info('getting all users');
+	try {
+		const results = await User.find({});
+		res.status(200).send(results);
+	} catch (err) {
+		res.status(400).send(err);
+	}
+});
+
+/**
  * @api {get} /profile/getCurrentUserInformation Retrieves all information about the logged in user.
  */
 router.get('/getCurrentUserInformation', async (req, res) => {
