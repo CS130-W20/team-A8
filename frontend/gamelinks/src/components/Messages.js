@@ -217,31 +217,22 @@ class Messages extends React.Component {
     const { visible, loading } = this.state;
 
     return (
-      <BrowserRouter>
-        {/* <Socket uri={uri} options={options}>
-          {this.props}
-        </Socket> */}
+      <div>
         <Layout style={{ minHeight: "90vh" }}>
           <Sider>
             <Avatar size={64} icon="user" />
             <Menu theme="dark" mode="inline" defaultSelectedKeys={["3"]}>
               <Menu.Item key="1">
-                <Icon type="export" />
-                <span className="nav-text">refer host</span>
-              </Menu.Item>
-              <Menu.Item key="2">
-                <Icon type="home" />
-                <span className="nav-text">reservations</span>
-              </Menu.Item>
-              <Menu.Item key="3">
                 <Icon type="upload" />
                 <span className="nav-text">inbox</span>
               </Menu.Item>
-              <Menu.Item key="4">
-                <Link to={`/#/profile?id=${this.props.user._id}`}>
-                  <Icon type="user" />
-                  back to profile
-                </Link>
+              <Menu.Item key="2">
+               {(this.props.user) &&
+                  <Link to={`/profile?id=${this.props.user._id}`}>
+                     <Icon type="user"/>
+                     back to profile
+                  </Link>
+               }
               </Menu.Item>
             </Menu>
           </Sider>
@@ -308,7 +299,7 @@ class Messages extends React.Component {
             </Content>
           </Layout>
         </Layout>
-      </BrowserRouter>
+      </div>
     );
   }
 }
