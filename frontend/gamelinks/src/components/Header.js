@@ -39,7 +39,7 @@ const header = props => {
               profile
             </Link>
           </Menu.Item>
-          <Menu.Item>
+          <Menu.Item disabled={props.user ? false : true}>
             <Link to="/inbox">inbox</Link>
           </Menu.Item>
           <Menu.Item>

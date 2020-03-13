@@ -37,7 +37,8 @@ class Messages extends React.Component {
       name: "",
       partner: "",
       title: "",
-      visible: false
+      visible: false,
+      userInfo: {}
     };
     this.gid = "";
     this.socket = io("localhost:9000");
@@ -196,6 +197,14 @@ class Messages extends React.Component {
   };
 
   componentDidMount() {
+    axios.get(`${config.backend_url}/profile/getCurrentUserInformation`)
+      .then((userInfo) => {
+        console.log(userInfo);
+        this.setState({ 
+          userInfo: userInfo.data,
+        });
+      })
+      .catch(err => console.warn(err));
     if (window.location.href.includes('messages')) {
       this.messages();
     } else {
@@ -220,7 +229,8 @@ class Messages extends React.Component {
       <div>
         <Layout style={{ minHeight: "90vh" }}>
           <Sider>
-            <Avatar size={64} icon="user" />
+            <Avatar size={64} src={this.state.userInfo ? this.state.userInfo.profilePicture : undefined} />
+            <span style={{color: "white"}}>{this.state.userInfo ? this.state.userInfo.username : undefined}</span>
             <Menu theme="dark" mode="inline" defaultSelectedKeys={["3"]}>
               <Menu.Item key="1">
                 <Icon type="upload" />
@@ -238,10 +248,6 @@ class Messages extends React.Component {
           </Sider>
           <Layout>
             <Content style={{ margin: "0 16px" }}>
-              <Breadcrumb style={{ margin: "16px 0" }}>
-                <Breadcrumb.Item>Inbox</Breadcrumb.Item>
-                <Breadcrumb.Item>User</Breadcrumb.Item>
-              </Breadcrumb>
               <div style={{ padding: 24, background: "#fff", minHeight: 475 }}>
                 <div
                   className="scrollable-container"

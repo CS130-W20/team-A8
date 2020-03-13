@@ -127,7 +127,7 @@ class Games extends React.Component {
           axios.post(`${config.backend_url}/igdb/recommendedGames`, recommended)
             .then(data => {
               console.log(data.data);
-              this.setState({ apiResonse: data.data });
+              this.setState({ apiResponse: data.data });
             })
             .catch(err => console.log(`Error is: ${err}`));
         })
