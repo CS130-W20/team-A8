@@ -37,7 +37,7 @@ router.get('/getAllUsers', async (req, res) => {
  */
 router.get('/getCurrentUserInformation', async (req, res) => {
 	logger.info ('getting current users');
-	const userId = req.user ? req.user._id : "5e5ec0db5839764b608826c6"; // hard coded for testing
+	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
 	let userInfo;
 	try {
 		userInfo = await User.findById(userId);
@@ -135,7 +135,7 @@ router.post('/editProfilePicture', upload, async (req, res) => {
  * @apiParam {Number} long longitude
  */
 router.get('/distance', async (req, res) => {
-	logger.info('/distance')
+	logger.info('/distance');
 	const userId = req.user ? req.user._id : '5e658f62f143961df1ac0bb5';
 	const { lat, long } = req.query;
 	let userInfo;
@@ -145,8 +145,8 @@ router.get('/distance', async (req, res) => {
 		logger.error('got an error finding user');
 		return res.status(400).send(err);
 	}
-	const distance = map.distanceBtwnGeocoords(lat, long, userInfo.latitude, userInfo.longitude)
-	console.log('DISTANCE-----------------------------------------------', distance)
+	const distance = map.distanceBtwnGeocoords(lat, long, userInfo.latitude, userInfo.longitude);
+	console.log('DISTANCE-----------------------------------------------', distance);
 	res.status(200).send({distance});
 });
 
@@ -160,10 +160,10 @@ router.post('/incrementGenreHistory', async (req,res) => {
 	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
 	const userInfo = { _id: userId};
 	let genreIds = req.body.genres;
-	userInfo.genres = genreIds
+	userInfo.genres = genreIds;
 	let err = await User.updateUserGenres(userInfo);
 	err ? res.status(400).send('Failed to Update genre history') : res.status(200).send('Updated genre history');
-})
+});
 
 /**
  * @api {get} /profile/getGenreHistory Gets the current user's genre history
@@ -171,7 +171,7 @@ router.post('/incrementGenreHistory', async (req,res) => {
  */
 router.get('/getGenreHistory', async(req,res) => {
 	logger.info ('getting current user\'s genre history');
-	const userId = req.user ? req.user._id : "5e5ec0db5839764b608826c6"; // hard coded for testing
+	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
 	let userInfo;
 	try {
 		userInfo = await User.findById(userId);
@@ -180,7 +180,7 @@ router.get('/getGenreHistory', async(req,res) => {
 		res.status(400).send(err);
 	}
 	res.status(200).send(userInfo.userStats.genres);
-})
+});
 
 /**
  * @api /profile/addSharedWith Adds a userId to the current user's sharedWith attribute
@@ -190,10 +190,10 @@ router.post('/addSharedWith', async(req,res) => {
 	logger.info('adding to User\'s sharedWith attribute');
 	const userId = req.user ? req.user._id : '5e575cf533813248d7906079'; // hard coded for testing
 	const { id } = req.query;
-	const updateJson = { _id: userId, updateId: id, operation: "add" };
+	const updateJson = { _id: userId, updateId: id, operation: 'add' };
 	let err = await User.updateUserSharedWith(updateJson);
 	err ? res.status(400).send('Failed to add to sharedWith attribute') : res.status(200).send('Updated sharedWith attribute');
-})
+});
 
 /**
  * @api /profile/removeSharedWith Removes a userId from the current user's sharedWith attribute
@@ -203,54 +203,54 @@ router.post('/removeSharedWith', async(req,res) => {
 	logger.info('removing from User\'s sharedWith attribute');
 	const userId = req.user ? req.user._id : '5e5ec0db5839764b608826c6'; // hard coded for testing
 	const { id } = req.query;
-	const updateJson = { _id: userId, updateId: id, operation: "remove" };
+	const updateJson = { _id: userId, updateId: id, operation: 'remove' };
 	let err = await User.updateUserSharedWith(updateJson);
 	err ? res.status(400).send('Failed to remove from sharedWith attribute') : res.status(200).send('Updated sharedWith attribute');
-})
+});
 
 /**
  * @api /profile/searchByUser - returns the mongo id of the user based on their username
  * @apiParam {String} nickname - username of the person whose mongo id is desired
  */
 router.get('/searchByUser', async (req, res) => {
-   logger.info('searching by user');
-   const { nickname } = req.query;
-   let user;
-   try {
-      user = await User.findOne({ username: nickname });
-      console.log(user);
-   } catch (err) {
-      logger.error('error finding user');
-      res.status(400).send(err);
-   }
-   if (!user) {
-      logger.error('unable to find user');
-      res.status(400).send('error finding user');
-   }
-   res.status(200).send(user._id);
-})
+	logger.info('searching by user');
+	const { nickname } = req.query;
+	let user;
+	try {
+		user = await User.findOne({ username: nickname });
+		console.log(user);
+	} catch (err) {
+		logger.error('error finding user');
+		res.status(400).send(err);
+	}
+	if (!user) {
+		logger.error('unable to find user');
+		res.status(400).send('error finding user');
+	}
+	res.status(200).send(user._id);
+});
 
 /**
  * @api /profile/getNameByID - returns the first name of the person based on their mongo id
  * @apiParam {String} id - mongo id of the person whose first name is requested
  */
 router.get('/getNameByID', async (req, res) => {
-   logger.info('search by id');
-   const { id } = req.query;
-   let user;
-   try {
-      user = await User.findById(id);
-      console.log(user);
-   } catch (err) {
-      logger.error('error findind user');
-      res.status(400).send(err);
-   }
-   if (!user) {
-      logger.error('unable to find user');
-      res.status(400).send('error finding user');
-   }
-   const fname = user.firstName;
-   res.status(200).send({fname});
-})
+	logger.info('search by id');
+	const { id } = req.query;
+	let user;
+	try {
+		user = await User.findById(id);
+		console.log(user);
+	} catch (err) {
+		logger.error('error findind user');
+		res.status(400).send(err);
+	}
+	if (!user) {
+		logger.error('unable to find user');
+		res.status(400).send('error finding user');
+	}
+	const fname = user.firstName;
+	res.status(200).send({fname});
+});
 
 module.exports = router;
