@@ -40,8 +40,9 @@ class SingleGame extends React.Component {
       hosting: false,
       hosts: [],
       liked: false,
-      likes: "",
+      likes: 0,
 
+      hostData: {},
       userInfo: {},
       userHosting: [],
       userFavorites: []
@@ -50,6 +51,7 @@ class SingleGame extends React.Component {
     this.previous = this.previous.bind(this);
     this.carousel = React.createRef();
     this.gid = queryString.parse(this.props.location.search).id;
+    this.hostCards = [];
   }
 
   next() {
@@ -92,6 +94,21 @@ class SingleGame extends React.Component {
       .catch(err => console.log(`Error is: ${err}`));
   }
 
+  getHost(elem) {
+    axios.get(`${config.backend_url}/profile/getProfileUserInformation?id=${elem}`)
+      .then((userInfo) => {
+        console.log("Adding host data");
+        console.log(userInfo.data);
+        this.setState({hostData: userInfo.data})
+        this.hostCards.push({
+          id: elem, 
+          pic: userInfo.data.profilePicture,
+          name: userInfo.data.username
+        })
+        console.log(this.hostCards);
+      }) 
+      .catch(err => console.warn(err));
+  }
   cover() {
     var url =
       `http://localhost:9000/igdb/cover?id=` +
@@ -122,7 +139,7 @@ class SingleGame extends React.Component {
         console.log(res);
       })
       .catch(err => {
-        console.warn(err)
+        console.warn(err);
       });
   }
 
@@ -153,13 +170,23 @@ class SingleGame extends React.Component {
     var url = `${config.backend_url}/games/getGameInfo?id=${this.gid}`
     fetch(url)
       .then(res => res.json())
-      .then(data => {this.checkHost(data.hosts);})
+      .then(data => {
+        this.checkHost(data.hosts);
+        this.setState({ 
+          likes: data.likes,
+          userHosting: data.hosts});
+        console.log(data);
+        this.state.userHosting.map(elem => {
+          console.log("Processing host " + elem);
+          this.getHost(elem);
+        })
+      })
       .catch(err => console.warn(err));
     axios.get(`${config.backend_url}/profile/getCurrentUserInformation`)
       .then((userInfo) => {
         console.log(userInfo);
-        this.setState({ userInfo: userInfo.data,
-          userHosting: userInfo.data.hosting,
+        this.setState({ 
+          userInfo: userInfo.data,
           userFavorites: userInfo.data.favorites});
         this.checkFavorite();
       })
@@ -172,7 +199,7 @@ class SingleGame extends React.Component {
     if(getHosts.indexOf(userId) > -1)
       this.state.hosting = true;
     console.log(this.state.hosts);
-    console.log("hosting is " + this.state.hosting);
+    console.log("Hosting is " + this.state.hosting);
   }
   
   checkFavorite() {
@@ -183,12 +210,10 @@ class SingleGame extends React.Component {
   }
 
   favorite = () => {
-    const id = this.gid;
     if(!this.state.liked){
-      const userInfo = {...this.state.userInfo, favorites: { id: id, operation: "add"}};
-      axios.post(`${config.backend_url}/profile/editUserInfo`, userInfo)
+      axios.post(`${config.backend_url}/games/IncOrDecLikes?id=${this.gid}&inc=true`)
             .then(res => {
-                this.setState({ userInfo })
+                this.setState({ likes: this.state.likes + 1})
                 console.log(res);
             })
             .catch(err => {
@@ -196,10 +221,9 @@ class SingleGame extends React.Component {
             });
     }
     else{
-      const userInfo = {...this.state.userInfo, favorites: { id: id, operation: "remove"}};
-      axios.post(`${config.backend_url}/profile/editUserInfo`, userInfo)
+      axios.post(`${config.backend_url}/games/IncOrDecLikes?id=${this.gid}&inc=false`)
             .then(res => {
-                this.setState({ userInfo });
+                this.setState({ likes: this.state.likes - 1})
                 console.log(res);
             })
             .catch(err => {
@@ -212,7 +236,7 @@ class SingleGame extends React.Component {
 
   componentDidMount() {
     this.initialize();
-    console.log(this.state.userHosting);
+    console.log("Hosts are" + this.state.userHosting);
     this.getGame();
     this.cover();
   }
@@ -220,7 +244,7 @@ class SingleGame extends React.Component {
   render() {
     const carouselProps = {
       dots: true,
-      infinite: true,
+      infinite: false,
       speed: 500,
       slidesToShow: 1,
       slidesToScroll: 1
@@ -241,18 +265,24 @@ class SingleGame extends React.Component {
                 <Rate character={<Icon type="heart" />} count={1} 
                 value={this.state.liked} onChange={this.favorite}/> 
                 : <Rate disabled character={<Icon type="heart" />} count={1}/>}
-                {/* <Text> {this.state.apiResponse.rating}</Text> */}
+                <span>{this.state.likes}</span>
               </div>
               <br />
               <Card title="Where To Play" style={{ width: 300 }}>
-                <Avatar size="small" icon="user" />
-                <Avatar size="small" icon="user" />
-                <Avatar size="small" icon="user" />
-                <br />
-                <Link>My Hosts</Link>
-                <br />
-                <Link to={`/people`}>More Hosts</Link>
-                {/* link to people page  */}
+                  {this.hostCards ?
+                  this.hostCards.map(elem => {
+                    if(elem.id != this.state.userInfo._id){
+                      console.log("Displaying host " + elem);
+                      return (
+                        <div align="center">
+                          <Link to={`/profile/?id=${elem.id}`}> 
+                            <img className="host-image" src={elem.pic}/>
+                            <Tag>{elem.name}</Tag>
+                          </Link>
+                        </div>
+                        );
+                    }
+                  }): false}
               </Card>
             </div>
           </Col>
