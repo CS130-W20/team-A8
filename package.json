@@ -29,8 +29,8 @@
       "winston": "^3.2.1"
    },
    "scripts": {
-      "test": "mocha --timeout 10000 --exit"
-   },
+      "test": "mocha --timeout 10000 --exit",
+      "start": "node index.js",
    "apidoc": {
       "name": "Gamelinks",
       "title": "Gamelinks",
