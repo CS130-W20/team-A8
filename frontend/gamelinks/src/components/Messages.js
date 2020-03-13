@@ -288,7 +288,7 @@ class Messages extends React.Component {
                             value={this.state.message || ''}
                             enterButton="Send"
                             onChange={this.onChange}
-                            onPressEnter={this.handleEnter}
+                            onSearch={this.handleEnter}
                           />
                         </Modal>
                       </div>

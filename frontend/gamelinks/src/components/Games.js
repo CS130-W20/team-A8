@@ -12,6 +12,7 @@ import {
   Carousel,
   Avatar
 } from "antd";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import "./Games.css";
 import config from '../config.json'
@@ -116,6 +117,23 @@ class Games extends React.Component {
       .catch(err => console.log(`Error is: ${err}`));
   }
 
+  recommended() {
+    this.state.title = `Recommended`;
+    fetch(`${config.backend_url}/profile/getGenreHistory`)
+      .then(res => res.json())
+      .then(data => {
+          console.log(data);
+          const recommended = { genres: data, limit: this.limit }
+          axios.post(`${config.backend_url}/igdb/recommendedGames`, recommended)
+            .then(data => {
+              console.log(data.data);
+              this.setState({ apiResonse: data.data });
+            })
+            .catch(err => console.log(`Error is: ${err}`));
+        })
+      .catch(err => console.log(`Error is: ${err}`));
+  }
+
   componentDidMount() {
     this.popular();
   }
@@ -141,6 +159,7 @@ class Games extends React.Component {
                   genre <Icon type="down" />
                 </Button>
               </Dropdown>
+              <Button onClick={() => this.recommended()}>recommended</Button>
             </div>
           </Col>
           <Col span={6}>
