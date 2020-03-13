@@ -37,7 +37,8 @@ class Messages extends React.Component {
       name: "",
       partner: "",
       title: "",
-      visible: false
+      visible: false,
+      userInfo: {}
     };
     this.gid = "";
     this.socket = io("localhost:9000");
@@ -142,29 +143,29 @@ class Messages extends React.Component {
     this.addMessage(m);
     this.sendMessage(value);
 
-    // const messageInfo = { ...this.state.userID1, userID2, history };
-    this.state.title = `Send Message`;
-    console.log("In onSendMessage");
-    console.log(value);
-    // replace with messageIndo
-    var body_ = JSON.stringify({
-      userID1: this.props.user._id, // Replace this with current user id
-      userID2: this.state.partner, // Replace this with chat partner id
-      message: m
-    });
-    console.log(body_);
-    fetch(`${config.backend_url}/messaging/addToChatHistory`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: body_
-    })
-      .then(res => res.json())
-      .then(data => this.setState({ apiResponse: data }))
-      .catch(err => console.log(`Error is ${err}`));
-    // clear the message
+   //  // const messageInfo = { ...this.state.userID1, userID2, history };
+   //  this.state.title = `Send Message`;
+   //  console.log("In onSendMessage");
+   //  console.log(value);
+   //  // replace with messageIndo
+   //  var body_ = JSON.stringify({
+   //    userID1: this.props.user._id, // Replace this with current user id
+   //    userID2: this.state.partner, // Replace this with chat partner id
+   //    message: m
+   //  });
+   //  console.log(body_);
+   //  fetch(`${config.backend_url}/messaging/addToChatHistory`, {
+   //    method: "POST",
+   //    headers: {
+   //      Accept: "application/json",
+   //      "Content-Type": "application/json"
+   //    },
+   //    body: body_
+   //  })
+   //    .then(res => res.json())
+   //    .then(data => this.setState({ apiResponse: data }))
+   //    .catch(err => console.log(`Error is ${err}`));
+   //  // clear the message
   }
 
   onReceiveMessage = async value => {
@@ -196,6 +197,14 @@ class Messages extends React.Component {
   };
 
   componentDidMount() {
+    axios.get(`${config.backend_url}/profile/getCurrentUserInformation`)
+      .then((userInfo) => {
+        console.log(userInfo);
+        this.setState({ 
+          userInfo: userInfo.data,
+        });
+      })
+      .catch(err => console.warn(err));
     if (window.location.href.includes('messages')) {
       this.messages();
     } else {
@@ -217,40 +226,28 @@ class Messages extends React.Component {
     const { visible, loading } = this.state;
 
     return (
-      <BrowserRouter>
-        {/* <Socket uri={uri} options={options}>
-          {this.props}
-        </Socket> */}
+      <div>
         <Layout style={{ minHeight: "90vh" }}>
           <Sider>
-            <Avatar size={64} icon="user" />
+            <Avatar size={64} src={this.state.userInfo ? this.state.userInfo.profilePicture : undefined} />
+            <span style={{color: "white"}}>{this.state.userInfo ? this.state.userInfo.username : undefined}</span>
             <Menu theme="dark" mode="inline" defaultSelectedKeys={["3"]}>
               <Menu.Item key="1">
-                <Icon type="export" />
-                <span className="nav-text">refer host</span>
-              </Menu.Item>
-              <Menu.Item key="2">
-                <Icon type="home" />
-                <span className="nav-text">reservations</span>
-              </Menu.Item>
-              <Menu.Item key="3">
                 <Icon type="upload" />
                 <span className="nav-text">inbox</span>
               </Menu.Item>
-              <Menu.Item key="4">
-                <Link to={`/#/profile?id=${this.props.user._id}`}>
-                  <Icon type="user" />
-                  back to profile
-                </Link>
+              <Menu.Item key="2">
+               {(this.props.user) &&
+                  <Link to={`/profile?id=${this.props.user._id}`}>
+                     <Icon type="user"/>
+                     back to profile
+                  </Link>
+               }
               </Menu.Item>
             </Menu>
           </Sider>
           <Layout>
             <Content style={{ margin: "0 16px" }}>
-              <Breadcrumb style={{ margin: "16px 0" }}>
-                <Breadcrumb.Item>Inbox</Breadcrumb.Item>
-                <Breadcrumb.Item>User</Breadcrumb.Item>
-              </Breadcrumb>
               <div style={{ padding: 24, background: "#fff", minHeight: 475 }}>
                 <div
                   className="scrollable-container"
@@ -297,7 +294,7 @@ class Messages extends React.Component {
                             value={this.state.message || ''}
                             enterButton="Send"
                             onChange={this.onChange}
-                            onPressEnter={this.handleEnter}
+                            onSearch={this.handleEnter}
                           />
                         </Modal>
                       </div>
@@ -308,7 +305,7 @@ class Messages extends React.Component {
             </Content>
           </Layout>
         </Layout>
-      </BrowserRouter>
+      </div>
     );
   }
 }
