@@ -30,7 +30,8 @@
    },
    "scripts": {
       "test": "mocha --timeout 10000 --exit",
-      "start": "node index.js",
+      "start": "node index.js"
+   },
    "apidoc": {
       "name": "Gamelinks",
       "title": "Gamelinks",
