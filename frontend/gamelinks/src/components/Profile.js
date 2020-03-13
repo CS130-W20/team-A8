@@ -405,9 +405,11 @@ class Profile extends React.Component {
                             : <Paragraph ellipsis={{ rows: 5, expandable: true }}>{ this.state.userInfo.bio }</Paragraph>)
                         }
                     </div>
-                    <Link to={ `/messages?id=${ this.state.userId }`}>
-                       <Title level={3}><Icon type="mail" /> Message this host</Title>
-                    </Link>
+                    { (this.props.user && !this.state.isProfileOwner) &&
+                        <Link to={ `/messages?id=${ this.state.userId }`}>
+                            <Title level={3}><Icon type="mail" /> Message this host</Title>
+                        </Link>
+                    }
                 </div>
             </div>
         );
