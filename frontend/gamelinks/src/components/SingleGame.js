@@ -52,6 +52,7 @@ class SingleGame extends React.Component {
     this.carousel = React.createRef();
     this.gid = queryString.parse(this.props.location.search).id;
     this.hostCards = [];
+    this.genreIds = [];
   }
 
   next() {
@@ -82,16 +83,28 @@ class SingleGame extends React.Component {
           apiScreenshots: data.screenshots,
           apiGenre: data.genres, 
           apiPlatforms: data.platforms[0][0]
-        })
-        if (data.has("screenshots")) {
+        });
+        if (data.screenshots) {
           this.setState({apiScreenshots: data.screenshots});
         }
-        if (data.has("age_ratings")) {
+        if (data.age_ratings) {
           this.setState({apiAges: data.age_ratings[0][0]});
         }
+        this.state.apiGenre.map(elem => {
+          this.genreIds.push(elem[0].id);
+        })
+        const genreAdd = { "genres" : this.genreIds }
+        axios.post(`${config.backend_url}/profile/incrementGenreHistory`, genreAdd)
+           .then(res => {
+             console.log(res);
+           })
+           .catch(err => {
+             console.warn(err);
+        });
       }
       )
       .catch(err => console.log(`Error is: ${err}`));
+    
   }
 
   getHost(elem) {

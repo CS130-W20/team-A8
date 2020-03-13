@@ -238,7 +238,7 @@ class Messages extends React.Component {
                 <span className="nav-text">inbox</span>
               </Menu.Item>
               <Menu.Item key="4">
-                <Link to={`/profile#/profile?id=undefined`}>
+                <Link to={`/#/profile?id=${this.props.user._id}`}>
                   <Icon type="user" />
                   back to profile
                 </Link>
