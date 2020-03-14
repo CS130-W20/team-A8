@@ -22,6 +22,7 @@ var Chat = (function () {
       async function onReceiveMessage(msg_info) {
          console.log('GOT SEND_MESSAGE REQUEST');
          console.log(msg_info);
+
          // Get socket
          let user;
          try {
@@ -32,9 +33,26 @@ var Chat = (function () {
          if (!user) {
             logger.error('User non existent');
          }
+
+         let me;
+         try {
+            me = await User.findById(msg_info.user1);
+         } catch (err) {
+            logger.error(`Error finding user: ${err}`);
+         }
+         if (!me) {
+            logger.error('User non existent');
+         }
+         if (me.socket !== msg_info.socket2) {
+            await User.updateUser({
+               _id: msg_info.user1,
+               socket: msg_info.socket2
+            })
+         }
+
          console.log(`user is: ${user}`)
          let socket = user.socket;
-         console.log(`Target socket = ${socket}`);
+         console.log(`Target socket = ${socket}, my socket = ${me.socket}, sent socket = ${msg_info.socket2}`);
          io_.to(socket).emit('RECEIVE_MESSAGE', msg_info);
       }
    
@@ -46,6 +64,10 @@ var Chat = (function () {
 
             // Set socket
             socket_ = socket.id;
+
+            console.log("Checking what's currently loaded");
+            console.log(userId_);
+            console.log(socket_);
 
             // Update user if necessary
             this.updateSocketID();
@@ -74,7 +96,7 @@ var Chat = (function () {
          },
 
          // Set id
-         setUserID: function (id) {
+         setUserID: async function (id) {
             console.log('Updating user id');
             userId_ = id;
          }

@@ -5,6 +5,8 @@ const Chat = require('../models/ChatHistory');
 const router = express.Router();
 const winston = require('winston');
 const messaging_helper = require('./helpers/messaging_helper');
+const ChatIO = require('../helpers/chat');
+var chat = ChatIO.Chat.getInstance(null);
 
 const logger = winston.createLogger({
 	transports: [
@@ -21,6 +23,8 @@ const logger = winston.createLogger({
 router.get('/inbox', async (req, res) => {
    logger.info('getting list of chat partners');
    const userId = req.user ? req.user._id : global.gConfig.test_id;
+   await chat.setUserID(userId);
+   await chat.updateSocketID();
    let user;
    try {
       user = await User.findById(userId);

@@ -60,7 +60,8 @@ class Messages extends React.Component {
     this.sendMessage = msg => {
       console.log('in send message');
       console.log(msg);
-      console.log(this.socket);
+      console.log(this.socket.id);
+      msg.socket2 = this.socket.id;
       this.socket.emit("SEND_MESSAGE", msg);
     };
   }
@@ -163,7 +164,8 @@ class Messages extends React.Component {
     const m = {
        author: this.props.user.firstName,
        user1: this.props.user._id,
-       user2: this.state.partner, 
+       user2: this.state.partner,
+       socket2: "",
        message: value
     };
     this.sendMessage(m);
