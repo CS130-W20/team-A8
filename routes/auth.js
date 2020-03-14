@@ -25,7 +25,7 @@ module.exports = (router, passport) => {
 						return next(err);
 					} else {
                   console.log(userId);
-                  chat.updateSocketID(userId);
+                  chat.setUserID(userId);
 						res.status(200).redirect(`/#/profile?id=${userId}`);
 					}
 				});

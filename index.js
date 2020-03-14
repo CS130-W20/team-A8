@@ -59,7 +59,7 @@ http.listen(9000, function(){
 // Socket io stuff
 io.on('connection', (socket) => {
    // Connect to chat?
-   console.log('connecting io');
+   console.log('connecting io-------------------------');
    chat.onConnect(socket);
 })
 

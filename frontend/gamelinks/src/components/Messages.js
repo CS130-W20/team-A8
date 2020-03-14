@@ -45,43 +45,23 @@ class Messages extends React.Component {
     this.socket = io("localhost:9000");
 
     this.socket.on("RECEIVE_MESSAGE", function(data) {
-      console.log('RECEIVED MESSAGE');
+      console.log(`RECEIVED MESSAGE`);
       addMessageFromSocket(data);
     });
 
     const addMessageFromSocket = data => {
       console.log('In add message from socket');
       console.log(data);
-      this.setState({ messages: [...this.state.messages, data] });
+      this.state.messages = [...this.state.messages, data];
+      this.forceUpdate();
       console.log(this.state.messages);
-      var body_ = JSON.stringify({
-         userID1: this.props.user._id, // Replace this with current user id
-         userID2: this.state.partner, // Replace this with chat partner id
-         message: data
-       });
-       console.log(body_);
-       fetch(`${config.backend_url}/messaging/addToChatHistory`, {
-         method: "POST",
-         headers: {
-           Accept: "application/json",
-           "Content-Type": "application/json"
-         },
-         body: body_
-       })
-         .then(res => res.json())
-         .then(data => this.setState({ apiResponse: data }))
-         .catch(err => console.log(`Error is ${err}`));   
     };
 
     this.sendMessage = msg => {
-      console.log('Sending message');
-      const msg_info = {
-         author: this.state.username,
-         user: this.state.partner,
-         message: msg
-      };
-      console.log(msg_info);
-      this.socket.emit("SEND_MESSAGE", msg_info);
+      console.log('in send message');
+      console.log(msg);
+      console.log(this.socket);
+      this.socket.emit("SEND_MESSAGE", msg);
     };
   }
 
@@ -153,34 +133,42 @@ class Messages extends React.Component {
       .catch(err => console.log(`Error is: ${err}`));
   }
 
-  onSendMessage(value) {
-    const m = {author: this.props.user.firstName, user: this.state.partner, message: value};
-    this.addMessage(m);
-    this.sendMessage(value);
+  addToHistory(msg) {
+    console.log("in add to chat history");
+    this.state.title = `Add to history`;
+    console.log(msg);
 
-   //  // const messageInfo = { ...this.state.userID1, userID2, history };
-   //  this.state.title = `Send Message`;
-   //  console.log("In onSendMessage");
-   //  console.log(value);
-   //  // replace with messageIndo
-   //  var body_ = JSON.stringify({
-   //    userID1: this.props.user._id, // Replace this with current user id
-   //    userID2: this.state.partner, // Replace this with chat partner id
-   //    message: m
-   //  });
-   //  console.log(body_);
-   //  fetch(`${config.backend_url}/messaging/addToChatHistory`, {
-   //    method: "POST",
-   //    headers: {
-   //      Accept: "application/json",
-   //      "Content-Type": "application/json"
-   //    },
-   //    body: body_
-   //  })
-   //    .then(res => res.json())
-   //    .then(data => this.setState({ apiResponse: data }))
-   //    .catch(err => console.log(`Error is ${err}`));
-   //  // clear the message
+    // replace with messageInfo
+    var body_ = JSON.stringify({
+      userID1: this.props.user._id, // Replace this with current user id
+      userID2: this.state.partner, // Replace this with chat partner id
+      message: msg
+    });
+    console.log(body_);
+    fetch(`${config.backend_url}/messaging/addToChatHistory`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: body_
+    })
+      .then(res => res.json())
+      .then(data => this.setState({ apiResponse: data }))
+      .catch(err => console.log(`Error is ${err}`));
+    // clear the message
+  }
+
+  onSendMessage(value) {
+    const m = {
+       author: this.props.user.firstName,
+       user1: this.props.user._id,
+       user2: this.state.partner, 
+       message: value
+    };
+    this.sendMessage(m);
+    this.addMessage(m);
+    this.addToHistory(m);
   }
 
   onReceiveMessage = async value => {

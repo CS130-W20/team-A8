@@ -25,15 +25,16 @@ var Chat = (function () {
          // Get socket
          let user;
          try {
-            user = await User.findById(msg_info.user);
-         } catch(err) {
+            user = await User.findById(msg_info.user2);
+         } catch (err) {
             logger.error(`Error finding user: ${err}`);
          }
          if (!user) {
             logger.error('User non existent');
          }
+         console.log(`user is: ${user}`)
          let socket = user.socket;
-         console.log(`Socket is ${socket}`);
+         console.log(`Target socket = ${socket}`);
          io_.to(socket).emit('RECEIVE_MESSAGE', msg_info);
       }
    
@@ -47,19 +48,18 @@ var Chat = (function () {
             socket_ = socket.id;
 
             // Update user if necessary
-            this.updateSocketID(userId_);
+            this.updateSocketID();
 
             // Await socket message
             socket.on('SEND_MESSAGE', onReceiveMessage);
          },
 
          // Update database
-         updateSocketID: async function (id) {
+         updateSocketID: async function () {
             console.log('Updating socket id');
-            userId_ = id;
             let user;
             try {
-               user = await User.findById(id);
+               user = await User.findById(userId_);
             } catch (err) {
                logger.error(`Error is: ${err}`);
             }
@@ -67,10 +67,16 @@ var Chat = (function () {
                logger.error('Could not find user');
             }
             const userInfo = {
-               _id: id,
+               _id: userId_,
                socket: socket_
             };
             await User.updateUser(userInfo);
+         },
+
+         // Set id
+         setUserID: function (id) {
+            console.log('Updating user id');
+            userId_ = id;
          }
       };
    }
