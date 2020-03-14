@@ -43,8 +43,12 @@ router.get('/getCurrentUserInformation', async (req, res) => {
 		userInfo = await User.findById(userId);
 	} catch (err) {
 		logger.error('got an error finding user');
-		res.status(400).send(err);
+		return res.status(400).send(err);
 	}
+	if (userInfo.username.length > 4 && userInfo.username.substring(0, 5) == '#user') {
+		userInfo.username = '';
+	}
+	console.log('userInfo', userInfo)
 	res.status(200).send(userInfo);
 });
 
@@ -66,9 +70,16 @@ router.get('/getProfileUserInformation', async (req, res) => {
 	if (!user) {
 		res.status(400).send('Could not find user');
 	} else {
+		let username;
+		console.log(user.username.substring(0, 5))
+		if (user.username.length > 4 && user.username.substring(0, 5) == '#user') {
+			username = '';
+		} else {
+			username = user.username;
+		}
 		const userInfo = {
 			_id: user._id,
-			username: user.username,
+			username,
 			favorites: user.favorites,
 			hosting: user.hosting,
 			profilePicture: user.profilePicture,
@@ -77,11 +88,13 @@ router.get('/getProfileUserInformation', async (req, res) => {
 			latitude: user.latitude,
 			longitude: user.longitude,
 		};
-		if (req.user && (user.sharedWith.includes(JSON.stringify(req.user._id)) || JSON.stringify(req.user._id) == JSON.stringify(user._id))) {
+
+		if (req.user && (user.sharedWith.includes(req.user._id) || JSON.stringify(req.user._id) == JSON.stringify(user._id))) {
 			userInfo.firstName = user.firstName;
 			userInfo.lastName = user.lastName;
 			userInfo.address = user.address;
 		}
+		console.log(userInfo);
 		res.status(200).send(userInfo);
 	}
 });

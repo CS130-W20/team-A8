@@ -195,7 +195,7 @@ UserSchema.statics.findOrCreate = async (userInfo, done) => {
 	if (!user) {
 		logger.info('No user. Creating user');
 		try {
-			user = await User.create(userInfo);
+			user = await User.create({ ...userInfo, username: `#user${Math.random()}` });
 			console.log(user);
 		} catch (err) { 
 			logger.error('failed to create user');
