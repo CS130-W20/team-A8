@@ -41,27 +41,23 @@ class Hosts extends React.Component {
   componentDidMount() {
     // get host infos
     axios
-      .get(`${config.backend_url}/profile/getCurrentUserInformation`)
-      .then(user => {
-        console.log(user);
-        this.props.setUser(user.data);
-      })
-      .then(() => {
-        return axios({
-          url: `${config.backend_url}/profile/getProfileUserInformation?id=${this.state.userId}`,
-          method: "GET"
-        });
-      })
-      .then(userInfo => {
-        console.log(userInfo.data._id);
-        this.setState({ userInfo: userInfo.data });
-      })
-      .then(() => {
-        this.getHostList(this.state.userInfo.data.city);
-      })
-      // .then(() => {
-      //   this.getGameList("hosting");
+      .get(`${config.backend_url}/profile/getAllUsers`)
+      // .get(`${config.backend_url}/profile/getCurrentUserInformation`)
+      // .then(user => {
+      //   console.log(user);
+      //   this.props.setUser(user.data);
       // })
+      // .then(() => {
+      //   return axios({
+      //     url: `${config.backend_url}/profile/getAllUsers`,
+      //     method: "GET"
+      //   });
+      // })
+      .then(results => {
+        console.log(results.data);
+        this.setState({ results: results.data });
+        this.getHostList(results);
+      })
       .catch(err => {
         console.log(err);
       });
@@ -74,96 +70,51 @@ class Hosts extends React.Component {
     this.carouselHosting.prev();
   }
 
-  getHostList = async loc => {
-    // once google maps api is set up we can post people near user location
-    if (!this.state.userInfo) {
-      // TEST:  if (!this.state.userInfo || !this.state.userInfo[type])
+  getHostList = async results => {
+    if (!this.state.results) {
       return <Empty />;
     }
-    const idList = this.state.userInfo[loc];
+    const hostList = this.state.results;
+    console.log(hostList);
     const HostPromises = [];
-    for (let i = 0; i < idList.length; i += 1) {
+    for (let i = 0; i < hostList.length; i += 1) {
+      var currentUser = hostList[i];
+      console.log(currentUser);
       const hostReq = axios.get(
-        `${config.backend_url}/profile/getProfileUserInformation?id=${idList[i]}`
+        `${config.backend_url}/profile/getProfileUserInformation?id=${currentUser._id}`
       );
-      HostPromises.push(hostReq);
+      if (currentUser.hosting != []) {
+        HostPromises.push(hostReq);
+      }
+      // HostPromises.push(hostReq);
     }
     const hostInfo = await Promise.all(HostPromises);
     this.setState({ hosts: hostInfo });
   };
 
-  getGameList = async type => {
-    if (!this.state.userInfo || !this.state.userInfo[type]) {
-      // TEST:  if (!this.state.userInfo || !this.state.userInfo[type])
-      return <Empty />;
-    }
-    const idList = this.state.userInfo[type];
-    const InfoPromises = [];
-    for (let i = 0; i < idList.length; i += 1) {
-      const gameReq = axios.get(
-        `${config.backend_url}/igdb/game?id=${idList[i]}`
-      );
-      const coverReq = axios.get(
-        `${config.backend_url}/igdb/cover?id=${idList[i]}`
-      );
-      InfoPromises.push(gameReq, coverReq);
-    }
-    const gameInfo = await Promise.all(InfoPromises);
-    type === "hosting"
-      ? this.setState({ hosting: gameInfo })
-      : this.setState({ favorites: gameInfo });
-  };
-
   render() {
-    let createGameCards = type => {
-      console.log("creatingGameCards");
-      const gameInfo = this.state[type];
-      if (!gameInfo) return;
-      const cards = [];
-      for (let i = 0; i < gameInfo.length; i += 2) {
-        cards.push(
-          <div className="card">
-            <Link to={`/singlegame/?id=${gameInfo[i].data.id}`}>
-              <img src={"http://" + gameInfo[i + 1].data} />
-            </Link>
-            <div className="name-text-box">
-              <a className="name-text">{gameInfo[i].data.name}</a>
-              <br />
-              {this.state.isProfileOwner && (
-                <Text
-                  className="name-text"
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    this.removeCard(type, gameInfo[i].data.id);
-                  }}
-                >
-                  Remove
-                </Text>
-              )}
-            </div>
-          </div>
-        );
-      }
-      return cards;
-    };
-    let createHostCards = loc => {
+    let createHostCards = () => {
       console.log("creatingHostCards");
-      const hostInfo = this.state[loc];
+      const hostInfo = this.state.hosts;
+      console.log(hostInfo);
       if (!hostInfo) return;
       const cards = [];
-      for (let i = 0; i < hostInfo.length; i += 2) {
+      for (let i = 0; i < hostInfo.length; i += 1) {
         cards.push(
           <div className="card">
-            <Link to={`/profile/?id=${hostInfo[i].data.id}`}>
-              <img src={`/profile/?id=${hostInfo[i].data.profilePicture}`} />
+            <Link to={`/profile/?id=${hostInfo[i].data._id}`}>
+              <img src={hostInfo[i].data.profilePicture} />
+              <div className="card-text-box">
+                <Text className="card-text">{hostInfo[i].data.username}</Text>
+              </div>
             </Link>
           </div>
         );
       }
       return cards;
     };
-    const hostCards = createHostCards("hosts") || [];
-    const gameCards = createGameCards("hosting") || []; // NOT TEST
+    const hostCards = createHostCards() || [];
+    // const gameCards = createGameCards("hosting") || []; // NOT TEST
     const props = {
       dots: true,
       speed: 500,
@@ -173,6 +124,7 @@ class Hosts extends React.Component {
     return (
       // clicking on a card links to profile.js
       <div>
+        <hr />
         <Title level={2}>Hosts for You</Title>
         <hr />
         <div>
