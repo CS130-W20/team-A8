@@ -1,0 +1,29 @@
+{
+	"development": {
+		"config_id": "development",
+		"port": 9000,
+		"json_indentation": 4,
+		"mongo_url": "mongodb+srv://jason:gamelinks@gamelinks0-n8pas.mongodb.net/test?retryWrites=true&w=majority",
+		"db": "gamelinks0",
+		"FB_APP_SECRET": "41cd857d1acdbce7ab33fd5e7311558d",
+		"FB_APP_ID" : "181950399740252",
+		"FB_callback": "http://localhost:",
+		"igdb_key": "702e19b802b89a966705daa12a12161c",
+		"CLOUDINARY_KEY": "974473475599991",
+		"CLOUDINARY_SECRET": "Hc5CisGM8NPX0aXBfxJOnbGtloI",
+		"CLOUDINARY_NAME": "doth6ny3e",
+		"test_id": "5e47447c9ca2a9355632dd43",
+		"api_key": "AIzaSyAL5zPat0WJTKSh4jQ7fZmVZZd-oCXnP7s"
+	},
+	"testing": {
+		"config_id": "testing",
+		"port": 9000,
+		"json_indentation": 4,
+		"mongo_url": "mongodb+srv://admin:admin@gamelink-axvyy.mongodb.net/test?retryWrites=true&w=majority",
+		"db": "gamelinks", 
+		"FB_APP_SECRET": "41cd857d1acdbce7ab33fd5e7311558d",
+		"FB_APP_ID" : "181950399740252",
+		"FB_callback": "http://localhost:",
+		"api_key": "AIzaSyAL5zPat0WJTKSh4jQ7fZmVZZd-oCXnP7s"
+	}
+}
