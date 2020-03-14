@@ -40,9 +40,13 @@ In case you need to create files in the static folder, go to frontend/gamelinks 
 PLEASE NOTE:
 Currently the Facebook login system is not open to registration. Please use one of these provided Facebook test accounts to log in and use the website:
 
+
 username / password:
+
 qnqwotthar_1584150026@tfbnw.net / gamelinks
+
 open_gqpusyv_user@tfbnw.net / gamelinks
+
 jwctgamelinks@gmail.com / gamelinks123!
 
 ## Relevant Links 
