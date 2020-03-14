@@ -41,17 +41,18 @@ class Hosts extends React.Component {
   componentDidMount() {
     // get host infos
     axios
-      .get(`${config.backend_url}/profile/getCurrentUserInformation`)
-      .then(user => {
-        console.log(user);
-        this.props.setUser(user.data);
-      })
-      .then(() => {
-        return axios({
-          url: `${config.backend_url}/profile/getAllUsers`,
-          method: "GET"
-        });
-      })
+      .get(`${config.backend_url}/profile/getAllUsers`)
+      // .get(`${config.backend_url}/profile/getCurrentUserInformation`)
+      // .then(user => {
+      //   console.log(user);
+      //   this.props.setUser(user.data);
+      // })
+      // .then(() => {
+      //   return axios({
+      //     url: `${config.backend_url}/profile/getAllUsers`,
+      //     method: "GET"
+      //   });
+      // })
       .then(results => {
         console.log(results.data);
         this.setState({ results: results.data });
@@ -74,35 +75,45 @@ class Hosts extends React.Component {
       return <Empty />;
     }
     const hostList = this.state.results;
+    console.log(hostList);
     const HostPromises = [];
     for (let i = 0; i < hostList.length; i += 1) {
+      var currentUser = hostList[i];
+      console.log(currentUser);
       const hostReq = axios.get(
-        `${config.backend_url}/profile/getProfileUserInformation?id=${hostList[i]}`
+        `${config.backend_url}/profile/getProfileUserInformation?id=${currentUser._id}`
       );
-      HostPromises.push(hostReq);
+      if (currentUser.hosting != []) {
+        HostPromises.push(hostReq);
+      }
+      // HostPromises.push(hostReq);
     }
     const hostInfo = await Promise.all(HostPromises);
     this.setState({ hosts: hostInfo });
   };
 
   render() {
-    let createHostCards = loc => {
+    let createHostCards = () => {
       console.log("creatingHostCards");
-      const hostInfo = this.state[loc];
+      const hostInfo = this.state.hosts;
+      console.log(hostInfo);
       if (!hostInfo) return;
       const cards = [];
-      for (let i = 0; i < hostInfo.length; i += 2) {
+      for (let i = 0; i < hostInfo.length; i += 1) {
         cards.push(
           <div className="card">
-            <Link to={`/profile/?id=${hostInfo[i].data.id}`}>
-              <img src={`/profile/?id=${hostInfo[i].data.profilePicture}`} />
+            <Link to={`/profile/?id=${hostInfo[i].data._id}`}>
+              <img src={hostInfo[i].data.profilePicture} />
+              <div className="card-text-box">
+                <Text className="card-text">{hostInfo[i].data.username}</Text>
+              </div>
             </Link>
           </div>
         );
       }
       return cards;
     };
-    const hostCards = createHostCards("hosts") || [];
+    const hostCards = createHostCards() || [];
     // const gameCards = createGameCards("hosting") || []; // NOT TEST
     const props = {
       dots: true,
@@ -113,6 +124,7 @@ class Hosts extends React.Component {
     return (
       // clicking on a card links to profile.js
       <div>
+        <hr />
         <Title level={2}>Hosts for You</Title>
         <hr />
         <div>

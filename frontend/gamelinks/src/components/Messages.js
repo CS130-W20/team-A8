@@ -38,7 +38,8 @@ class Messages extends React.Component {
       partner: "",
       title: "",
       visible: false,
-      userInfo: {}
+      userInfo: {},
+      shared: false
     };
     this.gid = "";
     this.socket = io("localhost:9000");
@@ -100,11 +101,26 @@ class Messages extends React.Component {
        })
        .catch(err => console.log(`Error is: ${err}`));  
   }
-
+  
   getChat(partnerID) {
     this.state.title = `Chat`;
     this.setState({ partner: partnerID });
     console.log('getting chat');
+    axios.get(`${config.backend_url}/profile/getCurrentUserInformation`)
+      .then((userInfo) => {
+        console.log(userInfo);
+        this.setState({ 
+          userInfo: userInfo.data,
+        });
+        console.log(this.state.userInfo.sharedWith);
+        console.log(partnerID);
+        const sharing = (this.state.userInfo.sharedWith.indexOf(partnerID) > -1 ? true : false)
+        this.setState({shared: sharing});
+        console.log("Sharing is:");
+        console.log(sharing);
+      })
+      .catch(err => console.warn(err));
+    
     axios.get(`${config.backend_url}/profile/getNameByID?id=${partnerID}`)
       .then((name) => {
          console.log('now, getting chat history');
@@ -179,9 +195,29 @@ class Messages extends React.Component {
   handleCancel = e => {
     console.log(e);
     this.setState({
+      shared: false,
       visible: false
     });
   };
+
+  handleShare(){
+    if(!this.state.shared)
+      axios.post(`${config.backend_url}/profile/addSharedWith?id=${this.state.partner}`)
+        .then(res => {
+          console.log(res);
+          this.setState({shared: true});
+          console.log(this.state.shared);
+        })
+        .catch(err => console.warn(err))
+    else
+      axios.post(`${config.backend_url}/profile/removeSharedWith?id=${this.state.partner}`)
+        .then(res => {
+          console.log(res);
+          this.setState({shared: false});
+          console.log(this.state.shared);
+        })
+        .catch(err => console.warn(err))
+  }
 
   componentDidMount() {
     axios.get(`${config.backend_url}/profile/getCurrentUserInformation`)
@@ -260,6 +296,9 @@ class Messages extends React.Component {
                           onOk={this.handleOk}
                           onCancel={this.handleCancel}
                           footer={[
+                            <Button key='share' onClick={() => this.handleShare()}>
+                              {this.state.shared ? "Stop Sharing Info" : "Share Your Info"}
+                            </Button>, 
                             <Button key="back" onClick={this.handleCancel}>
                               Return
                             </Button>
