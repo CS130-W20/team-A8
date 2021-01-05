@@ -6,7 +6,7 @@
       "@googlemaps/google-maps-services-js": "^2.0.2",
       "antd": "^3.26.9",
       "apicalypse": "^0.1.6",
-      "axios": "^0.19.2",
+      "axios": "^0.21.1",
       "chai": "^4.1.2",
       "chai-http": "^4.0.0",
       "cloudinary": "^1.19.0",
